@@ -18,12 +18,11 @@ This README would normally document whatever steps are necessary to get your app
 Netbeans project type: Java with Maven | Web Application
 
 #### Dependencies ####
-* mySQL 8.0.21
+* mySQL 8.0.21 J connector
 * JSTL
 * GSON
 * Bootstrap
 * jQuery
 
 #### Database configuration ####
-
-* check master/restaurante.sql
+Check master/restaurante.sql

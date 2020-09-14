@@ -1,0 +1,10 @@
+jdbc\ConnectionFactory.class
+dao\PgDAOFactory.class
+dao\DAOFactory.class
+controller\LoginController.class
+dao\DAO.class
+controller\UserController.class
+dao\UserDAO.class
+dao\PgUserDAO.class
+jdbc\PgConnectionFactory.class
+model\User.class

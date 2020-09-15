@@ -26,6 +26,9 @@ public abstract class DAOFactory implements AutoCloseable {
         if (ConnectionFactory.getDbServer().equals("postgresql")) {
             factory = new PgDAOFactory(connection);
         }
+        else if(ConnectionFactory.getDbServer().equals("mysql")){
+            
+        }
         else {
             throw new RuntimeException("Servidor de banco de dados não suportado.");
         }

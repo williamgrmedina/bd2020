@@ -34,7 +34,7 @@ public class MySqlConnectionFactory extends ConnectionFactory {
                dbPort = properties.getProperty("port");
                dbName = properties.getProperty("name");
                dbUser = properties.getProperty("user");
-               dbPassword = properties.getProperty("pasword");
+               dbPassword = properties.getProperty("password");
                
            } catch (IOException ex) {
                System.err.println(ex.getMessage());
@@ -48,7 +48,7 @@ public class MySqlConnectionFactory extends ConnectionFactory {
         Connection connection = null;
         
         try{
-            Class.forName("com.mysql.jdbc.Driver");
+            Class.forName("com.mysql.cj.jdbc.Driver");
             readProperties();
             
             String url = "jdbc:mysql://" + dbHost + ":" + dbPort + "/" + dbName;

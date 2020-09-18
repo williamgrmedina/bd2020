@@ -92,6 +92,7 @@ CREATE TABLE IF NOT EXISTS `esquema_restaurante`.`Pedido` (
   `inicio_atendimento` TIMESTAMP(2) NOT NULL,
   `status_pedido` VARCHAR(45) NOT NULL,
   `fim_atendimento` TIMESTAMP(2) NULL,
+  `observacao` VARCHAR(45),
   `Gerente_login` VARCHAR(32) NOT NULL,
   PRIMARY KEY (`idPedido`),
   INDEX `fk_Pedido_Gerente1_idx` (`Gerente_login` ASC) VISIBLE,

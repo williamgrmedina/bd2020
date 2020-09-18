@@ -41,6 +41,9 @@ public abstract class ConnectionFactory {
             if (getDbServer().equals("postgresql")) {
                 instance = new PgConnectionFactory();
             }
+            else if (getDbServer().equals("mysql")){
+                instance = new MySqlConnectionFactory();
+            }
             else {
                 throw new RuntimeException("Servidor de banco de dados não suportado.");
             }

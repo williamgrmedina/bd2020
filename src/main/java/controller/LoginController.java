@@ -96,7 +96,6 @@ public class LoginController extends HttpServlet {
 
                 try (DAOFactory daoFactory = DAOFactory.getInstance()) {
                     dao = daoFactory.getUserDAO();
-
                     dao.authenticate(user);
 
                     session.setAttribute("usuario", user);

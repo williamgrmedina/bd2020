@@ -13,6 +13,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import model.Funcionario;
+import model.Gerente;
 import model.User;
 
 /**
@@ -21,6 +23,8 @@ import model.User;
  */
 public class MyUserDAO implements UserDAO {
 
+    
+    
     private final Connection connection;
 
     private static final String CREATE_QUERY =
@@ -61,10 +65,11 @@ public class MyUserDAO implements UserDAO {
                                 "FROM esquema_restaurante.user " +
                                 "ORDER BY id;";
 
-    private static final String AUTHENTICATE_QUERY =
-                                "SELECT id, nome, nascimento, avatar " +
-                                "FROM esquema_restaurante.user " +
-                                "WHERE login = ? AND senha = ?;";
+    private static String AUTHENTICATE_QUERY(String mysqlTable){
+        return "SELECT login, senha, salario, data_contratacao, nome, `e-mail` " +
+        "FROM esquema_restaurante." + mysqlTable + " " +
+        "WHERE login = ? AND senha = ?;";
+    }
     
     private static final String GET_BY_LOGIN_QUERY =
                                 "SELECT id, login, nome, nascimento, avatar " +
@@ -86,7 +91,7 @@ public class MyUserDAO implements UserDAO {
 
             statement.executeUpdate();
         } catch (SQLException ex) {
-            Logger.getLogger(PgUserDAO.class.getName()).log(Level.SEVERE, "DAO", ex);
+            Logger.getLogger(MyUserDAO.class.getName()).log(Level.SEVERE, "DAO", ex);
 
             if (ex.getMessage().contains("uq_user_login")) {
                 throw new SQLException("Erro ao inserir usuário: login já existente.");
@@ -116,7 +121,7 @@ public class MyUserDAO implements UserDAO {
                 }
             }
         } catch (SQLException ex) {
-            Logger.getLogger(PgUserDAO.class.getName()).log(Level.SEVERE, "DAO", ex);
+            Logger.getLogger(MyUserDAO.class.getName()).log(Level.SEVERE, "DAO", ex);
             
             if (ex.getMessage().equals("Erro ao visualizar: usuário não encontrado.")) {
                 throw ex;
@@ -171,7 +176,7 @@ public class MyUserDAO implements UserDAO {
                 throw new SQLException("Erro ao editar: usuário não encontrado.");
             }
         } catch (SQLException ex) {
-            Logger.getLogger(PgUserDAO.class.getName()).log(Level.SEVERE, "DAO", ex);
+            Logger.getLogger(MyUserDAO.class.getName()).log(Level.SEVERE, "DAO", ex);
 
             if (ex.getMessage().equals("Erro ao editar: usuário não encontrado.")) {
                 throw ex;
@@ -194,7 +199,7 @@ public class MyUserDAO implements UserDAO {
                 throw new SQLException("Erro ao excluir: usuário não encontrado.");
             }
         } catch (SQLException ex) {
-            Logger.getLogger(PgUserDAO.class.getName()).log(Level.SEVERE, "DAO", ex);
+            Logger.getLogger(MyUserDAO.class.getName()).log(Level.SEVERE, "DAO", ex);
 
             if (ex.getMessage().equals("Erro ao excluir: usuário não encontrado.")) {
                 throw ex;
@@ -218,7 +223,7 @@ public class MyUserDAO implements UserDAO {
                 userList.add(user);
             }
         } catch (SQLException ex) {
-            Logger.getLogger(PgUserDAO.class.getName()).log(Level.SEVERE, "DAO", ex);
+            Logger.getLogger(MyUserDAO.class.getName()).log(Level.SEVERE, "DAO", ex);
 
             throw new SQLException("Erro ao listar usuários.");
         }
@@ -228,15 +233,14 @@ public class MyUserDAO implements UserDAO {
 
     @Override
     public void authenticate(User user) throws SQLException, SecurityException {
-        try (PreparedStatement statement = connection.prepareStatement(AUTHENTICATE_QUERY)) {
+        try (PreparedStatement statement = connection.prepareStatement(AUTHENTICATE_QUERY("user"))) {
             statement.setString(1, user.getLogin());
+            System.out.println("login: " + user.getLogin());
             statement.setString(2, user.getSenha());
-             
+            System.out.println("senha: " + user.getSenha());
             try (ResultSet result = statement.executeQuery()) {
-                                    System.out.println(result.getInt("id"));
-                                    System.out.println("aaaaa");
                 if (result.next()) {
-                     System.out.println("adcdcsdc");
+                    System.out.println("adcdcsdc");
                     user.setId(result.getInt("id"));
                     user.setNome(result.getString("nome"));
                     user.setNascimento(result.getDate("nascimento"));
@@ -246,7 +250,32 @@ public class MyUserDAO implements UserDAO {
                 }
             }
         } catch (SQLException ex) {
-            Logger.getLogger(PgUserDAO.class.getName()).log(Level.SEVERE, "DAO", ex);
+            Logger.getLogger(MyUserDAO.class.getName()).log(Level.SEVERE, "DAO", ex);
+
+            throw new SQLException("Erro ao autenticar usuário.");
+        }
+    }
+    
+    @Override
+    public void authenticate(Funcionario fun) throws SQLException, SecurityException {
+        System.out.println("TIPO: " + fun.getTipo());
+        System.out.println("QUERY: " + AUTHENTICATE_QUERY(fun.getTipo()));
+        try (PreparedStatement statement = connection.prepareStatement(AUTHENTICATE_QUERY(fun.getTipo()))) {
+            statement.setString(1, fun.getLogin());
+            System.out.println("login: " + fun.getLogin());
+            statement.setString(2, fun.getSenha());
+            System.out.println("senha: " + fun.getSenha());
+            try (ResultSet result = statement.executeQuery()) {
+                if (result.next()) {
+                    System.out.println("to aqui tio");
+                    fun.setLogin(result.getString("login"));
+                    fun.setNome(result.getString("nome"));
+                } else {
+                    throw new SecurityException("Login ou senha incorretos.");
+                }
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(MyUserDAO.class.getName()).log(Level.SEVERE, "DAO", ex);
 
             throw new SQLException("Erro ao autenticar usuário.");
         }
@@ -274,7 +303,7 @@ public class MyUserDAO implements UserDAO {
                 }
             }
         } catch (SQLException ex) {
-            Logger.getLogger(PgUserDAO.class.getName()).log(Level.SEVERE, "DAO", ex);
+            Logger.getLogger(MyUserDAO.class.getName()).log(Level.SEVERE, "DAO", ex);
             
             throw new SQLException("Erro ao obter usuário.");
         }

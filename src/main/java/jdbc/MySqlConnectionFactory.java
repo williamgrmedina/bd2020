@@ -27,7 +27,7 @@ public class MySqlConnectionFactory extends ConnectionFactory {
            Properties properties = new Properties();
            
            try {
-               InputStream input = this.getClass().getClassLoader().getResourceAsStream(this.propertiesPath);
+               InputStream input = this.getClass().getClassLoader().getResourceAsStream(MySqlConnectionFactory.propertiesPath);
                properties.load(input);
                
                dbHost = properties.getProperty("host");

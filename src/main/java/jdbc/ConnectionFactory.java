@@ -38,14 +38,12 @@ public abstract class ConnectionFactory {
                 throw new IOException("Erro ao obter informações do banco de dados.");
             }
 
-            if (getDbServer().equals("postgresql")) {
-                instance = new PgConnectionFactory();
-            }
-            else if (getDbServer().equals("mysql")){
-                instance = new MySqlConnectionFactory();
-            }
-            else {
-                throw new RuntimeException("Servidor de banco de dados não suportado.");
+            switch (getDbServer()) {
+                case "mysql":
+                    instance = new MySqlConnectionFactory();
+                    break;
+                default:
+                    throw new RuntimeException("Servidor de banco de dados não suportado.");
             }
         }
 

@@ -21,4 +21,9 @@ public class MyDAOFactory extends DAOFactory {
     public UserDAO getUserDAO(){
       return new MyUserDAO(this.connection);
     }
+    
+    @Override
+    public UserDAO getFuncionarioDAO(){
+      return new MyUserDAO(this.connection);
+    }
 }

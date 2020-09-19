@@ -23,14 +23,12 @@ public abstract class DAOFactory implements AutoCloseable {
         Connection connection = ConnectionFactory.getInstance().getConnection();
         DAOFactory factory = null;
         
-        if (ConnectionFactory.getDbServer().equals("postgresql")) {
-            factory = new PgDAOFactory(connection);
-        }
-        else if(ConnectionFactory.getDbServer().equals("mysql")){
-            factory = new MyDAOFactory(connection);
-        }
-        else {
-            throw new RuntimeException("Servidor de banco de dados não suportado.");
+        switch (ConnectionFactory.getDbServer()) {
+            case "mysql":
+                factory = new MyDAOFactory(connection);
+                break;
+            default:
+                throw new RuntimeException("Servidor de banco de dados não suportado.");
         }
         
         return factory;
@@ -106,7 +104,8 @@ public abstract class DAOFactory implements AutoCloseable {
         }
     }
 
-    public abstract UserDAO getUserDAO();
+    public abstract UserDAO getUserDAO();   
+    public abstract UserDAO getFuncionarioDAO();
 
     @Override
     public void close() throws SQLException {

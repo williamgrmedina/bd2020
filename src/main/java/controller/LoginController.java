@@ -16,6 +16,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import model.Gerente;
 import model.User;
 
 /**
@@ -86,15 +87,18 @@ public class LoginController extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         UserDAO dao;
-        User user = new User();
+        Gerente user = new Gerente();
         HttpSession session = request.getSession();
 
         switch (request.getServletPath()) {
             case "/login":
                 user.setLogin(request.getParameter("login"));
                 user.setSenha(request.getParameter("senha"));
-
+                
+                //retorna banco de dados ou msg "nao suportado"
                 try (DAOFactory daoFactory = DAOFactory.getInstance()) {
+                    
+                    //autentica usuario no BD selecionado
                     dao = daoFactory.getUserDAO();
                     dao.authenticate(user);
 

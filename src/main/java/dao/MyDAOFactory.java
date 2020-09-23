@@ -23,7 +23,7 @@ public class MyDAOFactory extends DAOFactory {
     }
     
     @Override
-    public UserDAO getFuncionarioDAO(){
-      return new MyUserDAO(this.connection);
+    public FuncionarioDAO getFuncionarioDAO(){
+      return new MyFuncionarioDAO(this.connection);
     }
 }

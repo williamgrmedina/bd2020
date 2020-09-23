@@ -11,6 +11,7 @@ import java.util.List;
 /**
  *
  * @author dskaster
+ * @param <T> the DAO Type. Ex: Funcionario indicates employee, User indicates user
  */
 public interface DAO<T> {
     public void create(T t) throws SQLException;

@@ -13,8 +13,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import model.Funcionario;
-import model.Gerente;
 import model.User;
 
 /**
@@ -245,31 +243,6 @@ public class MyUserDAO implements UserDAO {
                     user.setNome(result.getString("nome"));
                     user.setNascimento(result.getDate("nascimento"));
                     user.setAvatar(result.getString("avatar"));
-                } else {
-                    throw new SecurityException("Login ou senha incorretos.");
-                }
-            }
-        } catch (SQLException ex) {
-            Logger.getLogger(MyUserDAO.class.getName()).log(Level.SEVERE, "DAO", ex);
-
-            throw new SQLException("Erro ao autenticar usuário.");
-        }
-    }
-    
-    @Override
-    public void authenticate(Funcionario fun) throws SQLException, SecurityException {
-        System.out.println("TIPO: " + fun.getTipo());
-        System.out.println("QUERY: " + AUTHENTICATE_QUERY(fun.getTipo()));
-        try (PreparedStatement statement = connection.prepareStatement(AUTHENTICATE_QUERY(fun.getTipo()))) {
-            statement.setString(1, fun.getLogin());
-            System.out.println("login: " + fun.getLogin());
-            statement.setString(2, fun.getSenha());
-            System.out.println("senha: " + fun.getSenha());
-            try (ResultSet result = statement.executeQuery()) {
-                if (result.next()) {
-                    System.out.println("to aqui tio");
-                    fun.setLogin(result.getString("login"));
-                    fun.setNome(result.getString("nome"));
                 } else {
                     throw new SecurityException("Login ou senha incorretos.");
                 }

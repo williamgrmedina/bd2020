@@ -6,7 +6,7 @@
 package controller;
 
 import dao.DAOFactory;
-import dao.UserDAO;
+import dao.FuncionarioDAO;
 import java.io.IOException;
 import java.sql.SQLException;
 import javax.servlet.RequestDispatcher;
@@ -16,8 +16,8 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import model.Funcionario;
 import model.Gerente;
-import model.User;
 
 /**
  *
@@ -86,24 +86,32 @@ public class LoginController extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        UserDAO dao;
-        Gerente user = new Gerente();
+        FuncionarioDAO dao;
         HttpSession session = request.getSession();
 
         switch (request.getServletPath()) {
             case "/login":
-                user.setLogin(request.getParameter("login"));
-                user.setSenha(request.getParameter("senha"));
                 
-                //retorna banco de dados ou msg "nao suportado"
+                String login = request.getParameter("login");
+                String senha = request.getParameter("senha");
+                
+                //retorna conexao com banco de dados se o banco for suportado
                 try (DAOFactory daoFactory = DAOFactory.getInstance()) {
                     
-                    //autentica usuario no BD selecionado
-                    dao = daoFactory.getUserDAO();
-                    dao.authenticate(user);
-
-                    session.setAttribute("usuario", user);
-                } catch (ClassNotFoundException | IOException | SQLException | SecurityException ex) {
+                    dao = daoFactory.getFuncionarioDAO();              
+                     
+                    Funcionario fun = dao.getFuncionarioType(login);
+                    
+                    fun.setLogin(login);
+                    fun.setSenha(senha);
+                    
+                    /*procura no banco de dados pelas informacoes de login e senha fornecidos nos campos.
+                    Se estiverem corretos, seta restante dos dados (salario, etc) ao funcionario fun*/
+                    dao.authenticate(fun);
+                    
+                    session.setAttribute("usuario", fun);
+                    
+                } catch (ClassNotFoundException | IOException | SQLException | SecurityException | NoSuchFieldException ex) {
                     session.setAttribute("error", ex.getMessage());
                 }
 

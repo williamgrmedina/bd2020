@@ -12,12 +12,30 @@ import java.sql.Date;
  * @author Medina
  */
 
-public abstract class Funcionario extends HashSetLogin {
-    private String nome;
+public abstract class Funcionario {
     private String login;
     private String senha;
+    private String nome;
+    private String email;
     private Double salario;
     private Date data_efetivacao;
+    private String gerente_login;
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public String getGerenteLogin() {
+        return gerente_login;
+    }
+
+    public void setGerenteLogin(String gerente_login) {
+        this.gerente_login = gerente_login;
+    }
     
     public String getTipo() {
        return this.getClass().getSimpleName().toLowerCase();

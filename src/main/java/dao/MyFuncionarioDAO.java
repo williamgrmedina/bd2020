@@ -125,7 +125,6 @@ public class MyFuncionarioDAO implements FuncionarioDAO {
         try (PreparedStatement statement = connection.prepareStatement(AUTHENTICATE_QUERY(LISTA_CARGOS_MYSQLTABLENAME, index))) {
             statement.setString(1, fun.getLogin());
             statement.setString(2, fun.getSenha());
-            System.out.println("statement: " + statement);
             try (ResultSet result = statement.executeQuery()) {
                 if (result.next()) {
                     fun.setLogin(result.getString("login"));

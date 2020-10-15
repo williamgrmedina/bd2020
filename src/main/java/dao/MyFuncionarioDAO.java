@@ -5,13 +5,18 @@
  */
 package dao;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
+import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import jdbc.ConnectionFactory;
+import jdbc.MySqlConnectionFactory;
 import model.Funcionario;
 import model.Garcom;
 import model.Gerente;
@@ -24,77 +29,29 @@ import model.OperadorCaixa;
 public class MyFuncionarioDAO implements FuncionarioDAO {
     
     private final Connection connection;
+    static final String PROPERTIES_PATH = "../../conf/datasource.properties";  
+    static final String DBNAME = getDBName(PROPERTIES_PATH);
     
-    private String TYPE_QUERY(String LISTA_CARGOS[], int index){
+    private static String SEARCH_LOGIN_QUERY(int index){
         
-        try{
-            if(LISTA_CARGOS.length <= 1){
-                throw new NoSuchFieldException("Erro. Tabela de funcionários não definida/definida incorretamente.");
-            }
-        }catch(NoSuchFieldException ex){
-            System.out.println(ex);
-        }
+        String CARGO_NAME = "'" + INFO_FUNCIONARIOS[index] + "'";
+        String TABLE_NAME = INFO_FUNCIONARIOS[index + 1];
         
-        if(LISTA_CARGOS.length == 2 || index == LISTA_CARGOS.length - 1){
-            return "SELECT login, ? " +
-                "AS Source " +    
-                "FROM esquema_restaurante." +
-                LISTA_CARGOS[index] + " " +
-                "WHERE login = ?" + ";";
-        }
-        else{
-            return "SELECT login, ? " +
-                   "AS Source " +    
-                   "FROM esquema_restaurante." + 
-                   LISTA_CARGOS[index] + " " + 
-                   "WHERE login = ? " + "UNION ";
-        }
+        String QUERY = "SELECT login, " +
+            CARGO_NAME + " " +
+            "AS cargo " +    
+            "FROM " + DBNAME + "." +
+            TABLE_NAME + " " +
+            "WHERE login = ?";
+        
+        return QUERY;
     }
     
-    @Override
-    public Funcionario getFuncionarioType(String login) throws SQLException, NoSuchFieldException {
-        try{
-            String result_query = "";
-            int i, j;
-                       
-            for (i=0; i<LISTA_CARGOS_MYSQLTABLENAME.length; i += 2){
-                result_query += 
-                    TYPE_QUERY(LISTA_CARGOS_MYSQLTABLENAME, i + 1);
-            }
-            
-            try(PreparedStatement statement = connection.prepareStatement(result_query)){
-                
-                for(j=1; j<= LISTA_CARGOS_MYSQLTABLENAME.length; j+=2){
-                    statement.setString(j, LISTA_CARGOS_MYSQLTABLENAME[j]);
-                    statement.setString(j+1, login);
-                }
-                ResultSet result = statement.executeQuery();
-                if (result.next()) {
-                    String cargo = result.getString("Source");
-                    try{
-                        Funcionario newFuncionario = getFuncionarioInstance(cargo);
-                        return newFuncionario;
-                    }catch(SQLException ex){
-                        System.out.println(ex.getMessage());
-                    }
-                } 
-                else {
-                    throw new NoSuchFieldException("Erro. Não existe funcionário com este login.");
-                }
-            }catch(SQLException ex){
-                Logger.getLogger(MyUserDAO.class.getName()).log(Level.SEVERE, "DAO", ex);
-
-                throw new SQLException("Erro ao autenticar usuário.");
-            }   
-        }catch(NoSuchFieldException ex){
-            System.out.println(ex.getMessage());
-        }
-        throw new SQLException("Erro ao autenticar usuário.");
-    }
-    
-    private static String AUTHENTICATE_QUERY(String LISTA_CARGOS[], int index){
+    private static String AUTHENTICATE_QUERY(int index){
+        String TABLE_NAME = INFO_FUNCIONARIOS[index];
+        
         return "SELECT login, senha, nome, `e-mail`, salario, data_contratacao " +
-        "FROM esquema_restaurante." + LISTA_CARGOS[index] + " " +
+        "FROM " + DBNAME + "." + TABLE_NAME + " " +
         "WHERE login = ? AND senha = ?;";
     }
     
@@ -108,6 +65,43 @@ public class MyFuncionarioDAO implements FuncionarioDAO {
         this.connection = connection;
     }
     
+    //returns instance of employee with correct employee position. 
+    //Possible return values are defined in INFO_FUNCIONARIOS list(located in FuncionarioDAO).
+    @Override
+    public Funcionario getFuncionario(String login) throws SQLException, NoSuchFieldException {
+        try{
+            int j;
+            
+            String queries = prepareSearchByLoginQueries();
+            
+            try(PreparedStatement statement = connection.prepareStatement(queries)){
+                
+                for(j=1; j<= INFO_FUNCIONARIOS.length / 2; j++){
+                    statement.setString(j, login);
+                }
+                ResultSet result = statement.executeQuery();
+                if (result.next()) {
+                    String cargo = result.getString("cargo");
+                    try{
+                        Funcionario newFuncionario = getFuncionarioInstance(cargo);
+                        return newFuncionario;
+                    }catch(SQLException ex){
+                        System.out.println(ex.getMessage());
+                    }
+                } 
+                else {
+                    throw new SQLException("Erro ao autenticar funcionário.");
+                }
+            }catch(SQLException ex){
+                Logger.getLogger(MyUserDAO.class.getName()).log(Level.SEVERE, "DAO", ex);
+
+                throw new SQLException("Erro ao autenticar funcionário.");
+            }   
+        }catch(SQLException ex){
+            System.out.println(ex.getMessage());
+        }
+        throw new SQLException("Erro ao autenticar funcionário.");
+    }
     
     @Override
     public void authenticate(Funcionario fun) throws SQLException, SecurityException {
@@ -115,14 +109,14 @@ public class MyFuncionarioDAO implements FuncionarioDAO {
         
         int index;
         //recupera posicao onde está armazenado o nome da tabela mysql do funcionario    
-        for(index=0; index<LISTA_CARGOS_MYSQLTABLENAME.length; index++){
-            if(LISTA_CARGOS_MYSQLTABLENAME[index].equals(funcionarioTipo)){
+        for(index=0; index<INFO_FUNCIONARIOS.length; index++){
+            if(INFO_FUNCIONARIOS[index].equals(funcionarioTipo)){
                 break;
             }
         }
         index += 1;
         
-        try (PreparedStatement statement = connection.prepareStatement(AUTHENTICATE_QUERY(LISTA_CARGOS_MYSQLTABLENAME, index))) {
+        try (PreparedStatement statement = connection.prepareStatement(AUTHENTICATE_QUERY(index))) {
             statement.setString(1, fun.getLogin());
             statement.setString(2, fun.getSenha());
             try (ResultSet result = statement.executeQuery()) {
@@ -215,6 +209,49 @@ public class MyFuncionarioDAO implements FuncionarioDAO {
             System.out.println(ex.getMessage());
         }
         throw new SQLException("Ocorreu um erro ao instanciar um objeto de funcionário.");
+    }
+    
+    //retrieves database name from config file.
+    protected static final String getDBName(String propertiesPath){
+        
+        Properties properties = new Properties();
+        
+        String dbName = null;
+        
+        try { 
+            InputStream input = MyFuncionarioDAO.class.getClassLoader().getResourceAsStream(propertiesPath);               
+            properties.load(input);
+
+            dbName = properties.getProperty("name");
+            return dbName;
+        }catch (IOException ex) {
+            System.err.println(ex.getMessage());
+        }
+        
+        return dbName;
+    }
+    
+    private String prepareSearchByLoginQueries() throws SQLException{
+            int i;
+            String result_query = "";
+       
+            if(INFO_FUNCIONARIOS.length < 1 || INFO_FUNCIONARIOS.length % 2 != 0){
+                throw new SQLException("Erro. Tabela de funcionários não definida/definida incorretamente.");
+            }
+            
+            for (i=0; i<INFO_FUNCIONARIOS.length; i += 2){
+                result_query += 
+                    SEARCH_LOGIN_QUERY(i);
+
+                if(i == INFO_FUNCIONARIOS.length - 2 || INFO_FUNCIONARIOS.length == 2) {
+                    result_query += ";";
+                }
+                else {
+                    result_query += " UNION ";
+                }
+            }
+
+            return result_query;
     }
     
 }

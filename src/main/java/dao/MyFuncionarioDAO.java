@@ -15,8 +15,6 @@ import java.util.List;
 import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import jdbc.ConnectionFactory;
-import jdbc.MySqlConnectionFactory;
 import model.Funcionario;
 import model.Garcom;
 import model.Gerente;
@@ -28,7 +26,7 @@ import model.OperadorCaixa;
  */
 public class MyFuncionarioDAO implements FuncionarioDAO {
     
-    private final Connection connection;
+    Connection connection;
     static final String PROPERTIES_PATH = "../../conf/datasource.properties";  
     static final String DBNAME = getDBName(PROPERTIES_PATH);
     
@@ -47,19 +45,18 @@ public class MyFuncionarioDAO implements FuncionarioDAO {
         return QUERY;
     }
     
-    private static String AUTHENTICATE_QUERY(int index){
+    String AUTHENTICATE_QUERY(int index){
         String TABLE_NAME = INFO_FUNCIONARIOS[index];
         
-        return "SELECT login, senha, nome, `e-mail`, salario, data_contratacao " +
+        return "SELECT login, senha, nome, `e-mail`, salario, data_contratacao, Gerente_login " +
         "FROM " + DBNAME + "." + TABLE_NAME + " " +
         "WHERE login = ? AND senha = ?;";
     }
     
-    protected static String CREATE_QUERY(String mysqlTable) {
+    static String CREATE_QUERY(String mysqlTable) {
         return "INSERT INTO esquema_restaurante." + mysqlTable + "(login, senha, nome, `e-mail`, salario, data_contratacao, Gerente_login) " +
         "VALUES(md5(?), md5(?), ?, ?, ?, ?, ?);";
     }
-    
     
     public MyFuncionarioDAO(Connection connection) {
         this.connection = connection;

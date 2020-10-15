@@ -100,9 +100,13 @@ public class LoginController extends HttpServlet {
                     
                     dao = daoFactory.getFuncionarioDAO();              
                      
-                    /*retorna instancia de funcionario correta, se encontrada (gerente / 
-                    garcom / operador de caixa / etc)*/
+                    /*retorna instancia de funcionario correta, se encontrada. */
                     Funcionario fun = dao.getFuncionario(login);
+                    
+                    switch(fun.getTipo()){
+                        case "gerente":
+                            dao = daoFactory.getGerenteDAO();
+                    }
                     
                     fun.setLogin(login);
                     fun.setSenha(senha);

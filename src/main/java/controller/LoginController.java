@@ -91,25 +91,25 @@ public class LoginController extends HttpServlet {
 
         switch (request.getServletPath()) {
             case "/login":
-                
                 fun.setLogin(request.getParameter("login"));
                 fun.setSenha(request.getParameter("senha"));
                 
                 //retorna conexao com banco de dados se o banco for suportado
                 try (DAOFactory daoFactory = DAOFactory.getInstance()) {
                     
-                    dao = daoFactory.getFuncionarioDAO();              
-                     
-                    dao.authenticate(fun);
-                    
+                    dao = daoFactory.getFuncionarioDAO();   
+                    System.out.println("here1");                    
+                                         
                     /*procura no banco de dados pelas informacoes de login e senha fornecidos nos campos.
                     Se estiverem corretos, seta restante dos dados (salario, etc) ao funcionario fun*/
                     dao.authenticate(fun);
+                    System.out.println("here2");
                     
                     session.setAttribute("usuario", fun);
                     
                 } catch (ClassNotFoundException | IOException | SQLException | SecurityException ex) {
                     session.setAttribute("error", ex.getMessage());
+                    System.out.println(ex.getMessage());
                 }
 
                 response.sendRedirect(request.getContextPath() + "/");

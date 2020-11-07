@@ -18,7 +18,7 @@
             
             <div class="jumbotron">
                 <h1>Bem-vindo,
-                <c:out value="${usuario.nome}"/>!</h1>
+                <c:out value="${usuario.getPNome()}"/>!</h1>
                 <p>Este é um exemplo de cadastro de usuários para o trabalho da disciplina Bancos de Dados A.</p>
                 <p>
                     <a class="btn btn-lg btn-primary" href="${pageContext.servletContext.contextPath}/user">

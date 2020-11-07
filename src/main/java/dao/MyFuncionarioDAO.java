@@ -23,14 +23,14 @@ public class MyFuncionarioDAO implements FuncionarioDAO {
     Connection connection;
     
     private final static String CREATE_QUERY =
-        "INSERT INTO esquema_restaurante.funcionarios " +
+        "INSERT INTO restaurante.funcionarios " +
         "(login, senha, pnome, snome, email, cargo, salario, data_efetivacao, gerente_login) " +
-        "VALUES(SHA2(?, 0), SHA2(?, 0), ?, ?, ?, ?, ?, ?, SHA2(?, 0));";
+        "VALUES(?, md5(?), ?, ?, ?, ?, ?, ?, ?);";
     
     private final static String AUTHENTICATE_QUERY =
-        "SELECT *" +
-        "FROM esquema_restaurante.funcionarios " +
-        "WHERE login = SHA2(?, 0) AND senha = SHA2(?, 0);";
+        "SELECT * " +
+        "FROM restaurante.funcionarios " +
+        "WHERE login = ? AND senha = md5(?);";
     
     public MyFuncionarioDAO(Connection connection) {
         this.connection = connection;
@@ -78,13 +78,12 @@ public class MyFuncionarioDAO implements FuncionarioDAO {
             statement.setDouble(7, fun.getSalario());
             statement.setDate(8, fun.getData_efetivacao());
             statement.setString(9, fun.getGerenteLogin());
-
+            
+            System.out.println("query: " + statement);
             statement.executeUpdate();
         } catch (SQLException ex) {
             Logger.getLogger(MyFuncionarioDAO.class.getName()).log(Level.SEVERE, "DAO", ex);
-            if (ex.getMessage().contains("Erro ao inserir funcionário: login já existente.")) {
-                throw new SQLException("Erro ao inserir funcionário: login já existente.");
-            } else if (ex.getMessage().contains("not-null")) {
+            if (ex.getMessage().contains("not-null")) {
                 throw new SQLException("Erro ao inserir usuário: pelo menos um campo está em branco.");
             } else {
                 throw new SQLException("Erro ao inserir usuário.");

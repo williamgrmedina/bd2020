@@ -98,10 +98,12 @@ public class LoginController extends HttpServlet {
                 try (DAOFactory daoFactory = DAOFactory.getInstance()) {
                     
                     dao = daoFactory.getFuncionarioDAO();   
+                    System.out.println("here1");                    
                                          
                     /*procura no banco de dados pelas informacoes de login e senha fornecidos nos campos.
-                    Se estiverem corretos, seta restante dos atributos (salario, etc) ao funcionario*/
+                    Se estiverem corretos, seta restante dos dados (salario, etc) ao funcionario fun*/
                     dao.authenticate(fun);
+                    System.out.println("here2");
                     
                     session.setAttribute("usuario", fun);
                     

@@ -12,7 +12,7 @@ import java.sql.Date;
  * @author Medina
  */
 
-public abstract class Funcionario {
+public class Funcionario {
     private String login;
     private String senha;
     private String pnome;

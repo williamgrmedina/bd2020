@@ -17,7 +17,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import model.Funcionario;
-import model.Gerente;
 
 /**
  *
@@ -87,23 +86,21 @@ public class LoginController extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         FuncionarioDAO dao;
+        Funcionario fun = new Funcionario();
         HttpSession session = request.getSession();
 
         switch (request.getServletPath()) {
             case "/login":
                 
-                String login = request.getParameter("login");
-                String senha = request.getParameter("senha");
+                fun.setLogin(request.getParameter("login"));
+                fun.setSenha(request.getParameter("senha"));
                 
                 //retorna conexao com banco de dados se o banco for suportado
                 try (DAOFactory daoFactory = DAOFactory.getInstance()) {
                     
                     dao = daoFactory.getFuncionarioDAO();              
                      
-                    Funcionario fun = dao.getFuncionarioType(login);
-                    
-                    fun.setLogin(login);
-                    fun.setSenha(senha);
+                    dao.authenticate(fun);
                     
                     /*procura no banco de dados pelas informacoes de login e senha fornecidos nos campos.
                     Se estiverem corretos, seta restante dos dados (salario, etc) ao funcionario fun*/
@@ -111,7 +108,7 @@ public class LoginController extends HttpServlet {
                     
                     session.setAttribute("usuario", fun);
                     
-                } catch (ClassNotFoundException | IOException | SQLException | SecurityException | NoSuchFieldException ex) {
+                } catch (ClassNotFoundException | IOException | SQLException | SecurityException ex) {
                     session.setAttribute("error", ex.getMessage());
                 }
 

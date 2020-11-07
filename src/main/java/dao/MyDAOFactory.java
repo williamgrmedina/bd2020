@@ -26,9 +26,4 @@ public class MyDAOFactory extends DAOFactory {
     public FuncionarioDAO getFuncionarioDAO(){
       return new MyFuncionarioDAO(this.connection);
     }
-    
-    @Override
-    public FuncionarioDAO getGerenteDAO(){
-      return new MyGerenteDAO(this.connection);
-    }
 }

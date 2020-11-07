@@ -5,11 +5,14 @@
  */
 package dao;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
+import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import model.Funcionario;
@@ -34,6 +37,7 @@ public class MyFuncionarioDAO implements FuncionarioDAO {
     
     public MyFuncionarioDAO(Connection connection) {
         this.connection = connection;
+
     }
     
     @Override
@@ -110,5 +114,3 @@ public class MyFuncionarioDAO implements FuncionarioDAO {
     public List<Funcionario> all() throws SQLException {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
-    
-}

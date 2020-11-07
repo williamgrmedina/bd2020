@@ -17,10 +17,8 @@ public interface FuncionarioDAO extends DAO<Funcionario> {
     /*esta é uma lista de tuplas de "<nome do cargo>", "<nome da tabela mysql>".
     A lista {"gerente", "tabela_gerentes", "garcom", "tabela_garcons"} representa 
     dois cargos (gerente e garcom), que possuem respectivas tabelas mySQL
-    identificadas por "tabela_gerentes" e "tabela_garcons".
-    Listas devem *obrigatoriamente* seguir o padrão 
-    "<nome do cargo>", "<nome da tabela mysql>"*/
-    static final String[] LISTA_CARGOS_MYSQLTABLENAME =
+    identificadas por "tabela_gerentes" e "tabela_garcons".*/
+    static final String[] INFO_FUNCIONARIOS =
         {"gerente", "gerente", "garcom", "garcom", "operador_caixa", "operador_caixa"};
     
     public void authenticate(Funcionario fun) throws SQLException, SecurityException;

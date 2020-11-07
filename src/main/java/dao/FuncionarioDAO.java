@@ -21,8 +21,6 @@ public interface FuncionarioDAO extends DAO<Funcionario> {
     static final String[] INFO_FUNCIONARIOS =
         {"gerente", "gerente", "garcom", "garcom", "operador_caixa", "operador_caixa"};
     
-    public Funcionario getFuncionario(String login) throws SQLException, NoSuchFieldException;
-    public Funcionario getFuncionarioInstance(String cargo) throws SQLException;
     public void authenticate(Funcionario fun) throws SQLException, SecurityException;
     
 }

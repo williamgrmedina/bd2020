@@ -26,52 +26,52 @@ public class MyUserDAO implements UserDAO {
     private final Connection connection;
 
     private static final String CREATE_QUERY =
-                                "INSERT INTO esquema_restaurante.user(login, senha, nome, nascimento, avatar) " +
+                                "INSERT INTO restaurante.user(login, senha, nome, nascimento, avatar) " +
                                 "VALUES(?, md5(?), ?, ?, ?);";
 
     private static final String READ_QUERY =
                                 "SELECT login, nome, nascimento, avatar " +
-                                "FROM esquema_restaurante.user " +
+                                "FROM restaurante.user " +
                                 "WHERE id = ?;";
 
     private static final String UPDATE_QUERY =
-                                "UPDATE esquema_restaurante.user " +
+                                "UPDATE restaurante.user " +
                                 "SET login = ?, nome = ?, nascimento = ? " +
                                 "WHERE id = ?;";
 
     private static final String UPDATE_WITH_PASSWORD_QUERY =
-                                "UPDATE esquema_restaurante.user " +
+                                "UPDATE restaurante.user " +
                                 "SET login = ?, nome = ?, nascimento = ?, senha = md5(?) " +
                                 "WHERE id = ?;";
 
     private static final String UPDATE_WITH_AVATAR_QUERY =
-                                "UPDATE esquema_restaurante.user " +
+                                "UPDATE restaurante.user " +
                                 "SET login = ?, nome = ?, nascimento = ?, avatar = ? " +
                                 "WHERE id = ?;";
 
     private static final String UPDATE_WITH_AVATAR_AND_PASSWORD_QUERY =
-                                "UPDATE esquema_restaurante.user " +
+                                "UPDATE restaurante.user " +
                                 "SET login = ?, nome = ?, nascimento = ?, avatar = ?, senha = md5(?) " +
                                 "WHERE id = ?;";
     
     private static final String DELETE_QUERY =
-                                "DELETE FROM esquema_restaurante.user " +
+                                "DELETE FROM restaurante.user " +
                                 "WHERE id = ?;";
 
     private static final String ALL_QUERY =
                                 "SELECT id, login " +
-                                "FROM esquema_restaurante.user " +
+                                "FROM restaurante.user " +
                                 "ORDER BY id;";
 
     private static String AUTHENTICATE_QUERY(String mysqlTable){
         return "SELECT login, senha, salario, data_contratacao, nome, `e-mail` " +
-        "FROM esquema_restaurante." + mysqlTable + " " +
+        "FROM restaurante." + mysqlTable + " " +
         "WHERE login = ? AND senha = ?;";
     }
     
     private static final String GET_BY_LOGIN_QUERY =
                                 "SELECT id, login, nome, nascimento, avatar " +
-                                "FROM esquema_restaurante.user " +
+                                "FROM restaurante.user " +
                                 "WHERE login = ?;";
 
     public MyUserDAO(Connection connection) {

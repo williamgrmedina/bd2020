@@ -22,7 +22,7 @@ public class MySqlConnectionFactory extends ConnectionFactory {
        private String dbName;
        private String dbUser;
        private String dbPassword;
-       private String dbTimeZone;
+       private String dbTimezone;
        
        public void readProperties() throws IOException {
            Properties properties = new Properties();
@@ -36,7 +36,7 @@ public class MySqlConnectionFactory extends ConnectionFactory {
                dbName = properties.getProperty("name");
                dbUser = properties.getProperty("user");
                dbPassword = properties.getProperty("password");
-               dbTimeZone = properties.getProperty("serverTimezone");
+               dbTimezone = properties.getProperty("timezone");
                
            } catch (IOException ex) {
                System.err.println(ex.getMessage());
@@ -53,7 +53,7 @@ public class MySqlConnectionFactory extends ConnectionFactory {
             Class.forName("com.mysql.cj.jdbc.Driver");
             readProperties();
             
-            String url = "jdbc:mysql://" + dbHost + ":" + dbPort + "/" + dbName + "?useTimezone=true&serverTimezone=" + dbTimeZone;
+            String url = "jdbc:mysql://" + dbHost + ":" + dbPort + "/" + dbName + "?useTimeZone=true&serverTimezone=" + dbTimezone;
             
             connection = DriverManager.getConnection(url, dbUser, dbPassword);
             

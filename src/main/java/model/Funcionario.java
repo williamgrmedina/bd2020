@@ -15,8 +15,10 @@ import java.sql.Date;
 public abstract class Funcionario {
     private String login;
     private String senha;
-    private String nome;
+    private String pnome;
+    private String snome;
     private String email;
+    private String cargo;
     private Double salario;
     private Date data_efetivacao;
     private String gerente_login;
@@ -42,19 +44,47 @@ public abstract class Funcionario {
     }
     
     /**
-     * @return the nome
+     * @return the pnome
      */
-    public String getNome() {
-        return nome;
+    public String getPNome() {
+        return pnome;
     }
 
     /**
-     * @param nome the nome to set
+     * @param pnome the pnome to set
      */
-    public void setNome(String nome) {
-        this.nome = nome;
+    public void setPNome(String pnome) {
+        this.pnome = pnome;
     }
 
+    /**
+     * @return the snome
+     */
+    public String getSNome() {
+        return snome;
+    }
+
+    /**
+     * @param snome the snome to set
+     */
+    public void setSNome(String snome) {
+        this.snome = snome;
+    }
+    
+    /**
+     * @return the cargo
+     */
+    public String getCargo() {
+        return cargo;
+    }
+
+    /**
+     * @param cargo the gargo to set
+     */
+    public void setCargo(String cargo) {
+        this.cargo = cargo;
+    }
+    
     /**
      * @return the login
      */

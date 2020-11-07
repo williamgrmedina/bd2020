@@ -23,8 +23,6 @@ public interface FuncionarioDAO extends DAO<Funcionario> {
     static final String[] LISTA_CARGOS_MYSQLTABLENAME =
         {"gerente", "gerente", "garcom", "garcom", "operador_caixa", "operador_caixa"};
     
-    public Funcionario getFuncionarioType(String login) throws SQLException, NoSuchFieldException;
-    public Funcionario getFuncionarioInstance(String cargo) throws SQLException;
     public void authenticate(Funcionario fun) throws SQLException, SecurityException;
     
 }

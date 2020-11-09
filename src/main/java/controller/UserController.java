@@ -7,7 +7,6 @@ package controller;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import dao.DAO;
 import dao.DAOFactory;
 import dao.UserDAO;
 import java.io.File;
@@ -34,6 +33,7 @@ import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.fileupload.FileUploadException;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
+import dao.DAOInt;
 
 /**
  *
@@ -73,7 +73,7 @@ public class UserController extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
-        DAO<User> dao;
+        DAOInt<User> dao;
         User user;
         RequestDispatcher dispatcher;
 
@@ -158,7 +158,7 @@ public class UserController extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
-        DAO<User> dao;
+        DAOInt<User> dao;
         User user = new User();
         HttpSession session = request.getSession();
 

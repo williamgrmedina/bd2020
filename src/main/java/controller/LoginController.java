@@ -49,14 +49,17 @@ public class LoginController extends HttpServlet {
         switch (request.getServletPath()) {
             case "": {
                 session = request.getSession(false);
-
-                if (session != null && session.getAttribute("usuario") != null) {
-                    dispatcher = request.getRequestDispatcher("/welcome.jsp");
-                } else {
-                    dispatcher = request.getRequestDispatcher("/index.jsp");
-                }
-
-                dispatcher.forward(request, response);
+                if (session != null) {
+					if(session.getAttribute("gerente") != null){
+						dispatcher = request.getRequestDispatcher("/view/funcionario/gerente_welcome.jsp");
+					}
+					else if(session.getAttribute("funcionario") != null){
+						dispatcher = request.getRequestDispatcher("/view/funcionario/funcionario_welcome.jsp");
+					}
+					else dispatcher = request.getRequestDispatcher("/index.jsp");
+				}
+				else dispatcher = request.getRequestDispatcher("/index.jsp");
+				dispatcher.forward(request, response);
 
                 break;
             }
@@ -98,15 +101,18 @@ public class LoginController extends HttpServlet {
                 try (DAOFactory daoFactory = DAOFactory.getInstance()) {
                     
                     dao = daoFactory.getFuncionarioDAO();   
-                    System.out.println("here1");                    
                                          
                     /*procura no banco de dados pelas informacoes de login e senha fornecidos nos campos.
                     Se estiverem corretos, seta restante dos dados (salario, etc) ao funcionario fun*/
                     dao.authenticate(fun);
-                    System.out.println("here2");
                     
-                    session.setAttribute("usuario", fun);
-                    
+					//gerente: pagina especial
+					if(fun.getCargo().equals("gerente")){
+						session.setAttribute("gerente", fun);
+					}
+					//funcinario comum
+					else session.setAttribute("funcionario", fun);
+						
                 } catch (ClassNotFoundException | IOException | SQLException | SecurityException ex) {
                     session.setAttribute("error", ex.getMessage());
                     System.out.println(ex.getMessage());

@@ -16,14 +16,24 @@
         
         <div class="container">
             
-            <div class="jumbotron">
+            <div class="jumbotron text-center">
                 <h1>Bem-vindo,
-                <c:out value="${usuario.getPNome()}"/>!</h1>
-                <p>Este é um exemplo de cadastro de usuários para o trabalho da disciplina Bancos de Dados A.</p>
+                <c:out value="${gerente.PNome}"/>!</h1>
+                <p class="lead text-muted">
+                    Enquanto gerente deste restaurante, sinta-se livre
+                    para contratar funcionários e gerenciar pedidos. 
+                    O nosso restarante é também o seu!
+                </p>
                 <p>
-                    <a class="btn btn-lg btn-primary" href="${pageContext.servletContext.contextPath}/user">
-                        Cadastro de usuários
-                    </a>                 
+                    <a class="btn btn-lg btn-primary my-2" href="${pageContext.servletContext.contextPath}/user">
+                        Gerenciamento de usuários
+                    </a> 
+                    <a class="btn btn-lg btn-primary my-2" href="${pageContext.servletContext.contextPath}/gerente">
+                        Gerenciamento de funcionários
+                    </a> 
+                    <a class="btn btn-lg btn-primary my-2" href="${pageContext.servletContext.contextPath}/pedidos">
+                        Gerenciamento de pedidos
+                    </a>
                     <a class="btn btn-default"
                        href="${pageContext.servletContext.contextPath}/logout"
                        data-toggle="tooltip"
@@ -33,7 +43,7 @@
                 </p>
             </div>
         </div>
-
+                               
         <%@include file="/view/include/scripts.jsp"%>
         <script src="${pageContext.servletContext.contextPath}/assets/js/user.js"></script>        
     </body>

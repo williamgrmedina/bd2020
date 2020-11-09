@@ -17,7 +17,7 @@
     <body>
 
         <div class="container">
-            
+
             <div class="text-center div_inserir_excluir">
                 <a class="btn btn-lg btn-primary" href="${pageContext.servletContext.contextPath}/user/create">
                     Inserir novo usuário
@@ -69,6 +69,7 @@
                                        data-original-title="Excluir">
                                         <i class="fa fa-trash"></i>
                                     </a>
+
                                 </td>
                                 <td class="text-center">
                                     <input class="checkbox-inline" type="checkbox" name="delete" value="${usuario.id}" />
@@ -78,7 +79,7 @@
                     </tbody>
                 </table>
             </form>
-                
+
             <div class="modal fade modal_excluir_usuario">
                 <div class="modal-dialog">
                     <div class="modal-content">
@@ -148,9 +149,9 @@
                     </div>
                 </div>
             </div>
-                
+
         </div>
-        
+
         <%@include file="/view/include/scripts.jsp"%>
         <script src="${pageContext.servletContext.contextPath}/assets/js/user.js"></script>
     </body>

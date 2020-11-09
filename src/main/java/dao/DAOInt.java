@@ -11,13 +11,13 @@ import java.util.List;
 /**
  *
  * @author dskaster
- * @param <T> the DAO Type. Ex: Funcionario indicates employee, User indicates user
+ * @param <T> the DAOInt Type. Ex: Pedido indicates pedido
  */
-public interface DAO<T> {
+public interface DAOInt<T> {
     public void create(T t) throws SQLException;
-    public T read(Integer id) throws SQLException;
+    public T read(Integer pk) throws SQLException;
     public void update(T t) throws SQLException;
-    public void delete(Integer id) throws SQLException;
+    public void delete(Integer pk) throws SQLException;
 
     public List<T> all() throws SQLException;    
 }

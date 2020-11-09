@@ -9,6 +9,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -25,12 +26,21 @@ public class MyFuncionarioDAO implements FuncionarioDAO {
     private final static String CREATE_QUERY =
         "INSERT INTO restaurante.funcionarios " +
         "(login, senha, pnome, snome, email, cargo, salario, data_efetivacao, gerente_login) " +
-        "VALUES(?, md5(?), ?, ?, ?, ?, ?, ?, ?);";
+        "VALUES(?, SHA2(?, 0), ?, ?, ?, ?, ?, ?, ?);";
+    
+    private final static String READ_QUERY =
+        "SELECT login, pnome, snome, email, cargo " +
+        "FROM restaurante.funcionarios " +
+        "WHERE login = ?;";
     
     private final static String AUTHENTICATE_QUERY =
         "SELECT * " +
         "FROM restaurante.funcionarios " +
-        "WHERE login = ? AND senha = md5(?);";
+        "WHERE login = ? AND senha = SHA2(?, 0);";
+    
+    private final static String SELECT_ALL_QUERY =
+        "SELECT login, pnome, snome, email, cargo " +
+        "FROM restaurante.funcionarios;";
     
     public MyFuncionarioDAO(Connection connection) {
         this.connection = connection;
@@ -92,8 +102,31 @@ public class MyFuncionarioDAO implements FuncionarioDAO {
     }
 
     @Override
-    public Funcionario read(Integer id) throws SQLException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public Funcionario read(String login) throws SQLException {
+        Funcionario fun = new Funcionario();
+        
+        try (PreparedStatement statement = connection.prepareStatement(READ_QUERY)) {
+            statement.setString(1, login);
+            try (ResultSet result = statement.executeQuery()) {
+                if (result.next()) {
+                    fun.setLogin(result.getString("login"));
+                    fun.setPNome(result.getString("pnome"));
+                    fun.setSNome(result.getString("snome"));
+                    fun.setEmail(result.getString("email"));
+                    fun.setCargo(result.getString("cargo"));
+                }
+                else throw new SQLException("Erro ao visualizar: funcionário não encontrado.");
+            }
+        } catch (SQLException ex) {
+           Logger.getLogger(MyFuncionarioDAO.class.getName()).log(Level.SEVERE, "DAO", ex);
+           
+           if(ex.getMessage().equals("Erro ao visualizar: funcionário não encontrado.")){
+               
+           }
+           else throw new SQLException("Erro ao visualizar funcionário.");
+        } 
+        
+        return fun;
     }
 
     @Override
@@ -102,13 +135,33 @@ public class MyFuncionarioDAO implements FuncionarioDAO {
     }
 
     @Override
-    public void delete(Integer id) throws SQLException {
+    public void delete(String login) throws SQLException {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
     public List<Funcionario> all() throws SQLException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        List<Funcionario> allFun = new ArrayList<>();
+        
+        try (PreparedStatement statement = connection.prepareStatement(SELECT_ALL_QUERY)) {
+            
+            ResultSet result = statement.executeQuery();
+            while (result.next()) {
+                Funcionario fun = new Funcionario();
+                fun.setLogin(result.getString("login"));
+                fun.setPNome(result.getString("pnome"));
+                fun.setSNome(result.getString("snome"));
+                fun.setEmail(result.getString("email"));
+                fun.setCargo(result.getString("cargo"));
+                
+                allFun.add(fun);
+            }
+            return allFun;
+        } catch (SQLException ex) {
+           Logger.getLogger(MyFuncionarioDAO.class.getName()).log(Level.SEVERE, "DAO", ex);
+           
+           throw new SQLException("Erro ao listar funcionário.");
+        } 
     }
     
 }

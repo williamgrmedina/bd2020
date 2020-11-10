@@ -19,6 +19,7 @@ public class Funcionario {
     private String snome;
     private String email;
     private String cargo;
+	private String setor;
     private Double salario;
     private Date data_efetivacao;
     private String gerente_login;
@@ -98,7 +99,15 @@ public class Funcionario {
     public void setLogin(String login) {
         this.login = login;
     }
+	
+	public String getSetor() {
+        return setor;
+    }
 
+    public void setSetor(String setor) {
+        this.setor = setor;
+    }
+	
     /**
      * @return the senha
      */

@@ -13,17 +13,17 @@
     <head>
         <%@include file="/view/include/head.jsp"%>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-        <title>Gerenciamento de Funcionarios</title>
+        <title>Gerenciamento de Funcionários</title>
     </head>
     <body>
         <div class="container">            
             <div class="text-center div_inserir_excluir">
                 <a class="btn btn-lg btn-primary" href="${pageContext.servletContext.contextPath}/funcionario/create">
-                    Inserir novo funcionario
+                    Inserir novo funcionário
                 </a>
                     
                 <button class="btn btn-lg btn-warning" data-toggle="modal" data-target=".modal_excluir_funcionario">
-                    Excluir Funcionario
+                    Excluir múltiplos funcionarios
 				</button>
 					
 				<a class="btn btn-default"
@@ -38,10 +38,13 @@
                 <table class="table table-striped">
                     <thead>
                         <tr>
-                            <th scope="col" class="h4">Nome</th>
-							<th scope="col" class="h4">Sobrenome</th>
-                            <th scope="col" class="h4">Login</th>
-                            <th scope="col" class="h4">Ação</th>
+                            <th scope="col" >Nome</th>
+							<th scope="col" >Sobrenome</th>
+							<th scope="col" >E-mail</th>
+							<th scope="col" >Cargo</th>
+							<th scope="col" >Setor</th>
+                            <th scope="col" >Ação</th>
+							<th scope="col" >Excluir?</th>
                         </tr>
                     </thead>
 					
@@ -49,32 +52,43 @@
                         <c:forEach var="funcionario" items="${requestScope.funList}">
                             <tr>
                                 <td>
-                                    <span class="h4"><c:out value="${funcionario.PNome}"/></span>
+                                    <span class="h6"><c:out value="${funcionario.PNome}"/></span>
                                 </td>
 								<td>
-                                    <span class="h4"><c:out value="${funcionario.SNome}"/></span>
-                                </td>
-                                <td>
-                                    <a class="link_visualizar_usuario" href="#" data-href="${pageContext.servletContext.contextPath}/user/read?login=${funcionario.login}">
-                                        <span class="h4"><c:out value="${funcionario.login}"/></span>
+                                    <span class="h6"><c:out value="${funcionario.SNome}"/></span>
+                                </td>							
+								<td>
+                                    <a class="link_visualizar_usuario" href="mailto:${funcionario.email}" target="_blank" 
+									   data-href="${pageContext.servletContext.contextPath}/user/read?login=${funcionario.login}">
+                                        <span class="h6"><c:out value="${funcionario.email}"/></span>
                                     </a>
                                 </td>
+								<td>
+                                    <span class="h6"><c:out value="${funcionario.cargo}"/></span>
+                                </td>
+								<td>
+                                    <span class="h6"><c:out value="${funcionario.setor}"/></span>
+                                </td>	
                                 <td>
                                     <a class="btn btn-default"
-                                       href="${pageContext.servletContext.contextPath}/user/update?id=${usuario.id}"
+                                       href="${pageContext.servletContext.contextPath}/user/update?login=${funcionario.login}"
                                        data-toggle="tooltip"
                                        data-original-title="Editar">
                                         <i class="fa fa-pencil"></i>
                                     </a>
                                     <a class="btn btn-default link_excluir_usuario"
                                        href="#"
-                                       data-href="${pageContext.servletContext.contextPath}/user/delete?id=${usuario.id}"
+                                       data-href="${pageContext.servletContext.contextPath}/user/delete?login=${funcionario.login}"
                                        data-toggle="tooltip"
                                        data-original-title="Excluir">
                                         <i class="fa fa-trash"></i>
                                     </a>
-
                                 </td>
+								<td>
+									<a class="btn btn-default">
+										<input class="checkbox-inline" type="checkbox" name="delete" value="${funcionario.login}" />
+									</a>
+								</td>
                             </tr>
                         </c:forEach>
                     </tbody>

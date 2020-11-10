@@ -6,6 +6,7 @@
 package dao;
 
 import java.sql.SQLException;
+import java.util.List;
 import model.Funcionario;
 
 /**
@@ -15,5 +16,6 @@ import model.Funcionario;
 public interface FuncionarioDAO extends DAOString<Funcionario> {    
 	
     public void authenticate(Funcionario fun) throws SQLException, SecurityException;
+	public List<Funcionario> get_gerenciados(String gerente_login) throws SQLException; 
     
 }

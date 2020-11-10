@@ -6,17 +6,27 @@
 package controller;
 
 import dao.DAOFactory;
-import dao.DAOString;
+import dao.FuncionarioDAO;
 import java.io.IOException;
+import java.sql.Date;
 import java.sql.SQLException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Iterator;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import model.Funcionario;
+import org.apache.commons.fileupload.FileItem;
+import org.apache.commons.fileupload.disk.DiskFileItemFactory;
+import org.apache.commons.fileupload.servlet.ServletFileUpload;
 
 /**
  *
@@ -24,7 +34,8 @@ import model.Funcionario;
  */
 @WebServlet(
         name = "FuncionarioController", 
-        urlPatterns = {"/gerente"            
+        urlPatterns = {"/gerente",
+			"/funcionario/create"
         })
 public class FuncionarioController extends HttpServlet {
 
@@ -50,23 +61,30 @@ public class FuncionarioController extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        DAOString<Funcionario> dao;
-        Funcionario fun;
+        FuncionarioDAO dao;
+        HttpSession session = request.getSession();
         RequestDispatcher dispatcher;
         
         switch(request.getServletPath()){
             case "/gerente":
 				try ( DAOFactory daoFactory = DAOFactory.getInstance()) {
 					dao = daoFactory.getFuncionarioDAO();
-
-					List<Funcionario> funList = dao.all();
+					
+					Funcionario gerente = (Funcionario)session.getAttribute("gerente");
+					
+					List<Funcionario> funList = dao.get_gerenciados(gerente.getLogin());					
+					
 					request.setAttribute("funList", funList);
-				} catch (ClassNotFoundException | IOException | SQLException ex) {
+				} catch (Exception ex) {
 					request.getSession().setAttribute("error", ex.getMessage());
-				}
+				} 
 
 				dispatcher = request.getRequestDispatcher("/view/funcionario/gerente_index.jsp");
 				dispatcher.forward(request, response);
+				break;
+			case "/funcionario/create":
+				dispatcher = request.getRequestDispatcher("/view/funcionario/create.jsp");
+                dispatcher.forward(request, response);
 				break;
         }
             
@@ -84,6 +102,87 @@ public class FuncionarioController extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         
+		FuncionarioDAO dao;
+		Funcionario fun = new Funcionario();
+		HttpSession session = request.getSession();
+        RequestDispatcher dispatcher;
+		
+		String servletPath = request.getServletPath();
+		
+		switch(request.getServletPath()){
+			case "/funcionario/create":
+				
+				DiskFileItemFactory factory = new DiskFileItemFactory();
+				
+				Funcionario gerente = (Funcionario)session.getAttribute("gerente");
+				fun.setGerenteLogin(gerente.getLogin());
+				
+				// Create a new file upload handler
+                ServletFileUpload upload = new ServletFileUpload(factory);
+				
+				try ( DAOFactory daoFactory = DAOFactory.getInstance()) {
+                    // Parse the request
+                    List<FileItem> items = upload.parseRequest(request);
+					Iterator<FileItem> iter = items.iterator();
+					while (iter.hasNext()) {
+						FileItem item = iter.next();
+
+						// Process a regular form field
+						String fieldName = item.getFieldName();
+						String fieldValue = item.getString();
+
+						switch (fieldName) {
+							case "login":
+								fun.setLogin(fieldValue);
+								break;
+							case "senha":
+								fun.setSenha(fieldValue);
+								break;
+							case "nome":
+								fun.setPNome(fieldValue);
+								break;
+							case "sobrenome":
+								fun.setSNome(fieldValue);
+								break;	
+							case "email":
+								fun.setEmail(fieldValue);
+								break;	
+							case "cargo":
+								fun.setCargo(fieldValue);
+								break;
+							case "setor":
+								fun.setSetor(fieldValue);
+								break;	
+							case "salario":
+								fun.setSalario(Double.parseDouble(fieldValue));
+								break;	
+							case "efetivacao":
+								java.util.Date dataEfetivacao = new SimpleDateFormat("yyyy-mm-dd").parse(fieldValue);
+								fun.setData_efetivacao(new Date(dataEfetivacao.getTime()));
+								break;
+						}
+					}
+				fun.setGerenteLogin(gerente.getLogin());
+						
+				dao = daoFactory.getFuncionarioDAO();
+				dao.create(fun);
+
+				response.sendRedirect(request.getContextPath() + "/gerente");
+				} catch (ParseException ex) {
+                    Logger.getLogger(FuncionarioController.class.getName()).log(Level.SEVERE, "Controller", ex);
+                    session.setAttribute("error", "O formato de data não é válido. Por favor entre data no formato dd/mm/aaaa");
+                    response.sendRedirect(request.getContextPath() + servletPath);
+				} catch (ClassNotFoundException | IOException | SQLException ex) {
+                    Logger.getLogger(FuncionarioController.class.getName()).log(Level.SEVERE, "Controller", ex);
+                    session.setAttribute("error", ex.getMessage());
+                    response.sendRedirect(request.getContextPath() + servletPath);
+                } catch (Exception ex) {
+                    Logger.getLogger(FuncionarioController.class.getName()).log(Level.SEVERE, "Controller", ex);
+                    session.setAttribute("error", "Erro ao gravar arquivo no servidor.");
+                    response.sendRedirect(request.getContextPath() + servletPath);
+                }
+                break;
+		}
     }
 
     /**

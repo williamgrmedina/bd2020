@@ -182,11 +182,9 @@ public class UserController extends HttpServlet {
                 // Set overall request size constraint
                 upload.setSizeMax(MAX_FILE_SIZE);
 
-                try ( DAOFactory daoFactory = DAOFactory.getInstance()) {
-                    // Parse the request
+                try ( DAOFactory daoFactory = DAOFactory.getInstance()) {				
+					// Parse the request
                     List<FileItem> items = upload.parseRequest(request);
-
-                    // Process the uploaded items
                     Iterator<FileItem> iter = items.iterator();
                     while (iter.hasNext()) {
                         FileItem item = iter.next();

@@ -59,8 +59,8 @@ public class LoginController extends HttpServlet {
 					else dispatcher = request.getRequestDispatcher("/index.jsp");
 				}
 				else dispatcher = request.getRequestDispatcher("/index.jsp");
+				
 				dispatcher.forward(request, response);
-
                 break;
             }
             

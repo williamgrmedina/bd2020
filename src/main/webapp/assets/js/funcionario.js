@@ -91,3 +91,12 @@ $(document).ready(function () {
         'container': 'body'
     });
 });
+
+$('#my-modal').on('show.bs.modal', function (event) {
+  var nome = $(event.relatedTarget).data('nome');
+  $(this).find(".modal-nome").text(nome);
+  var salario = $(event.relatedTarget).data('salario');
+  $(this).find(".modal-salario").text(salario);
+  var data_efetivacao = $(event.relatedTarget).data('data_efetivacao');
+  $(this).find(".modal-data_efetivacao").text(data_efetivacao);
+});

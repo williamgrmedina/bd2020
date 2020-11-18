@@ -92,6 +92,6 @@
         </div>
 
         <%@include file="/view/include/scripts.jsp" %>
-        <script src="${pageContext.servletContext.contextPath}/assets/js/user.js"></script>
+        <script src="${pageContext.servletContext.contextPath}/assets/js/funcionario.js"></script>
     </body>
 </html>

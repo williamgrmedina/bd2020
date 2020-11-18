@@ -14,8 +14,10 @@
         <%@include file="/view/include/head.jsp"%>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
         <title>Gerenciamento de Funcionários</title>
-    </head>
+    
+	</head>
     <body>
+		
         <div class="container">            
             <div class="text-center div_inserir_excluir">
                 <a class="btn btn-lg btn-primary" href="${pageContext.servletContext.contextPath}/funcionario/create">
@@ -59,7 +61,6 @@
                                 </td>							
 								<td>
                                     <a class="link_visualizar_usuario" href="mailto:${funcionario.email}" target="_blank" 
-									   data-href="${pageContext.servletContext.contextPath}/user/read?login=${funcionario.login}">
                                         <span class="h6"><c:out value="${funcionario.email}"/></span>
                                     </a>
                                 </td>
@@ -70,15 +71,25 @@
                                     <span class="h6"><c:out value="${funcionario.setor}"/></span>
                                 </td>	
                                 <td>
-                                    <a class="btn btn-default"
-                                       href="${pageContext.servletContext.contextPath}/user/update?login=${funcionario.login}"
+									<a class="btn btn-default"
+									   href="#"
+									   data-nome="Nome: ${funcionario.PNome} ${funcionario.SNome}"
+                                       data-salario="Salario: ${funcionario.salario}"
+                                       data-data_efetivacao="Data de contratação: ${funcionario.data_efetivacao}"
+                                       data-toggle="modal"
+									   data-target="#my-modal"
+                                       data-original-title="Visualizar">
+                                       <i class="fa fa-eye" aria-hidden="true"></i>
+                                    </a>
+									<a class="btn btn-default"
+                                       href="${pageContext.servletContext.contextPath}/funcionario/update?login=${funcionario.login}"
                                        data-toggle="tooltip"
                                        data-original-title="Editar">
                                         <i class="fa fa-pencil"></i>
                                     </a>
                                     <a class="btn btn-default link_excluir_usuario"
                                        href="#"
-                                       data-href="${pageContext.servletContext.contextPath}/user/delete?login=${funcionario.login}"
+                                       data-href="${pageContext.servletContext.contextPath}/funcionario/delete?login=${funcionario.login}"
                                        data-toggle="tooltip"
                                        data-original-title="Excluir">
                                         <i class="fa fa-trash"></i>
@@ -94,8 +105,27 @@
                     </tbody>
 
 				</table>
-			</form>            
-                    
+			</form>
+             
+			<div class="modal fade" id="my-modal" tabindex="-1" role="dialog" aria-labelledby="my-modal" aria-hidden="true">
+			<div class="modal-dialog" role="document">
+			  <div class="modal-content">
+				<div class="modal-header">
+				  <h5 class="modal-title" id="exampleModalLabel">Mais informações</h5>
+				  <button type="button" class="close" data-dismiss="modal" aria-label="Fechar">
+					<span aria-hidden="true">&times;</span>
+				  </button>
+				</div>
+				<div class="modal-nome" ></div>
+				<div class="modal-salario"></div>
+				<div class="modal-data_efetivacao"></div>
+				<div class="modal-footer">
+				  <button type="button" class="btn btn-secondary" data-dismiss="modal">Fechar</button>
+				</div>
+			  </div>
+			</div>
+		  </div>
+				
             <div class="modal fade modal_excluir_funcionario">
                 <div class="modal-dialog">
                     <div class="modal-content">
@@ -113,7 +143,10 @@
                     </div>
                 </div>
             </div>
-     
         </div>
+		
+		<%@include file="/view/include/scripts.jsp"%>
+		<script src="${pageContext.servletContext.contextPath}/assets/js/funcionario.js"></script>
+		
     </body>
 </html>

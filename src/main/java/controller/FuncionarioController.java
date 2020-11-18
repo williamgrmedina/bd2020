@@ -35,7 +35,8 @@ import org.apache.commons.fileupload.servlet.ServletFileUpload;
 @WebServlet(
         name = "FuncionarioController", 
         urlPatterns = {"/gerente",
-			"/funcionario/create"
+			"/funcionario/create",
+			"/funcionario/update"
         })
 public class FuncionarioController extends HttpServlet {
 
@@ -64,6 +65,7 @@ public class FuncionarioController extends HttpServlet {
         FuncionarioDAO dao;
         HttpSession session = request.getSession();
         RequestDispatcher dispatcher;
+		Funcionario fun;
         
         switch(request.getServletPath()){
             case "/gerente":
@@ -86,6 +88,21 @@ public class FuncionarioController extends HttpServlet {
 				dispatcher = request.getRequestDispatcher("/view/funcionario/create.jsp");
                 dispatcher.forward(request, response);
 				break;
+			case "/funcionario/update": {
+				try ( DAOFactory daoFactory = DAOFactory.getInstance()) {
+                    dao = daoFactory.getFuncionarioDAO();
+
+                    fun = dao.read(request.getParameter("login"));
+                    request.setAttribute("funcionario", fun);
+
+                    dispatcher = request.getRequestDispatcher("/view/funcionario/update.jsp");
+                    dispatcher.forward(request, response);
+                } catch (ClassNotFoundException | IOException | SQLException ex) {
+					request.getSession().setAttribute("error", ex.getMessage());
+                    response.sendRedirect(request.getContextPath() + "/gerente");
+                }
+                break;
+            }
         }
             
     }

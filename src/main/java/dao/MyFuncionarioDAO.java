@@ -111,11 +111,11 @@ public class MyFuncionarioDAO implements FuncionarioDAO {
     public Funcionario read(String login) throws SQLException {
         Funcionario fun = new Funcionario();
         
-        try (PreparedStatement statement = connection.prepareStatement(READ_QUERY)) {
+		try (PreparedStatement statement = connection.prepareStatement(READ_QUERY)) {
             statement.setString(1, login);
             try (ResultSet result = statement.executeQuery()) {
                 if (result.next()) {
-                    fun.setLogin(result.getString("login"));
+					fun.setLogin(result.getString("login"));
                     fun.setPNome(result.getString("pnome"));
                     fun.setSNome(result.getString("snome"));
                     fun.setEmail(result.getString("email"));

@@ -79,7 +79,7 @@ public class UserController extends HttpServlet {
 
         switch (request.getServletPath()) {
             case "/user": {
-                try ( DAOFactory daoFactory = DAOFactory.getInstance()) {
+                /*try ( DAOFactory daoFactory = DAOFactory.getInstance()) {
                     dao = daoFactory.getUserDAO();
 
                     List<User> userList = dao.all();
@@ -90,7 +90,7 @@ public class UserController extends HttpServlet {
 
                 dispatcher = request.getRequestDispatcher("/view/user/index.jsp");
                 dispatcher.forward(request, response);
-                break;
+                break;*/
             }
 
             case "/user/create": {
@@ -100,7 +100,7 @@ public class UserController extends HttpServlet {
             }
             
             case "/user/update": {
-                try ( DAOFactory daoFactory = DAOFactory.getInstance()) {
+                /*try ( DAOFactory daoFactory = DAOFactory.getInstance()) {
                     dao = daoFactory.getUserDAO();
 
                     user = dao.read(Integer.parseInt(request.getParameter("id")));
@@ -112,7 +112,7 @@ public class UserController extends HttpServlet {
                     request.getSession().setAttribute("error", ex.getMessage());
                     response.sendRedirect(request.getContextPath() + "/user");
                 }
-                break;
+                break;*/
             }
             
             case "/user/delete": {

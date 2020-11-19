@@ -12,7 +12,7 @@
 <html>
     <head>
         <%@include file="/view/include/head.jsp" %>
-        <title>[BD 2020] Usuários: atualização</title>
+        <title>Funcionários: atualização</title>
     </head>
     <body>
 
@@ -21,15 +21,15 @@
 
             <form
                 class="form"
-                action="${pageContext.servletContext.contextPath}/user/update"
+                action="${pageContext.servletContext.contextPath}/funcionario/update"
                 enctype="multipart/form-data"
                 method="POST">
-                
-                <input type="hidden" name="id" value="${user.id}">
-
+				
+				<input type="hidden" name="previous_login" value="${funcionario.login}">
+				
                 <div class="form-group">
-                    <label class="control-label" for="usuario-login">Login</label>
-                    <input id="usuario-login" class="form-control" type="text" name="login" value="${user.login}" data-value="${user.login}" required autofocus/>
+                    <label class="control-label" for="funcionario-login">Login</label>
+                    <input id="funcionario-login" class="form-control" type="text" name="login" required autofocus/>
 
                     <p class="help-block"></p>
                 </div>
@@ -39,36 +39,52 @@
                     <label class="control-label">Senha</label>
                     <input class="form-control password-input"
                            type="password" name="senha"
-                           pattern=".{4,}" title="Pelo menos 4 caracteres."/>
+                           pattern=".{8,}" required title="Pelo menos 8 caracteres."/>
                 </div>
 
                 <div class="form-group pwd-confirm">
                     <label class="control-label">Confirmar senha</label>
                     <input class="form-control password-confirm"
                            type="password" name="senha-confirmacao"
-                           pattern=".{4,}" title="Pelo menos 4 caracteres."/>
+                           pattern=".{8,}" required title="Pelo menos 8 caracteres."/>
                     <p class="help-block"></p>
                 </div>
 
                 <div class="form-group">
-                    <label for="usuario-nome" class="control-label">Nome</label>
-                    <input id="usuario-nome" class="form-control" type="text" name="nome" value="${user.nome}" required/>
+                    <label for="funcionario-nome" class="control-label">Nome</label>
+                    <input id="funcionario-nome" class="form-control" type="text" name="nome" required/>
                 </div>
-
-
-                <div class="form-group">
-                    <label for="usuario-nasc" class="control-label">Data de nascimento</label>
-                    <input id="usuario-nasc" class="form-control datepicker" type="date" name="nascimento"
-                           placeholder="dd/mm/yyyy" value="${user.nascimento}"
+				
+				<div class="form-group">
+                    <label for="funcionario-sobrenome" class="control-label">Sobrenome</label>
+                    <input id="funcionario-sobrenome" class="form-control" type="text" name="sobrenome" required/>
+                </div>
+				
+				<div class="form-group">
+                    <label for="funcionario-email" class="control-label">E-mail</label>
+                    <input id="funcionario-email" class="form-control" type="email" name="email" required/>
+                </div>
+				
+				<div class="form-group">
+                    <label for="funcionario-cargo" class="control-label">Cargo</label>
+                    <input id="funcionario-cargo" class="form-control" type="text" name="cargo" required/>
+                </div>
+				
+				<div class="form-group">
+                    <label for="funcionario-setor" class="control-label">Setor</label>
+                    <input id="funcionario-setor" class="form-control" type="text" name="setor" required/>
+                </div>
+				
+				<div class="form-group">
+                    <label for="funcionario-salario" class="control-label">Salario</label>
+                    <input id="funcionario-salario" class="form-control" type="real" name="salario" required/>
+                </div>
+				
+				 <div class="form-group">
+                    <label for="funcionario-efetivacao" class="control-label">Data de efetivação</label>
+                    <input id="funcionario-efetivacao" class="form-control datepicker" type="date" name="efetivacao"
+                           placeholder="dd/mm/yyyy"
                            pattern="\d{2}/\d{2}/\d{4}" required/>
-                </div>
-
-                <div class="form-group">
-                    <label for="usuario-avatar">Foto do perfil</label>
-                    <input type="file"
-                           class="form-control" id="usuario-avatar"
-                           name="avatar"
-                           accept="image/*"/>
                 </div>
 
                 <div class="text-center">

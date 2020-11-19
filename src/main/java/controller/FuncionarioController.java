@@ -14,6 +14,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Objects;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.servlet.RequestDispatcher;
@@ -36,7 +37,8 @@ import org.apache.commons.fileupload.servlet.ServletFileUpload;
         name = "FuncionarioController", 
         urlPatterns = {"/gerente",
 			"/funcionario/create",
-			"/funcionario/update"
+			"/funcionario/update",
+			"/funcionario/delete"
         })
 public class FuncionarioController extends HttpServlet {
 
@@ -103,6 +105,19 @@ public class FuncionarioController extends HttpServlet {
                 }
                 break;
             }
+			case "/funcionario/delete": {
+				System.out.println("here");
+                try ( DAOFactory daoFactory = DAOFactory.getInstance()) {
+                    dao = daoFactory.getFuncionarioDAO();
+					System.out.println("login: " + request.getParameter("login"));
+                    dao.delete((request.getParameter("login")));
+                } catch (ClassNotFoundException | IOException | SQLException ex) {
+                    request.getSession().setAttribute("error", ex.getMessage());
+                }
+
+                response.sendRedirect(request.getContextPath() + "/gerente");
+                break;
+            }
         }
             
     }
@@ -122,17 +137,20 @@ public class FuncionarioController extends HttpServlet {
 		FuncionarioDAO dao;
 		Funcionario fun = new Funcionario();
 		HttpSession session = request.getSession();
-        RequestDispatcher dispatcher;
 		
 		String servletPath = request.getServletPath();
 		
 		switch(request.getServletPath()){
 			case "/funcionario/create":
+			case "/funcionario/update":
 				
 				DiskFileItemFactory factory = new DiskFileItemFactory();
 				
 				Funcionario gerente = (Funcionario)session.getAttribute("gerente");
 				fun.setGerenteLogin(gerente.getLogin());
+				
+				String previousLogin = null;
+				String newLogin = null;
 				
 				// Create a new file upload handler
                 ServletFileUpload upload = new ServletFileUpload(factory);
@@ -149,8 +167,11 @@ public class FuncionarioController extends HttpServlet {
 						String fieldValue = item.getString();
 
 						switch (fieldName) {
+							case "previous_login":
+								previousLogin = fieldValue;
+								break;
 							case "login":
-								fun.setLogin(fieldValue);
+								newLogin = fieldValue;
 								break;
 							case "senha":
 								fun.setSenha(fieldValue);
@@ -180,9 +201,24 @@ public class FuncionarioController extends HttpServlet {
 						}
 					}
 				fun.setGerenteLogin(gerente.getLogin());
-						
+				
 				dao = daoFactory.getFuncionarioDAO();
-				dao.create(fun);
+				
+				if (servletPath.equals("/funcionario/create")) {
+					fun.setLogin(newLogin);
+					dao.create(fun);
+				} else {
+					// case /funcionario/update
+					if(!Objects.equals(previousLogin, newLogin)){
+						//atualizou login tambem, mas login eh chave primaria
+						fun.setLogin(previousLogin);
+						dao.updateWithLogin(fun, newLogin);
+					}
+					else {
+						fun.setLogin(previousLogin);
+						dao.update(fun);
+					}
+				}
 
 				response.sendRedirect(request.getContextPath() + "/gerente");
 				} catch (ParseException ex) {
@@ -199,6 +235,7 @@ public class FuncionarioController extends HttpServlet {
                     response.sendRedirect(request.getContextPath() + servletPath);
                 }
                 break;
+				
 		}
     }
 

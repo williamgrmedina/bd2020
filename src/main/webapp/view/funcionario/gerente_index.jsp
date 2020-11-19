@@ -12,7 +12,7 @@
 <html>
     <head>
         <%@include file="/view/include/head.jsp"%>
-        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+		<!-- MDBootstrap Datatables  -->
         <title>Gerenciamento de Funcionários</title>
     
 	</head>
@@ -36,8 +36,8 @@
                 </a>
 			</div>
 				   
-			<form class="form_excluir_funcionarios" action="${pageContext.servletContext.contextPath}/funcionario/delete" method="POST">
-                <table class="table table-striped">
+			<form class="form_excluir_funcionarios" action="${pageContext.servletContext.contextPath}/funcionario/delete" method="POST">				
+				<table class="table table-striped table-bordered table-sm" id="lista_funcionarios" cellspacing="0" width="100%">
                     <thead>
                         <tr>
                             <th scope="col" >Nome</th>
@@ -60,7 +60,7 @@
                                     <span class="h6"><c:out value="${funcionario.SNome}"/></span>
                                 </td>							
 								<td>
-                                    <a class="link_visualizar_usuario" href="mailto:${funcionario.email}" target="_blank" 
+                                    <a class="text-primary h6" href="mailto:${funcionario.email}" target="_blank" 
                                         <span class="h6"><c:out value="${funcionario.email}"/></span>
                                     </a>
                                 </td>
@@ -74,11 +74,12 @@
 									<a class="btn btn-default"
 									   href="#"
 									   data-nome="Nome: ${funcionario.PNome} ${funcionario.SNome}"
+									   data-login="Login: ${funcionario.login}"
                                        data-salario="Salario: ${funcionario.salario}"
                                        data-data_efetivacao="Data de contratação: ${funcionario.data_efetivacao}"
-                                       data-toggle="modal"
+                                       data-toggle="modal" 
 									   data-target="#my-modal"
-                                       data-original-title="Visualizar">
+                                       data-original-title="Mais Informações">
                                        <i class="fa fa-eye" aria-hidden="true"></i>
                                     </a>
 									<a class="btn btn-default"
@@ -87,7 +88,7 @@
                                        data-original-title="Editar">
                                         <i class="fa fa-pencil"></i>
                                     </a>
-                                    <a class="btn btn-default link_excluir_usuario"
+                                    <a class="btn btn-default link_excluir_funcionario"
                                        href="#"
                                        data-href="${pageContext.servletContext.contextPath}/funcionario/delete?login=${funcionario.login}"
                                        data-toggle="tooltip"
@@ -97,7 +98,7 @@
                                 </td>
 								<td>
 									<a class="btn btn-default">
-										<input class="checkbox-inline" type="checkbox" name="delete" value="${funcionario.login}" />
+										<input class="checkbox-inline checkbox" type="checkbox" name="delete" value="${funcionario.login}" />
 									</a>
 								</td>
                             </tr>
@@ -117,6 +118,7 @@
 				  </button>
 				</div>
 				<div class="modal-nome" ></div>
+				<div class="modal-login" ></div>
 				<div class="modal-salario"></div>
 				<div class="modal-data_efetivacao"></div>
 				<div class="modal-footer">
@@ -137,16 +139,14 @@
                             <p>Tem certeza de que deseja excluir este funcionário?</p>
                         </div>
                         <div class="modal-footer">
-                            <a class="btn btn-danger link_confirmacao_excluir_usuario">Sim</a>
+                            <a class="btn btn-danger link_confirmacao_excluir_funcionario">Sim</a>
                             <button class="btn btn-primary" type="button" data-dismiss="modal">Não</button>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-		
 		<%@include file="/view/include/scripts.jsp"%>
 		<script src="${pageContext.servletContext.contextPath}/assets/js/funcionario.js"></script>
-		
     </body>
 </html>

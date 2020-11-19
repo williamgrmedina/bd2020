@@ -32,7 +32,18 @@ public class MyFuncionarioDAO implements FuncionarioDAO {
         "SELECT login, pnome, snome, email, cargo, setor, salario, data_efetivacao, gerente_login " +
         "FROM restaurante.funcionarios " +
         "WHERE login = ?;";
+	
+	private final static String DELETE_QUERY =
+        "DELETE " +
+        "FROM restaurante.funcionarios " +
+        "WHERE login = ?;";
     
+	private final static String UPDATE_QUERY =
+        "UPDATE restaurante.funcionarios " +
+        "SET login = ?, senha = ?, pnome = ?, snome = ?, email = ?, cargo = ?, setor = ?," + 
+			"salario = ?, data_efetivacao = ?, gerente_login = ? " +
+        "WHERE login = ?;";
+	
     private final static String AUTHENTICATE_QUERY =
         "SELECT * " +
         "FROM restaurante.funcionarios " +
@@ -100,9 +111,9 @@ public class MyFuncionarioDAO implements FuncionarioDAO {
         } catch (SQLException ex) {
             Logger.getLogger(MyFuncionarioDAO.class.getName()).log(Level.SEVERE, "DAO", ex);
             if (ex.getMessage().contains("not-null")) {
-                throw new SQLException("Erro ao inserir usuário: pelo menos um campo está em branco.");
+                throw new SQLException("Erro ao inserir funcionário: um campo obrigatório está em branco.");
             } else {
-                throw new SQLException("Erro ao inserir usuário.");
+                throw new SQLException("Erro ao inserir funcionário.");
             }
         }
     }
@@ -139,13 +150,72 @@ public class MyFuncionarioDAO implements FuncionarioDAO {
     }
 
     @Override
-    public void update(Funcionario t) throws SQLException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public void update(Funcionario fun) throws SQLException {
+        try (PreparedStatement statement = connection.prepareStatement(UPDATE_QUERY)) {
+            
+            statement.setString(1, fun.getLogin());
+            statement.setString(2, fun.getSenha());
+            statement.setString(3, fun.getPNome());
+            statement.setString(4, fun.getSNome());
+            statement.setString(5, fun.getEmail());
+            statement.setString(6, fun.getCargo());
+			statement.setString(7, fun.getSetor());
+            statement.setDouble(8, fun.getSalario());
+            statement.setDate(9, fun.getData_efetivacao());
+            statement.setString(10, fun.getGerenteLogin());
+			statement.setString(11, fun.getLogin());
+            
+            statement.executeUpdate();
+        } catch (SQLException ex) {
+            Logger.getLogger(MyFuncionarioDAO.class.getName()).log(Level.SEVERE, "DAO", ex);
+            if (ex.getMessage().contains("not-null")) {
+                throw new SQLException("Erro ao atualizar funcionário: um campo obrigatório está em branco.");
+            } else {
+                throw new SQLException("Erro ao atualizar funcionário.");
+            }
+        }
     }
 
+	@Override
+	public void updateWithLogin(Funcionario fun, String new_login) throws SQLException {
+        try (PreparedStatement statement = connection.prepareStatement(UPDATE_QUERY)) {
+            
+            statement.setString(1, new_login);
+            statement.setString(2, fun.getSenha());
+            statement.setString(3, fun.getPNome());
+            statement.setString(4, fun.getSNome());
+            statement.setString(5, fun.getEmail());
+            statement.setString(6, fun.getCargo());
+			statement.setString(7, fun.getSetor());
+            statement.setDouble(8, fun.getSalario());
+            statement.setDate(9, fun.getData_efetivacao());
+            statement.setString(10, fun.getGerenteLogin());
+			statement.setString(11, fun.getLogin());
+            
+			statement.executeUpdate();
+        } catch (SQLException ex) {
+            Logger.getLogger(MyFuncionarioDAO.class.getName()).log(Level.SEVERE, "DAO", ex);
+            if (ex.getMessage().contains("not-null")) {
+                throw new SQLException("Erro ao atualizar funcionário: um campo obrigatório está em branco.");
+            } else {
+                throw new SQLException("Erro ao inserir funcionário.");
+            }
+        }
+    }
+	
+	
     @Override
     public void delete(String login) throws SQLException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        try (PreparedStatement statement = connection.prepareStatement(DELETE_QUERY)) {
+            
+            statement.setString(1, login);
+			statement.executeUpdate();
+			
+		} catch (SQLException ex) {
+            Logger.getLogger(MyFuncionarioDAO.class.getName()).log(Level.SEVERE, "DAO", ex);
+			throw new SQLException("Erro ao remover funcionário.");
+        }
+		
     }
 
     @Override
@@ -171,7 +241,7 @@ public class MyFuncionarioDAO implements FuncionarioDAO {
         } catch (SQLException ex) {
            Logger.getLogger(MyFuncionarioDAO.class.getName()).log(Level.SEVERE, "DAO", ex);
            
-           throw new SQLException("Erro ao listar funcionário.");
+           throw new SQLException("Erro ao listar funcionários.");
         } 
     }
 	

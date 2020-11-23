@@ -1,6 +1,6 @@
 <%-- 
-    Document   : create
-    Created on : Sep. 1, 2020, 11:27:40 a.m.
+    Document   : update
+    Created on : Sep. 2, 2020, 10:28:54 a.m.
     Author     : dskaster
 --%>
 
@@ -12,19 +12,21 @@
 <html>
     <head>
         <%@include file="/view/include/head.jsp" %>
-        <title>Cadastro de funcionários</title>
+        <title>Funcionários: atualização</title>
     </head>
     <body>
 
         <div class="container">
-            <h2 class="text-center">Inserção de um novo funcionário</h2>
+            <h2 class="text-center">Edição do funcionário <c:out value="${funcionario.PNome} ${funcionario.SNome}"/></h2>
 
             <form
                 class="form"
-                action="${pageContext.servletContext.contextPath}/funcionario/create"
+                action="${pageContext.servletContext.contextPath}/funcionario/update"
                 enctype="multipart/form-data"
                 method="POST">
-
+				
+				<input type="hidden" name="previous_login" value="${funcionario.login}">
+				
                 <div class="form-group">
                     <label class="control-label" for="funcionario-login">Login</label>
                     <input id="funcionario-login" class="form-control" type="text" name="login" required autofocus/>

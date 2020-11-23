@@ -24,10 +24,10 @@ $(document).on('focusout', '.password-input,.password-confirm', function(e) {
     }
 });
 
-function deleteUser(e) {
+function deleteFuncionario(e) {
     e.preventDefault();
-    $('.link_confirmacao_excluir_usuario').attr('href', $(this).data('href'));
-    $('.modal_excluir_usuario').modal();
+    $('.link_confirmacao_excluir_funcionario').attr('href', $(this).data('href'));
+    $('.modal_excluir_funcionario').modal();
 }
 
 function deleteUsers(e) {
@@ -55,9 +55,9 @@ function readUser(e) {
     });
 }
 
-$(document).on('focusout', '#usuario-login', function (e) {
+$(document).on('focusout', '#funcionario-login', function (e) {
     var $input = $(this);
-    if ($("#usuario-login").val() == $(this).data('value')) {
+    if ($("#funcionario-login").val() == $(this).data('value')) {
         var $formGroup = $input.parents(".form-group").first();
         if ($formGroup.hasClass("has-error")) {
             $formGroup.removeClass("has-error");
@@ -65,7 +65,7 @@ $(document).on('focusout', '#usuario-login', function (e) {
         $input.next("p").html("");
     }
     else {
-        $.post($.url("//user/checkLogin"), { login: $("#usuario-login").val() }, function(data) {
+        $.post($.url("//user/checkLogin"), { login: $("#funcionario-login").val() }, function(data) {
             var $formGroup = $input.parents(".form-group").first();
             if (data.status == "USADO") {
                 if (!$formGroup.hasClass("has-error")) {
@@ -82,12 +82,32 @@ $(document).on('focusout', '#usuario-login', function (e) {
     }
 });
 
+$(document).ready(function () {
+  $('#lista_funcionarios').DataTable();
+  $('.dataTables_length').addClass('bs-select');
+});
 
 $(document).ready(function () {
-    $(document).on('click', '.link_excluir_usuario', deleteUser);
+	$(document).on('click', '.link_excluir_funcionario', deleteFuncionario);
     $(document).on('click', '.button_confirmacao_excluir_usuarios', deleteUsers);
     $(document).on('click', '.link_visualizar_usuario', readUser);    
     $("*[data-toggle='tooltip']").tooltip({
-        'container': 'body'
+        'container': 'body',
+		trigger: "hover"
     });
+	$("*[data-toggle='modal']").tooltip({
+        'container': 'body',
+		trigger: "hover"
+    });
+});
+
+$('#my-modal').on('show.bs.modal', function (event) {
+  var nome = $(event.relatedTarget).data('nome');
+  $(this).find(".modal-login").text(nome);
+  var login = $(event.relatedTarget).data('login');
+  $(this).find(".modal-nome").text(login);
+  var salario = $(event.relatedTarget).data('salario');
+  $(this).find(".modal-salario").text(salario);
+  var data_efetivacao = $(event.relatedTarget).data('data_efetivacao');
+  $(this).find(".modal-data_efetivacao").text(data_efetivacao);
 });

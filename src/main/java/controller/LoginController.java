@@ -107,7 +107,7 @@ public class LoginController extends HttpServlet {
                     dao.authenticate(fun);
                     
 					//gerente: pagina especial
-					if(fun.getCargo().equals("gerente")){
+					if(fun.getCargo().equalsIgnoreCase("gerente")){
 						session.setAttribute("gerente", fun);
 					}
 					//funcinario comum

@@ -44,10 +44,10 @@ CREATE TABLE IF NOT EXISTS `restaurante`.`funcionarios` (
   `cargo` VARCHAR(45) NOT NULL,
   `setor` VARCHAR(45) NOT NULL,
   `salario` DECIMAL(8,2) NOT NULL,
-  `data_efetivacao` DATE NOT NULL DEFAULT (CURDATE()),
+  `data_efetivacao` DATE NOT NULL,
   `gerente_login` VARCHAR(45) NOT NULL,
   PRIMARY KEY (`login`),
-  INDEX `fk_funcionario_funcionario1_idx` (`gerente_login` ASC) VISIBLE,
+  INDEX `fk_funcionario_funcionario1_idx` (`gerente_login` ASC),
   CONSTRAINT `fk_funcionario_funcionario1`
     FOREIGN KEY (`gerente_login`)
     REFERENCES `restaurante`.`funcionarios` (`login`)
@@ -65,7 +65,7 @@ CREATE TABLE IF NOT EXISTS `restaurante`.`estoques` (
   `idEstoque` INT NOT NULL,
   `funcionario_login` VARCHAR(45) NOT NULL,
   PRIMARY KEY (`idEstoque`),
-  INDEX `fk_estoque_funcionario1_idx` (`funcionario_login` ASC) VISIBLE,
+  INDEX `fk_estoque_funcionario1_idx` (`funcionario_login` ASC),
   CONSTRAINT `fk_estoque_funcionario1`
     FOREIGN KEY (`funcionario_login`)
     REFERENCES `restaurante`.`funcionarios` (`login`)
@@ -85,9 +85,9 @@ CREATE TABLE IF NOT EXISTS `restaurante`.`pedidos` (
   `cliente_login` VARCHAR(45) NULL,
   `funcionario_login` VARCHAR(45) NULL,
   PRIMARY KEY (`idPedido`),
-  UNIQUE INDEX `idPedido_UNIQUE` (`idPedido` ASC) VISIBLE,
-  INDEX `fk_pedido_cliente1_idx` (`cliente_login` ASC) VISIBLE,
-  INDEX `fk_pedido_funcionario1_idx` (`funcionario_login` ASC) VISIBLE,
+  UNIQUE INDEX `idPedido_UNIQUE` (`idPedido` ASC),
+  INDEX `fk_pedido_cliente1_idx` (`cliente_login` ASC),
+  INDEX `fk_pedido_funcionario1_idx` (`funcionario_login` ASC),
   CONSTRAINT `fk_pedido_cliente1`
     FOREIGN KEY (`cliente_login`)
     REFERENCES `restaurante`.`clientes` (`login`)
@@ -114,7 +114,7 @@ CREATE TABLE IF NOT EXISTS `restaurante`.`produtos` (
   `valor_de_compra` DOUBLE NOT NULL,
   `valor_de_venda` DOUBLE NOT NULL,
   PRIMARY KEY (`idProduto`),
-  INDEX `fk_produtos_estoques1_idx` (`produto_idEstoque` ASC) VISIBLE,
+  INDEX `fk_produtos_estoques1_idx` (`produto_idEstoque` ASC),
   CONSTRAINT `fk_produtos_estoques1`
     FOREIGN KEY (`produto_idEstoque`)
     REFERENCES `restaurante`.`estoques` (`idEstoque`)
@@ -135,8 +135,8 @@ CREATE TABLE IF NOT EXISTS `restaurante`.`produtos_pedidos` (
   `qtd` INT NOT NULL,
   `observacao` VARCHAR(45) NULL,
   PRIMARY KEY (`pedido_idPedido`, `produto_idProduto`),
-  INDEX `fk_pedido_has_produto_produto1_idx` (`produto_idProduto` ASC) VISIBLE,
-  INDEX `fk_pedido_has_produto_pedido1_idx` (`pedido_idPedido` ASC) VISIBLE,
+  INDEX `fk_pedido_has_produto_produto1_idx` (`produto_idProduto` ASC),
+  INDEX `fk_pedido_has_produto_pedido1_idx` (`pedido_idPedido` ASC),
   CONSTRAINT `fk_pedido_has_produto_pedido1`
     FOREIGN KEY (`pedido_idPedido`)
     REFERENCES `restaurante`.`pedidos` (`idPedido`)
@@ -162,8 +162,8 @@ CREATE TABLE IF NOT EXISTS `restaurante`.`Atendimentos` (
   `atend_idPedido` INT NOT NULL,
   `atend_idProduto` INT NOT NULL,
   PRIMARY KEY (`idAtendimento`, `atend_idPedido`, `atend_idProduto`),
-  UNIQUE INDEX `idAtendimento_UNIQUE` (`idAtendimento` ASC) VISIBLE,
-  INDEX `fk_Atendimento_pedido_solicita_produto1_idx` (`atend_idPedido` ASC, `atend_idProduto` ASC) VISIBLE,
+  UNIQUE INDEX `idAtendimento_UNIQUE` (`idAtendimento` ASC),
+  INDEX `fk_Atendimento_pedido_solicita_produto1_idx` (`atend_idPedido` ASC, `atend_idProduto` ASC),
   CONSTRAINT `fk_Atendimento_pedido_solicita_produto1`
     FOREIGN KEY (`atend_idPedido` , `atend_idProduto`)
     REFERENCES `restaurante`.`produtos_pedidos` (`pedido_idPedido` , `produto_idProduto`)

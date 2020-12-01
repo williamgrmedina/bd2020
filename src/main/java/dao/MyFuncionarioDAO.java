@@ -41,7 +41,7 @@ public class MyFuncionarioDAO implements FuncionarioDAO {
 	private final static String UPDATE_QUERY =
         "UPDATE restaurante.funcionarios " +
         "SET login = ?, senha = ?, pnome = ?, snome = ?, email = ?, cargo = ?, setor = ?," + 
-			"salario = ?, data_efetivacao = ?, gerente_login = ? " +
+		"salario = ?, data_efetivacao = ?, gerente_login = ? " +
         "WHERE login = ?;";
 	
     private final static String AUTHENTICATE_QUERY =
@@ -49,12 +49,12 @@ public class MyFuncionarioDAO implements FuncionarioDAO {
         "FROM restaurante.funcionarios " +
         "WHERE login = ? AND senha = SHA2(?, 0);";
     
-    private final static String SELECT_GERENCIADOS_QUERY =
+    private final static String READ_GERENCIADOS_QUERY =
         "SELECT login, pnome, snome, email, cargo, setor, salario, data_efetivacao " +
         "FROM restaurante.funcionarios " +
 		"WHERE gerente_login = ?;";
 	
-	private final static String SELECT_ALL_QUERY =
+	private final static String READ_ALL_QUERY =
         "SELECT login, pnome, snome, email, cargo, setor, salario, data_efetivacao " +
         "FROM restaurante.funcionarios;";
     
@@ -134,6 +134,7 @@ public class MyFuncionarioDAO implements FuncionarioDAO {
 					fun.setSetor(result.getString("setor"));
 					fun.setSalario(result.getDouble("salario"));
 					fun.setData_efetivacao(result.getDate("data_efetivacao"));
+					return fun;
                 }
                 else throw new SQLException("Erro ao visualizar: funcionário não encontrado.");
             }
@@ -141,12 +142,10 @@ public class MyFuncionarioDAO implements FuncionarioDAO {
            Logger.getLogger(MyFuncionarioDAO.class.getName()).log(Level.SEVERE, "DAO", ex);
            
            if(ex.getMessage().equals("Erro ao visualizar: funcionário não encontrado.")){
-               
+               throw new SQLException("Erro ao visualizar: funcionário não encontrado.");
            }
            else throw new SQLException("Erro ao visualizar funcionário.");
         } 
-        
-        return fun;
     }
 
     @Override
@@ -222,7 +221,7 @@ public class MyFuncionarioDAO implements FuncionarioDAO {
     public List<Funcionario> all() throws SQLException {
         List<Funcionario> allFun = new ArrayList<>();
         
-		try (PreparedStatement statement = connection.prepareStatement(SELECT_ALL_QUERY)) {
+		try (PreparedStatement statement = connection.prepareStatement(READ_ALL_QUERY)) {
             
             ResultSet result = statement.executeQuery();
             while (result.next()) {
@@ -249,7 +248,7 @@ public class MyFuncionarioDAO implements FuncionarioDAO {
 	public List<Funcionario> get_gerenciados(String gerente_login) throws SQLException {
         List<Funcionario> allFun = new ArrayList<>();
 		
-		try (PreparedStatement statement = connection.prepareStatement(SELECT_GERENCIADOS_QUERY)) {
+		try (PreparedStatement statement = connection.prepareStatement(READ_GERENCIADOS_QUERY)) {
 			statement.setString(1, gerente_login);
             ResultSet result = statement.executeQuery();
             while (result.next()) {

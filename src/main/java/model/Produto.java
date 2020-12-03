@@ -5,6 +5,10 @@
  */
 package model;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import org.graalvm.compiler.lir.amd64.AMD64ArithmeticLIRGeneratorTool;
+
 /**
  *
  * @author Medina
@@ -12,10 +16,18 @@ package model;
 public class Produto {
 	private int id;
 	private String nome;
-	private Double valor_compra;
-	private Double valor_venda;
+	private BigDecimal valor_compra;
+	private BigDecimal valor_venda;
 	private int qtd;
 
+	public String getFormatted(BigDecimal value) {
+		value = value.setScale(2, RoundingMode.HALF_UP);
+		return "R$ " + value;
+	}
+	
+	
+	
+	
 	public int getId() {
 		return id;
 	}
@@ -32,19 +44,19 @@ public class Produto {
 		this.nome = nome;
 	}
 
-	public Double getValor_compra() {
+	public BigDecimal getValor_compra() {
 		return valor_compra;
 	}
 
-	public void setValor_compra(Double valor_compra) {
+	public void setValor_compra(BigDecimal valor_compra) {
 		this.valor_compra = valor_compra;
 	}
 
-	public Double getValor_venda() {
+	public BigDecimal getValor_venda() {
 		return valor_venda;
 	}
 
-	public void setValor_venda(Double valor_venda) {
+	public void setValor_venda(BigDecimal valor_venda) {
 		this.valor_venda = valor_venda;
 	}
 

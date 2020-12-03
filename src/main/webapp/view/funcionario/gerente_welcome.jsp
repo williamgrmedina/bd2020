@@ -27,10 +27,10 @@
                     O nosso restarante é também o seu!
                 </p>
                 <p>
-                    <a class="btn btn-lg btn-primary my-2" href="${pageContext.servletContext.contextPath}/user">
-                        Gerenciamento de usuários
+                    <a class="btn btn-lg btn-primary my-2" href="${pageContext.servletContext.contextPath}/gerente/produtos">
+                        Gerenciamento de produtos
                     </a> 
-                    <a class="btn btn-lg btn-primary my-2" href="${pageContext.servletContext.contextPath}/gerente">
+                    <a class="btn btn-lg btn-primary my-2" href="${pageContext.servletContext.contextPath}/gerente/funcionarios">
                         Gerenciamento de funcionários
                     </a> 
                     <a class="btn btn-lg btn-primary my-2" href="${pageContext.servletContext.contextPath}/pedidos">

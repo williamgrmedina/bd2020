@@ -36,6 +36,7 @@ import org.apache.commons.fileupload.servlet.ServletFileUpload;
 @WebServlet(
         name = "FuncionarioController", 
         urlPatterns = {"/gerente",
+			"/gerente/funcionarios",
 			"/funcionario/create",
 			"/funcionario/update",
 			"/funcionario/delete"
@@ -70,7 +71,7 @@ public class FuncionarioController extends HttpServlet {
 		Funcionario fun;
         
         switch(request.getServletPath()){
-            case "/gerente":
+            case "/gerente/funcionarios":
 				try ( DAOFactory daoFactory = DAOFactory.getInstance()) {
 					dao = daoFactory.getFuncionarioDAO();
 					
@@ -83,7 +84,7 @@ public class FuncionarioController extends HttpServlet {
 					request.getSession().setAttribute("error", ex.getMessage());
 				} 
 
-				dispatcher = request.getRequestDispatcher("/view/funcionario/gerente_index.jsp");
+				dispatcher = request.getRequestDispatcher("/view/funcionario/gerente_funcionarios.jsp");
 				dispatcher.forward(request, response);
 				break;
 			case "/funcionario/create":
@@ -101,13 +102,12 @@ public class FuncionarioController extends HttpServlet {
                     dispatcher.forward(request, response);
                 } catch (ClassNotFoundException | IOException | SQLException ex) {
 					request.getSession().setAttribute("error", ex.getMessage());
-                    response.sendRedirect(request.getContextPath() + "/gerente");
+                    response.sendRedirect(request.getContextPath() + "/gerente/funcionarios");
                 }
                 break;
             }
 			case "/funcionario/delete": {
-				System.out.println("here");
-                try ( DAOFactory daoFactory = DAOFactory.getInstance()) {
+				try ( DAOFactory daoFactory = DAOFactory.getInstance()) {
                     dao = daoFactory.getFuncionarioDAO();
 					System.out.println("login: " + request.getParameter("login"));
                     dao.delete((request.getParameter("login")));
@@ -115,7 +115,7 @@ public class FuncionarioController extends HttpServlet {
                     request.getSession().setAttribute("error", ex.getMessage());
                 }
 
-                response.sendRedirect(request.getContextPath() + "/gerente");
+                response.sendRedirect(request.getContextPath() + "/gerente/funcionarios");
                 break;
             }
         }
@@ -140,7 +140,7 @@ public class FuncionarioController extends HttpServlet {
 		
 		String servletPath = request.getServletPath();
 		
-		switch(request.getServletPath()){
+		switch(servletPath){
 			case "/funcionario/create":
 			case "/funcionario/update":
 				
@@ -220,7 +220,7 @@ public class FuncionarioController extends HttpServlet {
 					}
 				}
 
-				response.sendRedirect(request.getContextPath() + "/gerente");
+				response.sendRedirect(request.getContextPath() + "/gerente/funcionarios");
 				} catch (ParseException ex) {
                     Logger.getLogger(FuncionarioController.class.getName()).log(Level.SEVERE, "Controller", ex);
                     session.setAttribute("error", "O formato de data não é válido. Por favor entre data no formato dd/mm/aaaa");

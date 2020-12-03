@@ -96,8 +96,8 @@
                                         <i class="fa fa-trash"></i>
                                     </a>
                                 </td>
-								<td>
-									<a class="btn btn-default">
+								<td class="d-flex align-items-center">
+									<a>
 										<input class="checkbox-inline checkbox" type="checkbox" name="delete" value="${funcionario.login}" />
 									</a>
 								</td>
@@ -109,24 +109,24 @@
 			</form>
              
 			<div class="modal fade" id="my-modal" tabindex="-1" role="dialog" aria-labelledby="my-modal" aria-hidden="true">
-			<div class="modal-dialog" role="document">
-			  <div class="modal-content">
-				<div class="modal-header">
-				  <h5 class="modal-title" id="exampleModalLabel">Mais informações</h5>
-				  <button type="button" class="close" data-dismiss="modal" aria-label="Fechar">
-					<span aria-hidden="true">&times;</span>
-				  </button>
+				<div class="modal-dialog" role="document">
+				  <div class="modal-content">
+					<div class="modal-header">
+					  <h5 class="modal-title" id="exampleModalLabel">Mais informações</h5>
+					  <button type="button" class="close" data-dismiss="modal" aria-label="Fechar">
+						<span aria-hidden="true">&times;</span>
+					  </button>
+					</div>
+					<div class="modal-nome" ></div>
+					<div class="modal-login" ></div>
+					<div class="modal-salario"></div>
+					<div class="modal-data_efetivacao"></div>
+					<div class="modal-footer">
+					  <button type="button" class="btn btn-secondary" data-dismiss="modal">Fechar</button>
+					</div>
+				  </div>
 				</div>
-				<div class="modal-nome" ></div>
-				<div class="modal-login" ></div>
-				<div class="modal-salario"></div>
-				<div class="modal-data_efetivacao"></div>
-				<div class="modal-footer">
-				  <button type="button" class="btn btn-secondary" data-dismiss="modal">Fechar</button>
-				</div>
-			  </div>
 			</div>
-		  </div>
 				
             <div class="modal fade modal_excluir_funcionario">
                 <div class="modal-dialog">

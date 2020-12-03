@@ -106,7 +106,8 @@ public abstract class DAOFactory implements AutoCloseable {
 
     public abstract UserDAO getUserDAO();   
     public abstract FuncionarioDAO getFuncionarioDAO();
-
+	public abstract ProdutoDAO getProdutoDAO();
+	
     @Override
     public void close() throws SQLException {
         closeConnection();

@@ -19,7 +19,7 @@ import model.Produto;
  *
  * @author Medina
  */
-public class MyProdutoDAO implements DAOInt<Produto> {
+public class MyProdutoDAO implements ProdutoDAO {
 	
 	Connection connection;
 	
@@ -34,7 +34,7 @@ public class MyProdutoDAO implements DAOInt<Produto> {
 	
 	private final static String UPDATE_QUERY =
 		"UPDATE restaurante.produtos " +
-		"SET valor_de_compra = ?, valor_de_venda = ?, qtd = ?;" +
+		"SET nome = ? valor_de_compra = ?, valor_de_venda = ?, qtd = ?;" +
 		"WHERE idProduto = ?;";
 	
 	private final static String DELETE_QUERY =
@@ -44,6 +44,27 @@ public class MyProdutoDAO implements DAOInt<Produto> {
 	private final static String READ_ALL_QUERY =
 		"SELECT * FROM restaurante.produtos; ";
 	
+	private final static String UPDATE_NAME_QUERY =
+		"UPDATE restaurante.produtos " +
+		"SET nome = ? " +
+		"WHERE idProduto = ?;";
+	
+	private final static String UPDATE_BUY_VALUE_QUERY =
+		"UPDATE restaurante.produtos " +
+		"SET valor_de_compra = ? " +
+		"WHERE idProduto = ?;";
+	
+	private final static String UPDATE_SELL_VALUE_QUERY =
+		"UPDATE restaurante.produtos " +
+		"SET valor_de_venda = ? " +
+		"WHERE idProduto = ?;";
+	
+	private final static String UPDATE_QTY_QUERY =
+		"UPDATE restaurante.produtos " +
+		"SET qtd = ? " +
+		"WHERE idProduto = ?;";
+	
+	
 	public MyProdutoDAO(Connection connection) {
         this.connection = connection;
     }
@@ -52,8 +73,8 @@ public class MyProdutoDAO implements DAOInt<Produto> {
 	public void create(Produto p) throws SQLException {
 		try(PreparedStatement statement = connection.prepareStatement(CREATE_QUERY)){
 			statement.setString(1, p.getNome());
-			statement.setDouble(2, p.getValor_compra());
-			statement.setDouble(3, p.getValor_venda());
+			statement.setBigDecimal(2, p.getValor_compra());
+			statement.setBigDecimal(3, p.getValor_venda());
 			statement.setInt(4, p.getQtd());
 			
 			statement.executeUpdate();
@@ -76,8 +97,8 @@ public class MyProdutoDAO implements DAOInt<Produto> {
 				if(result.next()){
 					prod.setId(result.getInt("idPedido"));
 					prod.setNome(result.getString("nome"));
-					prod.setValor_compra(result.getDouble("valor_de_compra"));
-					prod.setValor_venda(result.getDouble("valor_de_venda"));
+					prod.setValor_compra(result.getBigDecimal("valor_de_compra"));
+					prod.setValor_venda(result.getBigDecimal("valor_de_venda"));
 					return prod;
 				}
 				else{
@@ -97,9 +118,79 @@ public class MyProdutoDAO implements DAOInt<Produto> {
 	@Override
 	public void update(Produto p) throws SQLException {
 		try(PreparedStatement statement = connection.prepareStatement(UPDATE_QUERY)){
-			statement.setDouble(1, p.getValor_compra());
-			statement.setDouble(2, p.getValor_venda());
-			statement.setInt(3, p.getQtd());
+			statement.setString(1, p.getNome());
+			statement.setBigDecimal(2, p.getValor_compra());
+			statement.setBigDecimal(3, p.getValor_venda());
+			statement.setInt(4, p.getQtd());
+			
+			statement.executeUpdate();
+			
+		}catch(SQLException ex){
+			Logger.getLogger(MyFuncionarioDAO.class.getName()).log(Level.SEVERE, "DAO", ex);
+			if (ex.getMessage().contains("not-null")) {
+                throw new SQLException("Erro ao atualizar produto: um campo obrigatório está em branco.");
+            }
+			else throw new SQLException("Erro ao atualizar produto.");
+		}
+	}
+	
+	
+	@Override
+	public void update_nome(Produto p) throws SQLException {
+		try(PreparedStatement statement = connection.prepareStatement(UPDATE_NAME_QUERY)){
+			statement.setString(1, p.getNome());
+			statement.setInt(2, p.getId());
+			
+			statement.executeUpdate();
+			
+		}catch(SQLException ex){
+			Logger.getLogger(MyFuncionarioDAO.class.getName()).log(Level.SEVERE, "DAO", ex);
+			if (ex.getMessage().contains("not-null")) {
+                throw new SQLException("Erro ao atualizar produto: um campo obrigatório está em branco.");
+            }
+			else throw new SQLException("Erro ao atualizar produto.");
+		}
+	}
+	
+	@Override
+	public void update_valor_compra(Produto p) throws SQLException {
+		try(PreparedStatement statement = connection.prepareStatement(UPDATE_BUY_VALUE_QUERY)){
+			statement.setBigDecimal(1, p.getValor_compra());
+			statement.setInt(2, p.getId());
+			
+			statement.executeUpdate();
+			
+		}catch(SQLException ex){
+			Logger.getLogger(MyFuncionarioDAO.class.getName()).log(Level.SEVERE, "DAO", ex);
+			if (ex.getMessage().contains("not-null")) {
+                throw new SQLException("Erro ao atualizar produto: um campo obrigatório está em branco.");
+            }
+			else throw new SQLException("Erro ao atualizar produto.");
+		}
+	}
+	
+	@Override
+	public void update_valor_venda(Produto p) throws SQLException {
+		try(PreparedStatement statement = connection.prepareStatement(UPDATE_SELL_VALUE_QUERY)){
+			statement.setBigDecimal(1, p.getValor_venda());
+			statement.setInt(2, p.getId());
+			
+			statement.executeUpdate();
+			
+		}catch(SQLException ex){
+			Logger.getLogger(MyFuncionarioDAO.class.getName()).log(Level.SEVERE, "DAO", ex);
+			if (ex.getMessage().contains("not-null")) {
+                throw new SQLException("Erro ao atualizar produto: um campo obrigatório está em branco.");
+            }
+			else throw new SQLException("Erro ao atualizar produto.");
+		}
+	}
+	
+	@Override
+	public void update_qtd(Produto p) throws SQLException {
+		try(PreparedStatement statement = connection.prepareStatement(UPDATE_QTY_QUERY)){
+			statement.setInt(1, p.getQtd());
+			statement.setInt(2, p.getId());
 			
 			statement.executeUpdate();
 			
@@ -136,8 +227,8 @@ public class MyProdutoDAO implements DAOInt<Produto> {
                 Produto p = new Produto();
                 p.setId(result.getInt("idProduto"));
 				p.setNome(result.getString("nome"));
-				p.setValor_compra(result.getDouble("valor_de_compra"));
-				p.setValor_venda(result.getDouble("valor_de_venda"));
+				p.setValor_compra(result.getBigDecimal("valor_de_compra"));
+				p.setValor_venda(result.getBigDecimal("valor_de_venda"));
 				p.setQtd(result.getInt("qtd"));
 				allProd.add(p);
 			}

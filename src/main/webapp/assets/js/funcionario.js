@@ -102,9 +102,9 @@ $(document).ready(function () {
 });
 
 $('#my-modal').on('show.bs.modal', function (event) {
-  var nome = $(event.relatedTarget).data('nome');
-  $(this).find(".modal-login").text(nome);
   var login = $(event.relatedTarget).data('login');
+  $(this).find(".modal-login").text(nome);
+  var nome = $(event.relatedTarget).data('nome');
   $(this).find(".modal-nome").text(login);
   var salario = $(event.relatedTarget).data('salario');
   $(this).find(".modal-salario").text(salario);

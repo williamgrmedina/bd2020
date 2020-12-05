@@ -85,14 +85,13 @@ public class MyProdutoDAO implements ProdutoDAO {
 			statement.executeUpdate();
 		}
 		catch (SQLException ex) {
-           Logger.getLogger(MyFuncionarioDAO.class.getName()).log(Level.SEVERE, "DAO", ex);
+           Logger.getLogger(MyProdutoDAO.class.getName()).log(Level.SEVERE, "DAO", ex);
 		   throw new SQLException("Erro ao inserir produto.");
 		}
 	}
 
 	@Override
 	public Produto read(Integer id) throws SQLException {
-		
 		Produto prod = new Produto();
 		
 		try(PreparedStatement statement = connection.prepareStatement(READ_QUERY)){
@@ -100,19 +99,19 @@ public class MyProdutoDAO implements ProdutoDAO {
 			
 			try(ResultSet result = statement.executeQuery()){
 				if(result.next()){
-					prod.setId(result.getInt("idPedido"));
+					prod.setId(result.getInt("idProduto"));
 					prod.setNome(result.getString("nome"));
 					prod.setValor_compra(result.getBigDecimal("valor_de_compra"));
 					prod.setValor_venda(result.getBigDecimal("valor_de_venda"));
 					return prod;
 				}
 				else{
-					throw new SQLException("Erro ao visualizar pedido: pedido não encontrado.");
+					throw new SQLException("Erro ao visualizar produto: produto não encontrado.");
 				}
 			}
 				
 		} catch (SQLException ex) {
-           Logger.getLogger(MyFuncionarioDAO.class.getName()).log(Level.SEVERE, "DAO", ex);
+           Logger.getLogger(MyProdutoDAO.class.getName()).log(Level.SEVERE, "DAO", ex);
 		   if(ex.getMessage().equals("Erro ao visualizar produto: produto não encontrado.")){
                throw new SQLException("Erro ao visualizar produto: produto não encontrado.");
            }
@@ -131,7 +130,7 @@ public class MyProdutoDAO implements ProdutoDAO {
 			statement.executeUpdate();
 			
 		}catch(SQLException ex){
-			Logger.getLogger(MyFuncionarioDAO.class.getName()).log(Level.SEVERE, "DAO", ex);
+			Logger.getLogger(MyProdutoDAO.class.getName()).log(Level.SEVERE, "DAO", ex);
 			if (ex.getMessage().contains("not-null")) {
                 throw new SQLException("Erro ao atualizar produto: um campo obrigatório está em branco.");
             }
@@ -149,7 +148,7 @@ public class MyProdutoDAO implements ProdutoDAO {
 			statement.executeUpdate();
 			
 		}catch(SQLException ex){
-			Logger.getLogger(MyFuncionarioDAO.class.getName()).log(Level.SEVERE, "DAO", ex);
+			Logger.getLogger(MyProdutoDAO.class.getName()).log(Level.SEVERE, "DAO", ex);
 			if (ex.getMessage().contains("not-null")) {
                 throw new SQLException("Erro ao atualizar produto: um campo obrigatório está em branco.");
             }
@@ -166,7 +165,7 @@ public class MyProdutoDAO implements ProdutoDAO {
 			statement.executeUpdate();
 			
 		}catch(SQLException ex){
-			Logger.getLogger(MyFuncionarioDAO.class.getName()).log(Level.SEVERE, "DAO", ex);
+			Logger.getLogger(MyProdutoDAO.class.getName()).log(Level.SEVERE, "DAO", ex);
 			if (ex.getMessage().contains("not-null")) {
                 throw new SQLException("Erro ao atualizar produto: um campo obrigatório está em branco.");
             }
@@ -183,7 +182,7 @@ public class MyProdutoDAO implements ProdutoDAO {
 			statement.executeUpdate();
 			
 		}catch(SQLException ex){
-			Logger.getLogger(MyFuncionarioDAO.class.getName()).log(Level.SEVERE, "DAO", ex);
+			Logger.getLogger(MyProdutoDAO.class.getName()).log(Level.SEVERE, "DAO", ex);
 			if (ex.getMessage().contains("not-null")) {
                 throw new SQLException("Erro ao atualizar produto: um campo obrigatório está em branco.");
             }
@@ -200,7 +199,7 @@ public class MyProdutoDAO implements ProdutoDAO {
 			statement.executeUpdate();
 			
 		}catch(SQLException ex){
-			Logger.getLogger(MyFuncionarioDAO.class.getName()).log(Level.SEVERE, "DAO", ex);
+			Logger.getLogger(MyProdutoDAO.class.getName()).log(Level.SEVERE, "DAO", ex);
 			if (ex.getMessage().contains("not-null")) {
                 throw new SQLException("Erro ao atualizar produto: um campo obrigatório está em branco.");
             }
@@ -216,7 +215,7 @@ public class MyProdutoDAO implements ProdutoDAO {
 			statement.executeUpdate();
 			
 		} catch (SQLException ex) {
-            Logger.getLogger(MyFuncionarioDAO.class.getName()).log(Level.SEVERE, "DAO", ex);
+            Logger.getLogger(MyProdutoDAO.class.getName()).log(Level.SEVERE, "DAO", ex);
 			throw new SQLException("Erro ao remover produto.");
         }
 	}
@@ -240,7 +239,7 @@ public class MyProdutoDAO implements ProdutoDAO {
 			return allProd;
 		}
 		catch(SQLException ex){
-			Logger.getLogger(MyFuncionarioDAO.class.getName()).log(Level.SEVERE, "DAO", ex);
+			Logger.getLogger(MyProdutoDAO.class.getName()).log(Level.SEVERE, "DAO", ex);
             throw new SQLException("Erro ao listar funcionários.");
 		}
 	}
@@ -263,7 +262,7 @@ public class MyProdutoDAO implements ProdutoDAO {
 			return allProd;
 		}
 		catch(SQLException ex){
-			Logger.getLogger(MyFuncionarioDAO.class.getName()).log(Level.SEVERE, "DAO", ex);
+			Logger.getLogger(MyProdutoDAO.class.getName()).log(Level.SEVERE, "DAO", ex);
             throw new SQLException("Erro ao listar funcionários.");
 		}
 	}

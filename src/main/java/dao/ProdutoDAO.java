@@ -19,7 +19,9 @@ public interface ProdutoDAO extends DAOInt <Produto> {
 	public void update_valor_venda(Produto p) throws SQLException;
 	public void update_qtd(Produto p) throws SQLException;
 	
-	//retorna itens sem informacao de preco de aquisicao. Se houver mais de um item com mesmo nome, 
-	//retorna o de menor preço. Comando utilizado para visualizacao do cliente na hora da compra.
+	/*retorna itens sem informacao de preco de compra do fornecedor. 
+	 Se houver mais de um item com mesmo nome, retorna o de menor preço. 
+	 Comando utilizado para visualizacao do cliente/funcionario na hora 
+	 da geracao do pedido.*/
 	public List<Produto> getComercializaveis() throws SQLException; 
 }

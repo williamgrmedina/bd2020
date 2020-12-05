@@ -12,8 +12,8 @@ package model;
 public class Pedido {
 	private int id;
 	private int comanda;
-	private Cliente cliente;
-	private Funcionario funcionario;
+	private String cliente_login;
+	private String funcionario_login;
 
 	public int getId() {
 		return id;
@@ -31,19 +31,19 @@ public class Pedido {
 		this.comanda = comanda;
 	}
 
-	public Cliente getCliente() {
-		return cliente;
+	public String getClienteLogin() {
+		return cliente_login;
 	}
 
-	public void setCliente(Cliente cliente) {
-		this.cliente = cliente;
+	public void setClienteLogin(String cliente_login) {
+		this.cliente_login = cliente_login;
 	}
 
-	public Funcionario getFuncionario() {
-		return funcionario;
+	public String getFuncionarioLogin() {
+		return funcionario_login;
 	}
 
-	public void setFuncionario(Funcionario funcionario) {
-		this.funcionario = funcionario;
+	public void setFuncionarioLogin(String funcionario_login) {
+		this.funcionario_login = funcionario_login;
 	}
 }

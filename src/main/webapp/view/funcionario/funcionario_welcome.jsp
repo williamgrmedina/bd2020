@@ -6,6 +6,8 @@
 
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+<%@taglib tagdir="/WEB-INF/tags/session" prefix="session"%>
+<session:my_funcionario context="${pageContext.servletContext.contextPath}"/>
 <!DOCTYPE html>
 <html>
     <head>
@@ -34,5 +36,6 @@
 				   data-original-title="Logout">
 					<i class="fa fa-sign-out"></i>
 				</a>
+		<%@include file="/view/include/scripts.jsp"%>
 	</body>
 </html>

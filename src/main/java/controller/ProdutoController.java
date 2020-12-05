@@ -88,7 +88,7 @@ public class ProdutoController extends HttpServlet {
 				dispatcher.forward(request, response);
 				break;
 				
-			case "/produto/delete": {
+			case "/produto/delete": 
 				try ( DAOFactory daoFactory = DAOFactory.getInstance()) {
                     dao = daoFactory.getProdutoDAO();
 					dao.delete(Integer.parseInt(request.getParameter("id")));
@@ -98,7 +98,6 @@ public class ProdutoController extends HttpServlet {
 
                 response.sendRedirect(request.getContextPath() + "/gerente/produtos");
                 break;
-            }
 		}
 	}
 

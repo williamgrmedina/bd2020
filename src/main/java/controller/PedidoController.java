@@ -5,12 +5,18 @@
  */
 package controller;
 
+import dao.DAOFactory;
+import dao.ProdutoDAO;
 import java.io.IOException;
+import java.util.List;
+import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+import model.Produto;
 
 /**
  *
@@ -18,7 +24,8 @@ import javax.servlet.http.HttpServletResponse;
  */
 @WebServlet(name = "PedidoController", 
 		urlPatterns = {
-			"/gerente/pedidos"
+			"/gerente/pedidos",
+			"/funcionario/pedidos"
 		})
 public class PedidoController extends HttpServlet {
 
@@ -45,6 +52,27 @@ public class PedidoController extends HttpServlet {
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 		
+		ProdutoDAO dao;
+        HttpSession session = request.getSession();
+        RequestDispatcher dispatcher;
+		Produto prod;
+		
+		switch(request.getServletPath()){
+		case "/funcionario/pedidos":
+			try ( DAOFactory daoFactory = DAOFactory.getInstance()) {
+				dao = daoFactory.getProdutoDAO();
+
+				List<Produto> produtos = dao.getComercializaveis();					
+
+				request.setAttribute("produtos", produtos);
+			} catch (Exception ex) {
+				request.getSession().setAttribute("error", ex.getMessage());
+			} 
+
+			dispatcher = request.getRequestDispatcher("/view/pedido/funcionario_pedidos.jsp");
+			dispatcher.forward(request, response);
+			break;
+		}
 	}
 
 	/**

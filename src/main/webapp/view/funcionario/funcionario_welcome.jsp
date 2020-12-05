@@ -10,16 +10,29 @@
 <html>
     <head>
         <%@include file="/view/include/head.jsp"  %>
-        <title>Funcionario</title>
+        <title>Funcionário</title>
     </head>
     <body>
-        <h1>Ola funcionário! Você não é gerente. Xispa.</h1>
-		
-		<a class="btn btn-default"
-			href="${pageContext.servletContext.contextPath}/logout"
-			data-toggle="tooltip"
-			data-original-title="Logout">
-			 <i class="fa fa-sign-out"></i>
-		 </a>
+        <div class="container">
+
+            <div class="jumbotron text-center">
+                <h1>Bem-vindo,
+					<c:out value="${funcionario.PNome}"/>!</h1>
+                <p class="lead text-muted">
+                    Pouca coisa é necessária para transformar inteiramente uma vida:<br/> 
+					amor no coração e sorriso nos lábios.<br/>
+					E o seu é o mais lindo deles!
+                </p>
+                <p>
+                    <a class="btn dbtn-lg btn-primary my-2" href="${pageContext.servletContext.contextPath}/funcionario/pedidos">
+                        Proceder para pedidos
+                    </a>
+				</p>
+				<a class="btn btn-default"
+				   href="${pageContext.servletContext.contextPath}/logout"
+				   data-toggle="tooltip"
+				   data-original-title="Logout">
+					<i class="fa fa-sign-out"></i>
+				</a>
 	</body>
 </html>

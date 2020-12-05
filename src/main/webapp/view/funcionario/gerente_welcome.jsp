@@ -12,7 +12,7 @@
 <html>
     <head>
         <%@include file="/view/include/head.jsp"  %>
-        <title>[BD 2020] Início</title>
+        <title>Gerenciamento</title>
     </head>
     <body>
         
@@ -24,7 +24,7 @@
                 <p class="lead text-muted">
                     Enquanto gerente deste restaurante, sinta-se livre
                     para contratar funcionários e gerenciar pedidos. 
-                    O nosso restarante é também o seu!
+                    O nosso restaurante é também o seu!
                 </p>
                 <p>
                     <a class="btn btn-lg btn-primary my-2" href="${pageContext.servletContext.contextPath}/gerente/produtos">

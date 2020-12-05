@@ -109,8 +109,7 @@ public class FuncionarioController extends HttpServlet {
 			case "/funcionario/delete": {
 				try ( DAOFactory daoFactory = DAOFactory.getInstance()) {
                     dao = daoFactory.getFuncionarioDAO();
-					System.out.println("login: " + request.getParameter("login"));
-                    dao.delete((request.getParameter("login")));
+					dao.delete((request.getParameter("login")));
                 } catch (ClassNotFoundException | IOException | SQLException ex) {
                     request.getSession().setAttribute("error", ex.getMessage());
                 }

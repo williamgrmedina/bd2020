@@ -33,7 +33,9 @@ import model.Produto;
 		"/produto/alter_name",
 		"/produto/alter_compra",
 		"/produto/alter_venda",
-		"/produto/alter_qtd"
+		"/produto/alter_qtd",
+		"/produto/create",
+		"/produto/delete"
 	})
 public class ProdutoController extends HttpServlet {
 
@@ -80,6 +82,23 @@ public class ProdutoController extends HttpServlet {
 				dispatcher = request.getRequestDispatcher("/view/produto/gerente_produtos.jsp");
 				dispatcher.forward(request, response);
 				break;
+			
+			case "/produto/create":
+				dispatcher = request.getRequestDispatcher("/view/produto/create.jsp");
+				dispatcher.forward(request, response);
+				break;
+				
+			case "/produto/delete": {
+				try ( DAOFactory daoFactory = DAOFactory.getInstance()) {
+                    dao = daoFactory.getProdutoDAO();
+					dao.delete(Integer.parseInt(request.getParameter("id")));
+                } catch (ClassNotFoundException | IOException | SQLException ex) {
+                    request.getSession().setAttribute("error", ex.getMessage());
+                }
+
+                response.sendRedirect(request.getContextPath() + "/gerente/produtos");
+                break;
+            }
 		}
 	}
 
@@ -103,7 +122,7 @@ public class ProdutoController extends HttpServlet {
 		
 		switch (servletPath) {
 		case "/produto/alter_name":
-			prod.setId(Integer.parseInt(request.getParameter("prod_id")));
+			prod.setId(Integer.parseInt(request.getParameter("id")));
 			prod.setNome(request.getParameter("nome"));
 			
 			try (DAOFactory daoFactory = DAOFactory.getInstance()){
@@ -120,7 +139,7 @@ public class ProdutoController extends HttpServlet {
 		
 		case "/produto/alter_compra":			
 			try{
-				prod.setId(Integer.parseInt(request.getParameter("prod_id_c")));
+				prod.setId(Integer.parseInt(request.getParameter("id")));
 				BigDecimal valor_compra = new BigDecimal(request.getParameter("value"));
 				prod.setValor_compra(valor_compra);
 			
@@ -138,7 +157,7 @@ public class ProdutoController extends HttpServlet {
 		
 		case "/produto/alter_venda":		
 			try{
-				prod.setId(Integer.parseInt(request.getParameter("prod_id_v")));
+				prod.setId(Integer.parseInt(request.getParameter("id")));
 				BigDecimal valor_venda = new BigDecimal(request.getParameter("value"));
 				prod.setValor_venda(valor_venda);
 			
@@ -156,7 +175,7 @@ public class ProdutoController extends HttpServlet {
 		
 		case "/produto/alter_qtd":		
 			try{
-				prod.setId(Integer.parseInt(request.getParameter("prod_id_q")));
+				prod.setId(Integer.parseInt(request.getParameter("id")));
 				Integer qtd = Integer.parseInt(request.getParameter("value"));
 				prod.setQtd(qtd);
 			
@@ -171,7 +190,61 @@ public class ProdutoController extends HttpServlet {
 				response.sendRedirect(request.getContextPath() + "/gerente/produtos");
 			}
 			break;
+		
+		case "/produto/create":		
+			try{
+				prod.setNome(request.getParameter("nome"));
+				BigDecimal val_compra = new BigDecimal(request.getParameter("val_compra"));
+				prod.setValor_compra(val_compra);
+				BigDecimal val_venda = new BigDecimal(request.getParameter("val_venda"));
+				prod.setValor_venda(val_venda);	
+				Integer qtd = Integer.parseInt(request.getParameter("qtd"));
+				prod.setQtd(qtd);
 			
+				DAOFactory daoFactory = DAOFactory.getInstance();
+				dao = daoFactory.getProdutoDAO();
+				dao.create(prod);
+				
+				response.setContentType("text/plain");
+				response.getWriter().println(request.getContextPath() + "/gerente/produtos");
+				
+			}catch(SQLException | IOException | ClassNotFoundException | NumberFormatException ex){
+				Logger.getLogger(FuncionarioController.class.getName()).log(Level.SEVERE, "Controller", ex);
+				session.setAttribute("error", ex.getMessage());
+				response.setContentType("text/plain");
+				response.getWriter().println(request.getContextPath() + "/gerente/produtos");
+			}
+			break;
+		
+		case "/produto/delete": 
+			String[] produtos = request.getParameterValues("delete");
+
+			try ( DAOFactory daoFactory = DAOFactory.getInstance()) {
+				dao = daoFactory.getProdutoDAO();
+
+				try {
+					daoFactory.beginTransaction();
+
+					for (String prodId : produtos) {
+						dao.delete(Integer.parseInt(prodId));
+					}
+
+					daoFactory.commitTransaction();
+					daoFactory.endTransaction();
+				} catch (SQLException ex) {
+					session.setAttribute("error", ex.getMessage());
+					daoFactory.rollbackTransaction();
+				}
+			} catch (ClassNotFoundException | IOException ex) {
+				Logger.getLogger(UserController.class.getName()).log(Level.SEVERE, "Controller", ex);
+				session.setAttribute("error", ex.getMessage());
+			} catch (SQLException ex) {
+				Logger.getLogger(UserController.class.getName()).log(Level.SEVERE, "Controller", ex);
+				session.setAttribute("rollbackError", ex.getMessage());
+			}
+
+			response.sendRedirect(request.getContextPath() + "/gerente/produtos");
+			break;
 		}
 	}	
 

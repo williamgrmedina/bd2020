@@ -20,13 +20,17 @@
 		
         <div class="container">            
             <div class="text-center div_inserir_excluir">
-                <a class="btn btn-lg btn-primary" href="${pageContext.servletContext.contextPath}/funcionario/create">
+				<a class="btn btn-lg btn-default"
+                   href="${pageContext.servletContext.contextPath}"
+                   data-toggle="tooltip"
+                   data-original-title="">
+					<i class="fa fa-arrow-left"></i>
+					Voltar para gerenciamento
+                </a>
+				
+				<a class="btn btn-lg btn-primary" href="${pageContext.servletContext.contextPath}/funcionario/create">
                     Inserir novo funcionário
                 </a>
-                    
-                <button class="btn btn-lg btn-warning" data-toggle="modal" data-target=".modal_excluir_funcionario">
-                    Excluir múltiplos funcionarios
-				</button>
 					
 				<a class="btn btn-default"
                    href="${pageContext.servletContext.contextPath}/logout"
@@ -46,7 +50,6 @@
 							<th scope="col" >Cargo</th>
 							<th scope="col" >Setor</th>
                             <th scope="col" >Ação</th>
-							<th scope="col" >Excluir?</th>
                         </tr>
                     </thead>
 					
@@ -96,11 +99,6 @@
                                         <i class="fa fa-trash"></i>
                                     </a>
                                 </td>
-								<td class="d-flex align-items-center">
-									<a>
-										<input class="checkbox-inline checkbox" type="checkbox" name="delete" value="${funcionario.login}" />
-									</a>
-								</td>
                             </tr>
                         </c:forEach>
                     </tbody>

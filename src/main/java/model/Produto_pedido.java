@@ -11,7 +11,7 @@ import java.math.BigDecimal;
  *
  * @author Medina
  */
-public class produtos_pedidos {
+public class Produto_pedido {
 	private int idPedido;
 	private int idProduto;
 	private BigDecimal valor;

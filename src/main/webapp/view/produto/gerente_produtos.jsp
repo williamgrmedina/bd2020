@@ -12,7 +12,6 @@
 <html>
     <head>
         <%@include file="/view/include/head.jsp"%>
-		<!-- MDBootstrap Datatables  -->
         <title>Gerenciamento de Funcionários</title>
 
 	</head>

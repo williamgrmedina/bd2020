@@ -44,11 +44,6 @@ public class MyProdutoDAO implements ProdutoDAO {
 	private final static String READ_ALL_QUERY =
 		"SELECT * FROM restaurante.produtos; ";
 	
-	private final static String READ_ALL_COMERCIALIZAVEL_QUERY =
-		"SELECT idProduto, nome, valor_de_compra, MIN(valor_de_venda) as valor_de_venda, qtd " +
-		"FROM restaurante.produtos " +
-		"GROUP BY nome;";
-	
 	private final static String UPDATE_NAME_QUERY =
 		"UPDATE restaurante.produtos " +
 		"SET nome = ? " +
@@ -233,29 +228,6 @@ public class MyProdutoDAO implements ProdutoDAO {
 				p.setNome(result.getString("nome"));
 				p.setValor_compra(result.getBigDecimal("valor_de_compra"));
 				p.setValor_venda(result.getBigDecimal("valor_de_venda"));
-				p.setQtd(result.getInt("qtd"));
-				allProd.add(p);
-			}
-			return allProd;
-		}
-		catch(SQLException ex){
-			Logger.getLogger(MyProdutoDAO.class.getName()).log(Level.SEVERE, "DAO", ex);
-            throw new SQLException("Erro ao listar funcionários.");
-		}
-	}
-	
-	@Override
-	public List<Produto> getComercializaveis() throws SQLException { 
-		List<Produto> allProd = new ArrayList<>();
-        
-		try (PreparedStatement statement = connection.prepareStatement(READ_ALL_COMERCIALIZAVEL_QUERY)) {
-            
-            ResultSet result = statement.executeQuery();
-            while (result.next()) {
-                Produto p = new Produto();
-                p.setId(result.getInt("idProduto"));
-				p.setNome(result.getString("nome"));
-				p.setValor_venda(result.getBigDecimal("preco"));
 				p.setQtd(result.getInt("qtd"));
 				allProd.add(p);
 			}

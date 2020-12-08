@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import model.Funcionario;
 import model.Pedido;
 
 /**
@@ -50,6 +51,11 @@ public class MyPedidoDAO implements PedidoDAO {
 	private final static String READ_ALL_QUERY = 
 		"SELECT * FROM restaurante.pedidos;";
 	
+	private final static String READ_RELEVANT_QUERY =
+		"SELECT * FROM restaurante.pedidos " +
+		"WHERE cliente_login IS NOT NULL " +
+		"OR funcionario_login = ?;";
+	
 	private final static String UPDATE_QUERY = 
 		"UPDATE restaurante.pedidos " +
 		"SET idPedido = ?, comanda = ?, cliente_login = ?, funcionario_login = ? " +
@@ -69,6 +75,12 @@ public class MyPedidoDAO implements PedidoDAO {
 		"DELETE FROM restaurante.pedidos " +
 		"WHERE idPedido = ?;";
 
+	public MyPedidoDAO(Connection connection) {
+        this.connection = connection;
+    }
+	
+	
+	
 	@Override
 	public void create(Pedido p) throws SQLException { 
 		//padrao pedido presencial. Para pedido online, utilize o metodo createOnline().
@@ -122,6 +134,30 @@ public class MyPedidoDAO implements PedidoDAO {
                throw new SQLException("Erro ao visualizar pedido: pedido não encontrado.");
            }
 		   else throw new SQLException("Erro ao visualizar pedido.");
+		}
+	}
+	
+	@Override
+	public List<Pedido> readRelevant(Funcionario f) throws SQLException {
+		List<Pedido> allPed = new ArrayList<>();
+        
+		try (PreparedStatement statement = connection.prepareStatement(READ_RELEVANT_QUERY)) {
+            statement.setString(1, f.getLogin());
+			
+            ResultSet result = statement.executeQuery();
+            while (result.next()) {
+                Pedido  p = new Pedido();
+                p.setId(result.getInt("idProduto"));
+				p.setComanda(result.getInt("comanda"));
+				p.setClienteLogin(result.getString("cliente_login"));
+				p.setFuncionarioLogin(result.getString("funcionario_login"));
+				allPed.add(p);
+			}
+			return allPed;
+		}
+		catch(SQLException ex){
+			Logger.getLogger(MyProdutoDAO.class.getName()).log(Level.SEVERE, "DAO", ex);
+            throw new SQLException("Erro ao listar funcionários.");
 		}
 	}
 

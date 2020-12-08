@@ -20,7 +20,7 @@
             <h2 class="text-center">Inserção de um novo produto</h2>
 
             <form
-                class="form form_criar_pedido"
+                class="form form_criar_produto"
                 action="${pageContext.servletContext.contextPath}/produto/create"
                 method="POST">
 

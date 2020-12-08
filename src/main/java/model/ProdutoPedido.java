@@ -11,12 +11,15 @@ import java.math.BigDecimal;
  *
  * @author Medina
  */
-public class Produto_pedido {
+public class ProdutoPedido {
 	private int idPedido;
 	private int idProduto;
 	private BigDecimal valor;
 	private int qtd;
 	private String obs; 
+	Pedido pedido;
+	Produto produto;
+	Atendimento atd;
 
 	public int getIdPedido() {
 		return idPedido;

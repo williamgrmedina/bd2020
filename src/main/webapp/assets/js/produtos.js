@@ -101,7 +101,7 @@ $(document).ready(function () {
 		});
 	});
 	
-	$('.form_criar_pedido').on('submit', createProduto);
+	$('.form_criar_produto').on('submit', createProduto);
 	
 	var $chkboxes = $('.checkbox');
 	var lastChecked = null;
@@ -145,7 +145,6 @@ function createProduto(e) {
 	
 	$.post(url, {nome:nome, val_compra:val_compra, val_venda:val_venda, qtd:qtd})
 		.done(function (data){
-			alert(data);
 			window.location.replace(data);
 		});
 }

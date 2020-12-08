@@ -12,7 +12,7 @@ import java.sql.SQLException;
  * @author Medina
  * @param <T>
  */
-public interface DAOProdutoPedido<T> {
+public interface DAOInt_2x<T> {
 	public void create( T pp) throws SQLException;
     public T read(Integer idPedido, Integer idProduto) throws SQLException;
     public void update(T pp) throws SQLException;

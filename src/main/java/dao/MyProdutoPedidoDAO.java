@@ -5,22 +5,19 @@
  */
 package dao;
 
-import java.math.BigDecimal;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import model.Pedido;
-import model.Produto_pedido;
+import model.ProdutoPedido;
 
 /**
  *
  * @author Medina
  */
-public class MyProdutoPedido implements DAOProdutoPedido <Produto_pedido> {
+public class MyProdutoPedidoDAO implements ProdutoPedidoDAO {
 
 	Connection connection;
 	
@@ -47,7 +44,7 @@ public class MyProdutoPedido implements DAOProdutoPedido <Produto_pedido> {
 	
 	
 	@Override
-	public void create(Produto_pedido pp) throws SQLException {
+	public void create(ProdutoPedido pp) throws SQLException {
 		try(PreparedStatement statement = connection.prepareStatement(CREATE_QUERY)){
 			statement.setInt(1, pp.getIdPedido());
 			statement.setInt(2, pp.getIdProduto());
@@ -62,10 +59,14 @@ public class MyProdutoPedido implements DAOProdutoPedido <Produto_pedido> {
 		   throw new SQLException("Erro ao inserir produto no pedido.");
 		}
 	}
+	
+	public MyProdutoPedidoDAO(Connection connection) {
+        this.connection = connection;
+    }
 
 	@Override
-	public Produto_pedido read(Integer idPedido, Integer idProduto) throws SQLException {
-		Produto_pedido pp = new Produto_pedido();
+	public ProdutoPedido read(Integer idPedido, Integer idProduto) throws SQLException {
+		ProdutoPedido pp = new ProdutoPedido();
 		
 		try(PreparedStatement statement = connection.prepareStatement(READ_QUERY)){
 			statement.setInt(1, idPedido);
@@ -95,7 +96,7 @@ public class MyProdutoPedido implements DAOProdutoPedido <Produto_pedido> {
 	}
 
 	@Override
-	public void update(Produto_pedido pp) throws SQLException {
+	public void update(ProdutoPedido pp) throws SQLException {
 		try(PreparedStatement statement = connection.prepareStatement(UPDATE_QUERY)){
 			statement.setInt(1, pp.getIdPedido());
 			statement.setInt(2, pp.getIdProduto());

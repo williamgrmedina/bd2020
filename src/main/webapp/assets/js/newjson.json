@@ -1,0 +1,12 @@
+{
+	"data": 
+	[
+		{
+		"idProduto": "3",
+		"nome": "System a",
+		"preco": "40",
+		"disponiveis": "3",
+		"solicitacoes": "3"
+		}
+	]
+}

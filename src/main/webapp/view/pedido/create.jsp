@@ -17,7 +17,13 @@
     <body>
 		<div class="container">
             <h2 class="text-center">Inserção de um novo pedido</h2>
-
+			
+			<p> 
+				<label class="control-label flex-grow-1" for="comanda">Comanda: </label>
+				<input class="form-control h2" id="prod-nome" type="text" name="comanda" 
+					   placeholder="insira o número da comanda..." required autofocus />
+			</p>
+			
 			<div class="container">            
 				<div class="text-center div_inserir_excluir">
 					<a class="btn btn-lg btn-default"
@@ -27,6 +33,13 @@
 						<i class="fa fa-arrow-left"></i>
 						Voltar para gerenciamento
 					</a>
+					   
+					<a class="btn btn-lg btn-primary"
+					   href="${pageContext.servletContext.contextPath}"
+					   data-toggle="tooltip"
+					   data-original-title="">
+						Confirmar pedido
+					</a>
 
 					<a class="btn btn-default"
 					   href="${pageContext.servletContext.contextPath}/logout"
@@ -35,7 +48,7 @@
 						<i class="fa fa-sign-out"></i>
 					</a>
 				</div>
-
+					   
 				<form class="form_excluir_produtos" action="${pageContext.servletContext.contextPath}/produto/delete" method="POST">				
 					<table class="table table-striped table-bordered table-sm success-color" id="tabela_produtos" cellspacing="0" width="100%">
 						<thead>
@@ -50,7 +63,7 @@
 						</thead>
 
 						<tbody>
-							<c:forEach var="produto" items="${sessionScope.produtos}" varStatus="status">
+							<c:forEach var="produto" items="${requestScope.produtos}" varStatus="status">
 								<c:choose>
 									<c:when test="${produto.qtd > 0}">
 										<tr class="info-color">
@@ -77,7 +90,6 @@
 										<a class="h3 link_adicionar_produto"
 										   href="#"
 										   data-href="${pageContext.servletContext.contextPath}/pedido/add_item"
-										   data-qtd="${produto.qtd}"
 										   data-index="${status.index}"
 										   data-toggle="tooltip"
 										   data-original-title="Adicionar">
@@ -86,7 +98,6 @@
 										<a class="h3 link_remover_produto"
 										   href="#"
 										   data-href="${pageContext.servletContext.contextPath}/pedido/remove_item"
-										   data-qtd="${selectList[status.index]}"
 										   data-index="${status.index}"
 										   data-toggle="tooltip"
 										   data-original-title="Remover">
@@ -94,7 +105,7 @@
 										</a>
 									</td>
 									<td>
-										<span class="h6 qtd"> ${selectList[status.index]} </span>
+										<span class="h6 qtd"> 0 </span>
 									</td>
 								</tr>
 							</c:forEach>
@@ -105,6 +116,6 @@
 			</div>
 
 			<%@include file="/view/include/scripts.jsp" %>
-			<script src="${pageContext.servletContext.contextPath}/assets/js/pedidos.js"></script>
+			<script src="${pageContext.servletContext.contextPath}/assets/js/pedidos/funcionario_gerar.js"></script>
     </body>
 </html>

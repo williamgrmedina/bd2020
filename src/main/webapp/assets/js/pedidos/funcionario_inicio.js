@@ -5,32 +5,22 @@
  */
 
 $(document).ready(function () {
-  $('#tabela_produtos').DataTable({
-	  "order": [[4, "asc"]]
-  });
-  $('.dataTables_length').addClass('bs-select');
   
-  $("*[data-toggle='tooltip']").tooltip({
-		'container': 'body',
-		trigger: "hover"
-	});
-
- $(document).on('click', '.new_pedido', createPedidoSession);  
+  $('body').tooltip({
+	  selector: '[data-toggle="tooltip"]',
+	  trigger: 'hover'
+	  }).on('click mousedown mouseup', '[data-toggle="tooltip"], [title]:not([data-toggle="popover"])', function () {
+        $('[data-toggle="tooltip"], [title]:not([data-toggle="popover"])').tooltip('dispose');
+    });
+ 
  $(document).on('click', '.link_adicionar_produto', adicionarProduto);  
  $(document).on('click', '.link_remover_produto', removerProduto);  
 });
 
-function createPedidoSession(e){
-	e.preventDefault();
-	var url = $(this).attr( "href" );
-	$.post(url)
-		.done(function(){
-			location.replace(url);
-		});
-}
-
 function adicionarProduto(e){
 	e.preventDefault();
+	alert(window.location.pathname);
+	  
 	var url = $(this).attr( "data-href");
 	var qtd = parseInt($(this).attr( "data-qtd"));
 	
@@ -40,8 +30,9 @@ function adicionarProduto(e){
 		alert("Erro. Produto fora de estoque.");
 	}
 	else{
-		$.post(url, {idx : index}, function (data){
-			location.replace(data);
+		$.post(url, {idx : index}, function (){
+			var table = $('#tabela_produtos').DataTable();
+			table.ajax.reload();
 		})
 		.fail(function(data) {
 			alert("ocorreu um erro na solicitação do pedido.\n" +

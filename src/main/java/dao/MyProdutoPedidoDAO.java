@@ -24,7 +24,7 @@ public class MyProdutoPedidoDAO implements ProdutoPedidoDAO {
 	private final static String CREATE_QUERY =
         "INSERT INTO restaurante.produtos_pedidos " +
 		"(pedido_idPedido, produto_idProduto, valor, qtd, observacao) " +
-		"VALUES (?, ?, ? ?, ?);";
+		"VALUES (?, ?, ?, ?, ?);";
 	
 	private final static String READ_QUERY = 
 		"SELECT * FROM restaurante.produtos_pedidos " +
@@ -56,7 +56,7 @@ public class MyProdutoPedidoDAO implements ProdutoPedidoDAO {
 		}
 		catch (SQLException ex) {
            Logger.getLogger(MyPedidoDAO.class.getName()).log(Level.SEVERE, "DAO", ex);
-		   throw new SQLException("Erro ao inserir produto no pedido.");
+		   throw new SQLException("Erro ao inserir produto ao pedido.");
 		}
 	}
 	

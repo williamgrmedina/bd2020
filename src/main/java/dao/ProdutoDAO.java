@@ -6,7 +6,6 @@
 package dao;
 
 import java.sql.SQLException;
-import java.util.List;
 import model.Produto;
 
 /**
@@ -18,4 +17,6 @@ public interface ProdutoDAO extends DAOInt <Produto> {
 	public void update_valor_compra(Produto p) throws SQLException;
 	public void update_valor_venda(Produto p) throws SQLException;
 	public void update_qtd(Produto p) throws SQLException;
+	public void add_items(Produto p) throws SQLException;
+	public void remove_items(Produto p) throws SQLException;
 }

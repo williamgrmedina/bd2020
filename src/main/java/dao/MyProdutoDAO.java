@@ -64,6 +64,16 @@ public class MyProdutoDAO implements ProdutoDAO {
 		"SET qtd = ? " +
 		"WHERE idProduto = ?;";
 	
+	private final static String REMOVE_ITEMS_QUERY =
+		"UPDATE restaurante.produtos " +
+		"SET qtd = qtd - ? " +
+		"WHERE idProduto = ?;";
+	
+	private final static String ADD_ITEMS_QUERY =
+		"UPDATE restaurante.produtos " +
+		"SET qtd = qtd + ? " +
+		"WHERE idProduto = ?;";
+	
 	
 	public MyProdutoDAO(Connection connection) {
         this.connection = connection;
@@ -236,6 +246,40 @@ public class MyProdutoDAO implements ProdutoDAO {
 		catch(SQLException ex){
 			Logger.getLogger(MyProdutoDAO.class.getName()).log(Level.SEVERE, "DAO", ex);
             throw new SQLException("Erro ao listar funcionários.");
+		}
+	}
+
+	@Override
+	public void add_items(Produto p) throws SQLException {
+		try(PreparedStatement statement = connection.prepareStatement(ADD_ITEMS_QUERY)){
+			statement.setInt(1, p.getQtd());
+			statement.setInt(2, p.getId());
+			
+			statement.executeUpdate();
+			
+		}catch(SQLException ex){
+			Logger.getLogger(MyProdutoDAO.class.getName()).log(Level.SEVERE, "DAO", ex);
+			if (ex.getMessage().contains("not-null")) {
+                throw new SQLException("Erro ao atualizar produto: um campo obrigatório está em branco.");
+            }
+			else throw new SQLException("Erro ao atualizar produto.");
+		}
+	}
+
+	@Override
+	public void remove_items(Produto p) throws SQLException {
+		try(PreparedStatement statement = connection.prepareStatement(REMOVE_ITEMS_QUERY)){
+			statement.setInt(1, p.getQtd());
+			statement.setInt(2, p.getId());
+			
+			statement.executeUpdate();
+			
+		}catch(SQLException ex){
+			Logger.getLogger(MyProdutoDAO.class.getName()).log(Level.SEVERE, "DAO", ex);
+			if (ex.getMessage().contains("not-null")) {
+                throw new SQLException("Erro ao atualizar produto: um campo obrigatório está em branco.");
+            }
+			else throw new SQLException("Erro ao atualizar produto.");
 		}
 	}
 }

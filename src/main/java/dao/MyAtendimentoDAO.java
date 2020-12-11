@@ -25,8 +25,8 @@ public class MyAtendimentoDAO implements AtendimentoDAO {
 	
 	private final static String CREATE_QUERY = 
 		"INSERT INTO restaurante.atendimentos " +
-		"(idAtendimento, inicio, atend_idPedido, atend_idProduto) " +
-		"VALUES (?, ?, ?, ?);";
+		"(inicio, atend_idPedido, atend_idProduto) " +
+		"VALUES (CURRENT_TIMESTAMP(), ?, ?);";
 
 	private final static String READ_QUERY = 
 		"SELECT * FROM restaurante.atendimentos " +
@@ -56,11 +56,8 @@ public class MyAtendimentoDAO implements AtendimentoDAO {
 	@Override
 	public void create(Atendimento atd) throws SQLException {
 		try(PreparedStatement statement = connection.prepareStatement(CREATE_QUERY)){
-			statement.setInt(1, atd.getIdAtendimento());
-			statement.setString(2, atd.getInicio());
-			statement.setString(3, atd.getFim());
-			statement.setInt(4, atd.getIdPedido());
-			statement.setInt(5, atd.getIdProduto());
+			statement.setInt(1, atd.getIdPedido());
+			statement.setInt(2, atd.getIdProduto());
 			
 			statement.executeUpdate();
 		}

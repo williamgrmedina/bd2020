@@ -74,6 +74,9 @@ public class MyPedidoDAO implements PedidoDAO {
 	private final static String DELETE_QUERY =
 		"DELETE FROM restaurante.pedidos " +
 		"WHERE idPedido = ?;";
+	
+	public final static String GET_LAST_QUERY =
+		"SELECT MAX(idPedido) AS idPedido FROM restaurante.pedidos;";
 
 	public MyPedidoDAO(Connection connection) {
         this.connection = connection;
@@ -216,6 +219,22 @@ public class MyPedidoDAO implements PedidoDAO {
 		}
 	}
 		
-	
+	@Override
+	public int getLastPedido() throws SQLException {
+		try (PreparedStatement statement = connection.prepareStatement(GET_LAST_QUERY)) {
+			try(ResultSet result = statement.executeQuery()){
+				if(result.next()){
+					return result.getInt("idPedido");
+				}
+				else{
+					throw new SQLException("Erro ao recuperar pedido: pedido não encontrado.");
+				}
+			}
+		}
+		catch(SQLException ex){
+			Logger.getLogger(MyProdutoDAO.class.getName()).log(Level.SEVERE, "DAO", ex);
+            throw new SQLException("Erro ao recuperar pedido.");
+		}
+	}
 	
 }

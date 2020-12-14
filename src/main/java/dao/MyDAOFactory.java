@@ -47,4 +47,8 @@ public class MyDAOFactory extends DAOFactory {
 		return new MyAtendimentoDAO(this.connection);
 	}
 
+	@Override
+	public MyPedidoInfoDAO getPedidoInfoDAO() {
+		return new MyPedidoInfoDAO(this.connection);
+	}
 }

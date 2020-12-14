@@ -120,6 +120,9 @@ CREATE TABLE `pedidos` (
   `comanda` int DEFAULT NULL,
   `cliente_login` varchar(45) DEFAULT NULL,
   `funcionario_login` varchar(45) DEFAULT NULL,
+  `tipo` VARCHAR(45) NOT NULL,
+  `status` VARCHAR(45) NOT NULL,
+  `observacao` VARCHAR(45) NOT NULL,
   PRIMARY KEY (`idPedido`),
   UNIQUE KEY `idPedido_UNIQUE` (`idPedido`),
   KEY `fk_pedido_cliente1_idx` (`cliente_login`),
@@ -135,7 +138,6 @@ CREATE TABLE `pedidos` (
 
 LOCK TABLES `pedidos` WRITE;
 /*!40000 ALTER TABLE `pedidos` DISABLE KEYS */;
-INSERT INTO `pedidos` VALUES (2,NULL,NULL,'Medina'),(3,1590,NULL,'funcionario1'),(4,1300,NULL,'Medina2'),(5,NULL,'cliente1',NULL),(6,NULL,'cliente1',NULL),(7,NULL,'cliente2',NULL);
 /*!40000 ALTER TABLE `pedidos` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -183,7 +185,6 @@ CREATE TABLE `produtos_pedidos` (
   `produto_idProduto` int NOT NULL,
   `valor` decimal(7,2) NOT NULL,
   `qtd` int NOT NULL,
-  `observacao` varchar(45) DEFAULT NULL,
   PRIMARY KEY (`pedido_idPedido`,`produto_idProduto`),
   KEY `fk_pedido_has_produto_produto1_idx` (`produto_idProduto`),
   KEY `fk_pedido_has_produto_pedido1_idx` (`pedido_idPedido`),

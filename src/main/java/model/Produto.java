@@ -12,13 +12,14 @@ import java.math.RoundingMode;
  *
  * @author Medina
  */
-public class Produto {
+public class Produto implements FormatCurrency {
 	private int id;
 	private String nome;
 	private BigDecimal valor_compra;
 	private BigDecimal valor_venda;
 	private int qtd;
 
+	@Override
 	public String getFormatted(BigDecimal value) {
 		value = value.setScale(2, RoundingMode.HALF_UP);
 		return "R$ " + value;

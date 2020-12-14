@@ -18,4 +18,5 @@ public interface PedidoDAO extends DAOInt<Pedido> {
 	public void createOnline(Pedido p) throws SQLException;
 	public List<Pedido> readRelevant(Funcionario f) throws SQLException;
 	public int getLastPedido() throws SQLException;
+	public void updateStatus(int idPedido, String status) throws SQLException;
 }

@@ -26,13 +26,13 @@ public class MyPedidoDAO implements PedidoDAO {
 	
 	private final static String CREATE_PRESENCIAL_QUERY =
         "INSERT INTO restaurante.pedidos " +
-		"(funcionario_login, comanda) " + //id é gerado automaticamente
-		"VALUES (?, ?);";
+		"(funcionario_login, comanda, status, tipo, observacao) " + //id é gerado automaticamente
+		"VALUES (?, ?, 'atendido', 'presencial', ?);";
 	
 	private final static String CREATE_ONLINE_QUERY =
         "INSERT INTO restaurante.pedidos " +
-		"(cliente_login) " + //id é gerado automaticamente
-		"VALUES (?);";
+		"(cliente_login, status, tipo, observacao) " + //id é gerado automaticamente
+		"VALUES (?, 'aguardando confirmacao', 'online', ?);";
 	
 	/*private final static String CREATE_PROD_PEDIDO_QUERY =
 		"INSERT INTO restaurante.produtos_pedidos " +
@@ -71,6 +71,11 @@ public class MyPedidoDAO implements PedidoDAO {
 		"SET funcionario_login = ?" +
 		"WHERE cliente_login = ?;";
 	
+	private final static String UPDATE_STATUS_QUERY =
+		"UPDATE restaurante.pedidos " +
+		"SET status = ?" +
+		"WHERE idPedido = ?;";
+	
 	private final static String DELETE_QUERY =
 		"DELETE FROM restaurante.pedidos " +
 		"WHERE idPedido = ?;";
@@ -90,6 +95,7 @@ public class MyPedidoDAO implements PedidoDAO {
 		try(PreparedStatement statement = connection.prepareStatement(CREATE_PRESENCIAL_QUERY)){
 			statement.setString(1, p.getFuncionarioLogin());
 			statement.setInt(2, p.getComanda());
+			statement.setString(3, p.getObs());
 			
 			statement.executeUpdate();
 		}
@@ -103,6 +109,7 @@ public class MyPedidoDAO implements PedidoDAO {
 	public void createOnline(Pedido p) throws SQLException { 
 		try(PreparedStatement statement = connection.prepareStatement(CREATE_ONLINE_QUERY)){
 			statement.setString(1, p.getClienteLogin());
+			statement.setString(2, p.getObs());
 			statement.executeUpdate();
 		}
 		catch (SQLException ex) {
@@ -124,6 +131,9 @@ public class MyPedidoDAO implements PedidoDAO {
 					p.setComanda(result.getInt("comanda"));
 					p.setClienteLogin(result.getString("cliente_login"));
 					p.setFuncionarioLogin(result.getString("funcionario_login"));
+					p.setStatus(result.getString("status"));
+					p.setTipo(result.getString("tipo"));
+					p.setObs(result.getString("observacao"));
 					return p;
 				}
 				else{
@@ -154,6 +164,9 @@ public class MyPedidoDAO implements PedidoDAO {
 				p.setComanda(result.getInt("comanda"));
 				p.setClienteLogin(result.getString("cliente_login"));
 				p.setFuncionarioLogin(result.getString("funcionario_login"));
+				p.setStatus(result.getString("status"));
+				p.setTipo(result.getString("tipo"));
+				p.setObs(result.getString("observacao"));
 				allPed.add(p);
 			}
 			return allPed;
@@ -171,6 +184,23 @@ public class MyPedidoDAO implements PedidoDAO {
 			statement.setInt(2, p.getComanda());
 			statement.setString(3, p.getClienteLogin());
 			statement.setString(4, p.getFuncionarioLogin());
+			
+			statement.executeUpdate();
+			
+		}catch(SQLException ex){
+			Logger.getLogger(MyProdutoDAO.class.getName()).log(Level.SEVERE, "DAO", ex);
+			if (ex.getMessage().contains("not-null")) {
+                throw new SQLException("Erro ao atualizar pedido: um campo obrigatório está em branco.");
+            }
+			else throw new SQLException("Erro ao atualizar pedido.");
+		}
+	}
+	
+	@Override
+	public void updateStatus(int id, String status) throws SQLException {
+		try(PreparedStatement statement = connection.prepareStatement(UPDATE_STATUS_QUERY)){
+			statement.setString(1, status);
+			statement.setInt(2, id);
 			
 			statement.executeUpdate();
 			
@@ -209,6 +239,8 @@ public class MyPedidoDAO implements PedidoDAO {
 				p.setComanda(result.getInt("comanda"));
 				p.setClienteLogin(result.getString("cliente_login"));
 				p.setFuncionarioLogin(result.getString("funcionario_login"));
+				p.setStatus(result.getString("status"));
+				p.setObs(result.getString("observacao"));
 				allPed.add(p);
 			}
 			return allPed;

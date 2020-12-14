@@ -25,17 +25,17 @@
 			</p>
 
 			<div class="container">            
-				<div class="text-center div_inserir_excluir">
+				<div class="text-center div_voltar_confirmar">
 					<a class="btn btn-lg btn-default"
-					   href="${pageContext.servletContext.contextPath}"
+					   href="${pageContext.servletContext.contextPath}/funcionario/pedidos"
 					   data-toggle="tooltip"
 					   data-original-title="">
 						<i class="fa fa-arrow-left"></i>
-						Voltar para gerenciamento
+						Voltar para pedidos
 					</a>
 
 					<a class="btn btn-lg btn-primary link_confirmar_pedido"
-					   href="${pageContext.servletContext.contextPath}/pedido/createPresencial"
+					   href="${pageContext.servletContext.contextPath}/funcionario/pedidos"
 					   data-toggle="tooltip"
 					   data-original-title="">
 						Confirmar pedido
@@ -66,12 +66,12 @@
 							<c:choose>
 								<c:when test="${produto.qtd > 0}">
 									<tr class="info-color">
-									</c:when>
+								</c:when>
 
-									<c:otherwise>
+								<c:otherwise>
 									<tr class="danger-color">
-									</c:otherwise>
-								</c:choose>	
+								</c:otherwise>
+							</c:choose>	
 
 								<td>
 									<span class="h6"><c:out value="${produto.id}"/></span>
@@ -112,8 +112,8 @@
 
 				</table>
 			</div>
-			
-			
+
+
 			<div class="modal fade" id="modal_obs" tabindex="-1" role="dialog" 
 				 aria-labelledby="modal_obs" aria-hidden="true">
 				<div class="modal-dialog" role="document">
@@ -126,8 +126,9 @@
 						</div>
 
 						<form
-							class="form" id="form_obs">
-							
+							class="form" id="form_obs" 
+							href="${pageContext.servletContext.contextPath}/pedido/createPresencial">
+
 							<div class="form-group" width>
 								<input class="form-control h2" type="text" name="observacao" 
 									   placeholder="insira uma observação..." autofocus ></input>
@@ -140,7 +141,7 @@
 				</div>
 			</div>
 
-					   
+
 			<div class="modal fade modal_error">
                 <div class="modal-dialog">
                     <div class="modal-content">
@@ -150,8 +151,8 @@
                         </div>
                         <div class="modal-body">
                             <p>
-							   Ocorreu um erro ao processar o seu pedido.<br/>
-							   Tente novamente ou contate um administrador do sistema.
+								Ocorreu um erro ao processar o seu pedido.<br/>
+								Tente novamente ou contate um administrador do sistema.
 							</p>
                         </div>
                         <div class="modal-footer">

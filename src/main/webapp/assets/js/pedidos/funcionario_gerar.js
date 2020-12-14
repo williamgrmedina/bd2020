@@ -49,7 +49,7 @@ $(document).ready(function () {
 
 		var comanda = parseInt($('#comanda').val(), 10);
 		var items = JSON.stringify(solicitados);
-		var url = $(this).attr( "href");
+		var url = $form.attr( "href");
 		$.post(url, {items:items, comanda:comanda, observacao:observacao}, function(data){
 			alert("pedido registrado.");
 			location.replace(data);
@@ -139,5 +139,6 @@ function confirmarPedido(e){
 	else
 	{
 		$('#modal_obs').modal({backdrop: 'static', keyboard: false});
+		//from here activates $('#form_obs').submit function
 	}
 }

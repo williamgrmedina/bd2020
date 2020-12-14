@@ -23,8 +23,8 @@ public class MyProdutoPedidoDAO implements ProdutoPedidoDAO {
 	
 	private final static String CREATE_QUERY =
         "INSERT INTO restaurante.produtos_pedidos " +
-		"(pedido_idPedido, produto_idProduto, valor, qtd, observacao) " +
-		"VALUES (?, ?, ?, ?, ?);";
+		"(pedido_idPedido, produto_idProduto, valor, qtd) " +
+		"VALUES (?, ?, ?, ?);";
 	
 	private final static String READ_QUERY = 
 		"SELECT * FROM restaurante.produtos_pedidos " +
@@ -35,7 +35,7 @@ public class MyProdutoPedidoDAO implements ProdutoPedidoDAO {
 	
 	private final static String UPDATE_QUERY = 
 		"UPDATE restaurante.produtos_pedidos " +
-		"SET pedido_idPedido = ?, produto_idProduto = ?, valor = ?, qtd = ?, observacao = ? " +
+		"SET pedido_idPedido = ?, produto_idProduto = ?, valor = ?, qtd = ?" +
 		"WHERE pedido_idPedido = ? AND produto_idProduto = ?;";
 	
 	private final static String DELETE_QUERY =
@@ -50,7 +50,6 @@ public class MyProdutoPedidoDAO implements ProdutoPedidoDAO {
 			statement.setInt(2, pp.getIdProduto());
 			statement.setBigDecimal(3, pp.getValor());
 			statement.setInt(4, pp.getQtd());
-			statement.setString(5, pp.getObs());
 			
 			statement.executeUpdate();
 		}
@@ -78,7 +77,6 @@ public class MyProdutoPedidoDAO implements ProdutoPedidoDAO {
 					pp.setIdProduto(result.getInt("produto_idProduto"));
 					pp.setValor(result.getBigDecimal("valor"));
 					pp.setQtd(result.getInt("qtd"));
-					pp.setObs("observacao");
 					return pp;
 				}
 				else{
@@ -102,7 +100,6 @@ public class MyProdutoPedidoDAO implements ProdutoPedidoDAO {
 			statement.setInt(2, pp.getIdProduto());
 			statement.setBigDecimal(3, pp.getValor());
 			statement.setInt(4, pp.getQtd());
-			statement.setString(5, pp.getObs());
 			
 			statement.executeUpdate();
 			

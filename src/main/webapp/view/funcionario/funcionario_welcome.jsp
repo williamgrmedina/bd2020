@@ -26,7 +26,7 @@
 					E o seu é o mais lindo deles!
                 </p>
                 <p>
-                    <a class="btn dbtn-lg btn-primary my-2" href="${pageContext.servletContext.contextPath}/funcionario/pedidos">
+                    <a class="btn dbtn-lg btn-primary my-2" href="${pageContext.servletContext.contextPath}/pedidos">
                         Proceder para pedidos
                     </a>
 				</p>

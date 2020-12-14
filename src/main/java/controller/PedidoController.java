@@ -45,8 +45,7 @@ import org.json.JSONObject;
  */
 @WebServlet(name = "PedidoController",
 	urlPatterns = {
-		"/gerente/pedidos",
-		"/funcionario/pedidos",
+		"/pedidos",
 		"/pedido/createPresencial",
 		"/pedido/confirmar_entrega",
 		"/pedido/confirmar_pgmt"
@@ -84,7 +83,20 @@ public class PedidoController extends HttpServlet implements Jsonable {
 		RequestDispatcher dispatcher;
 
 		switch (request.getServletPath()) {
-			case "/funcionario/pedidos": {
+			case "/pedidos": {
+				
+				String result_url;
+				session = request.getSession(false);
+				if(session != null){
+					if(session.getAttribute("gerente") != null){
+						result_url = "/view/pedido/gerente_pedidos.jsp";
+					}
+					else if(session.getAttribute("funcionario") != null){
+						result_url = "/view/pedido/funcionario_pedidos.jsp";
+					}
+					else result_url = "";
+				}
+				else result_url = "";
 				
 				try (DAOFactory daoFactory = DAOFactory.getInstance()) {
 					dao_ped_info = daoFactory.getPedidoInfoDAO();
@@ -105,12 +117,12 @@ public class PedidoController extends HttpServlet implements Jsonable {
 										
 				} catch (ClassNotFoundException | IOException | SQLException ex) {
 					session.setAttribute("error", ex.getMessage());
-					dispatcher = request.getRequestDispatcher("/view/pedido/funcionario_pedidos.jsp");
+					dispatcher = request.getRequestDispatcher(result_url);
 					dispatcher.forward(request, response);
 					break;
 				}
 
-				dispatcher = request.getRequestDispatcher("/view/pedido/funcionario_pedidos.jsp");
+				dispatcher = request.getRequestDispatcher(result_url);
 				dispatcher.forward(request, response);
 				break;
 			}
@@ -144,7 +156,7 @@ public class PedidoController extends HttpServlet implements Jsonable {
 				}
 				
 				response.setContentType("text/plain");
-				response.getWriter().println(request.getContextPath() + "/funcionario/pedidos");
+				response.getWriter().println(request.getContextPath() + "/pedidos");
 				break;
 			}
 			
@@ -160,7 +172,7 @@ public class PedidoController extends HttpServlet implements Jsonable {
 				}
 				
 				response.setContentType("text/plain");
-				response.getWriter().println(request.getContextPath() + "/funcionario/pedidos");
+				response.getWriter().println(request.getContextPath() + "/pedidos");
 				break;
 			}	
 		}
@@ -263,7 +275,7 @@ public class PedidoController extends HttpServlet implements Jsonable {
 				}
 				
 				response.setContentType("text/plain");
-				response.getWriter().println(request.getContextPath() + "/funcionario/pedidos");
+				response.getWriter().println(request.getContextPath() + "/pedidos");
 				break;
 			}
 		}

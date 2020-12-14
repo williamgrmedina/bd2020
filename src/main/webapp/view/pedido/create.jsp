@@ -27,7 +27,7 @@
 			<div class="container">            
 				<div class="text-center div_voltar_confirmar">
 					<a class="btn btn-lg btn-default"
-					   href="${pageContext.servletContext.contextPath}/funcionario/pedidos"
+					   href="${pageContext.servletContext.contextPath}/pedidos"
 					   data-toggle="tooltip"
 					   data-original-title="">
 						<i class="fa fa-arrow-left"></i>
@@ -35,7 +35,7 @@
 					</a>
 
 					<a class="btn btn-lg btn-primary link_confirmar_pedido"
-					   href="${pageContext.servletContext.contextPath}/funcionario/pedidos"
+					   href="${pageContext.servletContext.contextPath}/pedidos"
 					   data-toggle="tooltip"
 					   data-original-title="">
 						Confirmar pedido

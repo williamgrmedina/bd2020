@@ -109,6 +109,7 @@ public class LoginController extends HttpServlet {
 					//gerente: pagina especial
 					if(fun.getCargo().equalsIgnoreCase("gerente")){
 						session.setAttribute("gerente", fun);
+						session.setAttribute("funcionario", fun);
 					}
 					//funcinario comum
 					else session.setAttribute("funcionario", fun);

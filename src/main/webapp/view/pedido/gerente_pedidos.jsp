@@ -7,7 +7,7 @@
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@taglib tagdir="/WEB-INF/tags/session" prefix="session"%>
-<session:my_funcionario context="${pageContext.servletContext.contextPath}"/>
+<session:my_gerente context="${pageContext.servletContext.contextPath}"/>
 <!DOCTYPE html>
 <html>
     <head>
@@ -53,77 +53,73 @@
 
 					<tbody>
 						<c:forEach var="pedido" items="${requestScope.pedidos}" varStatus="status" >
-							<c:choose>
-								<c:when test="${pedido.pedido.status == 'pago'}"/>
-								<c:otherwise>
-									<tr>	
-										<td>
-											<span class="h6"><c:out value="${pedido.idPedido}"/></span>
-										</td>
-										<td>
-											<span class="h6"><c:out value="${pedido.idProduto} - "/></span>
-											<span class="h6"><c:out value="${pedido.nomeProduto}"/></span>
-										</td>
-										<td>
-											<span class="h6"><c:out value="${pedido.pedido.comanda}"/></span>
-										</td>
-										<td>
-											<span class="h6"><c:out value="${pedido.pedido.cliente_login}"/></span>
-										</td>
-										<td>
-											<span class="h6"><c:out value="${pedido.getFormatted(pedido.valor)}"/></span>
-										</td>	
-										<td>
-											<span class="h6"><c:out value="${pedido.qtd}"/></span>
-										</td>
-										<td>
-											<span class="h6"><c:out value="${pedido.pedido.obs}"/></span>
-										</td>
-										<td>
-											<span class="h6"><c:out value="${pedido.pedido.status}"/></span>
-										</td>
-										<td>
-											<c:choose>
-												<c:when test="${pedido.pedido.tipo == 'online'}">
-													<c:choose>	
-														<c:when test="${pedido.pedido.status == 'enviado para entrega'}">
-															<a class="btn btn-default link_confirmar_pag"
-															   href="#"
-															   >Confirmar pagamento</a>
-														</c:when>
-														<c:otherwise>
-															<a class="btn btn-default link_enviar"
-															   href="#"
-															   >Enviar</a>
-														</c:otherwise>
-													</c:choose>
+							<tr>	
+								<td>
+									<span class="h6"><c:out value="${pedido.idPedido}"/></span>
+								</td>
+								<td>
+									<span class="h6"><c:out value="${pedido.idProduto} - "/></span>
+									<span class="h6"><c:out value="${pedido.nomeProduto}"/></span>
+								</td>
+								<td>
+									<span class="h6"><c:out value="${pedido.pedido.comanda}"/></span>
+								</td>
+								<td>
+									<span class="h6"><c:out value="${pedido.pedido.cliente_login}"/></span>
+								</td>
+								<td>
+									<span class="h6"><c:out value="${pedido.getFormatted(pedido.valor)}"/></span>
+								</td>	
+								<td>
+									<span class="h6"><c:out value="${pedido.qtd}"/></span>
+								</td>
+								<td>
+									<span class="h6"><c:out value="${pedido.pedido.obs}"/></span>
+								</td>
+								<td>
+									<span class="h6"><c:out value="${pedido.pedido.status}"/></span>
+								</td>
+								<td>
+									<c:choose>
+										<c:when test="${pedido.pedido.tipo == 'online'}">
+											<c:choose>	
+												<c:when test="${pedido.pedido.status == 'enviado para entrega'}">
+													<a class="btn btn-default link_confirmar_pag"
+													   href="#"
+													   >Confirmar pagamento</a>
 												</c:when>
+												<c:otherwise>
+													<a class="btn btn-default link_enviar"
+													   href="#"
+													   >Enviar</a>
+												</c:otherwise>
+											</c:choose>
+										</c:when>
 
-												<c:when test="${pedido.pedido.tipo == 'presencial'}"> 
-													<c:choose>
-														<c:when test="${pedido.pedido.status == 'entregue'}">
-															<a class="btn btn-default link_confirmar_pgmt"
-															   href="#"
-															   data-href="${pageContext.servletContext.contextPath}/pedido/confirmar_pgmt?id=${pedido.pedido.id}"
-															   >Confirmar pagamento</a>
-														</c:when>
-														<c:otherwise>
-															<a class="btn btn-default link_confirmar_entrega"
-															   href="#"
-															   data-href="${pageContext.servletContext.contextPath}/pedido/confirmar_entrega?id=${pedido.pedido.id}"
-															   >Confirmar entrega</a>
-														</c:otherwise>
-													</c:choose>
+										<c:when test="${pedido.pedido.tipo == 'presencial'}"> 
+											<c:choose>
+												<c:when test="${pedido.pedido.status == 'entregue'}">
+													<a class="btn btn-default link_confirmar_pgmt"
+													   href="#"
+													   data-href="${pageContext.servletContext.contextPath}/pedido/confirmar_pgmt?id=${pedido.pedido.id}"
+													   >Confirmar pagamento</a>
 												</c:when>
-											</c:choose>	
-										</td>
-									</tr>
-								</c:otherwise>	
-							</c:choose>	
+												<c:when test="${pedido.pedido.status == 'pago'}"/>
+												<c:otherwise>
+													<a class="btn btn-default link_confirmar_entrega"
+													   href="#"
+													   data-href="${pageContext.servletContext.contextPath}/pedido/confirmar_entrega?id=${pedido.pedido.id}"
+													   >Confirmar entrega</a>
+												</c:otherwise>
+											</c:choose>
+										</c:when>
+									</c:choose>	
+								</td>
+							</tr>	
 						</c:forEach>
 
 				</table>
-
+				   
 				<div class="modal modal_confirmar_entrega">
 					<div class="modal-dialog">
 						<div class="modal-content">
@@ -141,7 +137,7 @@
 						</div>
 					</div>
 				</div>
-
+				   
 				<div class="modal modal_confirmar_pgmt">
 					<div class="modal-dialog">
 						<div class="modal-content">
@@ -159,7 +155,7 @@
 						</div>
 					</div>
 				</div> 
-
+				   
 			</div>
 
 		</div>

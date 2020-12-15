@@ -40,7 +40,7 @@ public class MyProdutoPedidoDAO implements ProdutoPedidoDAO {
 	
 	private final static String DELETE_QUERY =
 		"DELETE FROM restaurante.produtos_pedidos " +
-		"WHERE pedido_idPedido = ? AND produto_idProduto;";
+		"WHERE pedido_idPedido = ? AND produto_idProduto = ?;";
 	
 	
 	@Override

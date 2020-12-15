@@ -87,11 +87,19 @@
 													<a class="btn btn-default link_confirmar_pag"
 													   href="#"
 													   >Confirmar pagamento</a>
+													<a class="btn btn-warning link_cancelar"
+													   href="#"
+													   data-href="${pageContext.servletContext.contextPath}/pedido/cancelar_prod?idPed=${pedido.pedido.id}&idProd=${pedido.idProduto}"
+													   >Cancelar</a>
 												</c:when>
 												<c:otherwise>
 													<a class="btn btn-default link_enviar"
 													   href="#"
 													   >Enviar</a>
+													<a class="btn btn-warning link_cancelar"
+													   href="#"
+													   data-href="${pageContext.servletContext.contextPath}/pedido/cancelar_prod?idPed=${pedido.pedido.id}&idProd=${pedido.idProduto}"
+													   >Cancelar</a>
 												</c:otherwise>
 											</c:choose>
 										</c:when>
@@ -103,6 +111,10 @@
 													   href="#"
 													   data-href="${pageContext.servletContext.contextPath}/pedido/confirmar_pgmt?id=${pedido.pedido.id}"
 													   >Confirmar pagamento</a>
+													<a class="btn btn-warning link_cancelar"
+													   href="#"
+													   data-href="${pageContext.servletContext.contextPath}/pedido/cancelar_prod?idPed=${pedido.pedido.id}&idProd=${pedido.idProduto}"
+													   >Cancelar</a>
 												</c:when>
 												<c:when test="${pedido.pedido.status == 'pago'}"/>
 												<c:otherwise>
@@ -110,6 +122,10 @@
 													   href="#"
 													   data-href="${pageContext.servletContext.contextPath}/pedido/confirmar_entrega?id=${pedido.pedido.id}"
 													   >Confirmar entrega</a>
+													<a class="btn btn-warning link_cancelar"
+													   href="#"
+													   data-href="${pageContext.servletContext.contextPath}/pedido/cancelar_prod?idPed=${pedido.pedido.id}&idProd=${pedido.idProduto}"
+													   >Cancelar</a>
 												</c:otherwise>
 											</c:choose>
 										</c:when>
@@ -150,6 +166,24 @@
 							</div>
 							<div class="modal-footer">
 								<a class="btn btn-primary link_confirmacao_pgmt">Sim</a>
+								<button class="btn btn-default" type="button" data-dismiss="modal">Não</button>
+							</div>
+						</div>
+					</div>
+				</div> 
+				   
+				<div class="modal fade modal_cancelar">
+					<div class="modal-dialog">
+						<div class="modal-content">
+							<div class="modal-header">
+								<h4 class="modal-title">Confirmação</h4>
+								<button class="close" type="button" data-dismiss="modal"><span>&times;</span></button>
+							</div>
+							<div class="modal-body">
+								<p>Deseja mesmo cancelar este produto deste pedido?</p>
+							</div>
+							<div class="modal-footer">
+								<a class="btn btn-danger link_confirmacao_cancelar">Sim</a>
 								<button class="btn btn-default" type="button" data-dismiss="modal">Não</button>
 							</div>
 						</div>

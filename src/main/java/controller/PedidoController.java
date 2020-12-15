@@ -37,6 +37,7 @@ import model.PedidoInfo;
 import model.Produto;
 import model.ProdutoPedido;
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 /**
@@ -48,7 +49,8 @@ import org.json.JSONObject;
 		"/pedidos",
 		"/pedido/createPresencial",
 		"/pedido/confirmar_entrega",
-		"/pedido/confirmar_pgmt"
+		"/pedido/confirmar_pgmt",
+		"/pedido/cancelar_prod"
 	})
 public class PedidoController extends HttpServlet implements Jsonable {
 
@@ -86,7 +88,6 @@ public class PedidoController extends HttpServlet implements Jsonable {
 			case "/pedidos": {
 				
 				String result_url;
-				session = request.getSession(false);
 				if(session != null){
 					if(session.getAttribute("gerente") != null){
 						result_url = "/view/pedido/gerente_pedidos.jsp";
@@ -105,12 +106,39 @@ public class PedidoController extends HttpServlet implements Jsonable {
 					Produto prod;
 					Pedido ped;
 					
-					List <PedidoInfo> pedidos = dao_ped_info.all();
+					List <PedidoInfo> pedidos;
+					if(session != null){
+						if(session.getAttribute("gerente") != null){
+							pedidos = dao_ped_info.all();
+						}
+						else if(session.getAttribute("funcionario") != null){
+							Funcionario f = (Funcionario)session.getAttribute("funcionario");
+							String login = f.getLogin();
+							pedidos = dao_ped_info.readRelevant(login);
+						}
+						else {
+							dispatcher = request.getRequestDispatcher(result_url);
+							dispatcher.forward(request, response);
+							break;
+						} 
+					}
+					else {
+						dispatcher = request.getRequestDispatcher(result_url);
+						dispatcher.forward(request, response);
+						break;
+					} 
+					
+					
 					for (PedidoInfo pInfo : pedidos){
 						ped = dao_ped.read(pInfo.getIdPedido());
-						prod = dao_prod.read(pInfo.getIdProduto());
 						pInfo.setPedido(ped);
-						pInfo.setNomeProduto(prod.getNome());
+						System.out.print("status: " + pInfo.getPedido().getStatus());
+						if(ped.getStatus().equals("finalizado") == false
+						&& ped.getStatus().equals("cancelado") == false){
+							System.out.println("idPed: " + pInfo.getIdPedido() + "idProd: " + pInfo.getIdProduto());
+							prod = dao_prod.read(pInfo.getIdProduto());
+							pInfo.setNomeProduto(prod.getNome());
+						}
 					}
 					
 					request.setAttribute("pedidos", pedidos);
@@ -175,6 +203,47 @@ public class PedidoController extends HttpServlet implements Jsonable {
 				response.getWriter().println(request.getContextPath() + "/pedidos");
 				break;
 			}	
+			
+			case "/pedido/cancelar_prod": {
+				try (DAOFactory daoFactory = DAOFactory.getInstance()) {
+					int idPed = Integer.parseInt(request.getParameter("idPed"));
+					int idProd = Integer.parseInt(request.getParameter("idProd"));
+					
+					dao_atd = daoFactory.getAtendimentoDAO();
+					dao_prod_ped = daoFactory.getProdutoPedidoDAO();
+					dao_ped = daoFactory.getPedidoDAO();
+					
+					try {
+						daoFactory.beginTransaction();
+						
+						dao_atd.delete(idPed, idProd);
+						dao_prod_ped.delete(idPed, idProd);
+
+						List <Atendimento> atendimentos = dao_atd.readByPedido(idPed);
+						if(atendimentos.isEmpty()){ //pedido nao possui mais produtos
+							dao_ped.updateStatus(idPed, "cancelado");
+						}
+						
+						daoFactory.commitTransaction();
+						daoFactory.endTransaction();
+					
+					} catch (SQLException ex) {
+						daoFactory.rollbackTransaction();
+						session.setAttribute("error", ex.getMessage());
+						response.sendError(500);
+						break;
+					}
+					
+				}catch (ClassNotFoundException | IOException | SQLException ex) {
+					session.setAttribute("error", ex.getMessage());
+					response.sendError(500);
+					break;
+				}
+				
+				response.setContentType("text/plain");
+				response.getWriter().println(request.getContextPath() + "/pedidos");
+				break;
+			}
 		}
 	}
 
@@ -267,6 +336,10 @@ public class PedidoController extends HttpServlet implements Jsonable {
 						daoFactory.rollbackTransaction();
 						response.sendError(500);
 						break;
+					}catch (NumberFormatException | JSONException ex) {
+						session.setAttribute("error", ex.getMessage());
+						daoFactory.rollbackTransaction();
+						response.sendError(500);
 					}
 				} catch (ClassNotFoundException | IOException | SQLException ex) {
 					session.setAttribute("error", ex.getMessage());

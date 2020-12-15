@@ -28,6 +28,15 @@ $(document).ready(function () {
 			location.replace(data);
 		});
 	});
+	
+	$(document).on('click', '.link_cancelar', cancelarProduto);
+	$(document).on('click', '.link_confirmacao_cancelar', function(e){
+		e.preventDefault();
+		var url = $(this).attr('href');
+		$.get(url, function(data){
+			location.replace(data);
+		});
+	});
 });
 
 function confirmarEntrega(e) {
@@ -40,4 +49,10 @@ function confirmarPagamento(e) {
     e.preventDefault();
 	$('.link_confirmacao_pgmt').attr('href', $(this).data('href'));
 	$('.modal_confirmar_pgmt').modal();
+}
+
+function cancelarProduto(e) {
+    e.preventDefault();
+	$('.link_confirmacao_cancelar').attr('href', $(this).data('href'));
+	$('.modal_cancelar').modal();
 }

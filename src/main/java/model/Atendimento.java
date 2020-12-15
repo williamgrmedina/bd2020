@@ -10,19 +10,10 @@ package model;
  * @author Medina
  */
 public class Atendimento {
-	private int idAtendimento;
 	private String inicio;
 	private String fim;
 	private int idPedido;
 	private int idProduto;
-
-	public int getIdAtendimento() {
-		return idAtendimento;
-	}
-
-	public void setIdAtendimento(int idAtendimento) {
-		this.idAtendimento = idAtendimento;
-	}
 
 	public String getInicio() {
 		return inicio;

@@ -25,13 +25,11 @@ DROP TABLE IF EXISTS `atendimentos`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `atendimentos` (
-  `idAtendimento` int NOT NULL AUTO_INCREMENT,
   `inicio` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `fim` timestamp NULL DEFAULT NULL,
   `atend_idPedido` int NOT NULL,
   `atend_idProduto` int NOT NULL,
-  PRIMARY KEY (`idAtendimento`,`atend_idPedido`,`atend_idProduto`),
-  UNIQUE KEY `idAtendimento_UNIQUE` (`idAtendimento`),
+  PRIMARY KEY (`atend_idPedido`,`atend_idProduto`),
   KEY `fk_Atendimento_pedido_solicita_produto1_idx` (`atend_idPedido`,`atend_idProduto`),
   CONSTRAINT `fk_Atendimento_pedido_solicita_produto1` FOREIGN KEY (`atend_idPedido`, `atend_idProduto`) REFERENCES `produtos_pedidos` (`pedido_idPedido`, `produto_idProduto`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;

@@ -55,7 +55,9 @@
 						<c:forEach var="pedido" items="${requestScope.pedidos}" varStatus="status" >
 							<c:choose>
 								<c:when test="${pedido.pedido.status == 'pago'}"/>
+								<c:when test="${pedido.pedido.status == 'cancelado'}"/>
 								<c:otherwise>
+
 									<tr>	
 										<td>
 											<span class="h6"><c:out value="${pedido.idPedido}"/></span>
@@ -118,7 +120,8 @@
 											</c:choose>	
 										</td>
 									</tr>
-								</c:otherwise>	
+								</c:otherwise>
+
 							</c:choose>	
 						</c:forEach>
 

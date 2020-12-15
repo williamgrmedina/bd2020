@@ -30,16 +30,21 @@ public class MyAtendimentoDAO implements AtendimentoDAO {
 
 	private final static String READ_QUERY = 
 		"SELECT * FROM restaurante.atendimentos " +
-		"WHERE idAtendimento = ?;";
+		"WHERE atend_idPedido = ? AND atend_idProduto = ?;";
 	
 	private final static String UPDATE_QUERY =
 		"UPDATE restaurante.atendimentos " +
-		"SET idAtendimento = ?, inicio = ?, atend_idPedido = ?, atend_idProduto = ? " +
+		"SET atend_idPedido = ?, atend_idProduto = ?, fim = ? " +
 		"WHERE idAtendimento = ?;";
+	
+	private final static String FINALIZE_QUERY =
+		"UPDATE restaurante.atendimentos " +
+		"SET fim = CURRENT_TIMESTAMP() " +
+		"WHERE atend_idPedido = ? AND atend_idProduto = ?;";
 	
 	private final static String DELETE_QUERY =
 		"DELETE FROM restaurante.atendimentos " +
-		"WHERE idAtendimento = ?;";
+		"WHERE atend_idPedido = ? AND atend_idProduto = ?;";
 	
 	private final static String READ_ALL_QUERY =
 		"SELECT * FROM restaurante.atendimentos; ";
@@ -68,15 +73,15 @@ public class MyAtendimentoDAO implements AtendimentoDAO {
 	}
 
 	@Override
-	public Atendimento read(Integer idAtendimento) throws SQLException {
+	public Atendimento read(Integer idPedido, Integer idProduto) throws SQLException {
 		Atendimento atd = new Atendimento();
 		
 		try(PreparedStatement statement = connection.prepareStatement(READ_QUERY)){
-			statement.setInt(1, idAtendimento);
+			statement.setInt(1, idPedido);
+			statement.setInt(2, idProduto);
 			
 			try(ResultSet result = statement.executeQuery()){
 				if(result.next()){
-					atd.setIdAtendimento(result.getInt("idAtendimento"));
 					atd.setInicio(result.getString("inicio"));
 					atd.setFim(result.getString("fim"));
 					atd.setIdPedido(result.getInt("atend_idPedido"));
@@ -100,11 +105,27 @@ public class MyAtendimentoDAO implements AtendimentoDAO {
 	@Override
 	public void update(Atendimento atd) throws SQLException {
 		try(PreparedStatement statement = connection.prepareStatement(UPDATE_QUERY)){
-			statement.setInt(1, atd.getIdAtendimento());
-			statement.setString(2, atd.getInicio());
+			statement.setInt(1, atd.getIdPedido());
+			statement.setInt(2, atd.getIdProduto());
 			statement.setString(3, atd.getFim());
-			statement.setInt(4, atd.getIdPedido());
-			statement.setInt(5, atd.getIdProduto());
+			
+			statement.executeUpdate();
+			
+		}catch(SQLException ex){
+			Logger.getLogger(MyAtendimentoDAO.class.getName()).log(Level.SEVERE, "DAO", ex);
+			if (ex.getMessage().contains("not-null")) {
+                throw new SQLException("Erro ao atualizar atendimento: um campo obrigatório está em branco.");
+            }
+			else throw new SQLException("Erro ao atualizar atendimento.");
+		}
+	}
+	
+	@Override
+	public void finalize(Atendimento atd) throws SQLException {
+		try(PreparedStatement statement = connection.prepareStatement(FINALIZE_QUERY)){
+			
+			statement.setInt(1, atd.getIdPedido());
+			statement.setInt(2, atd.getIdProduto());
 			
 			statement.executeUpdate();
 			
@@ -118,10 +139,12 @@ public class MyAtendimentoDAO implements AtendimentoDAO {
 	}
 
 	@Override
-	public void delete(Integer idAtendimento) throws SQLException {
+	public void delete(Integer idPedido, Integer idProduto) throws SQLException {
 		try (PreparedStatement statement = connection.prepareStatement(DELETE_QUERY)) {
             
-            statement.setInt(1, idAtendimento);
+            statement.setInt(1, idPedido);
+			statement.setInt(2, idProduto);
+			
 			statement.executeUpdate();
 			
 		} catch (SQLException ex) {
@@ -130,7 +153,6 @@ public class MyAtendimentoDAO implements AtendimentoDAO {
         }
 	}
 
-	@Override
 	public List<Atendimento> all() throws SQLException {
 		List<Atendimento> allAtd = new ArrayList<>();
         
@@ -139,8 +161,7 @@ public class MyAtendimentoDAO implements AtendimentoDAO {
             ResultSet result = statement.executeQuery();
             while (result.next()) {
                 Atendimento atd = new Atendimento();
-                atd.setIdAtendimento(result.getInt("idAtendimento"));
-				atd.setInicio(result.getString("inicio"));
+                atd.setInicio(result.getString("inicio"));
 				atd.setFim(result.getString("fim"));
 				atd.setIdPedido(result.getInt("atend_idPedido"));
 				atd.setIdProduto(result.getInt("atend_idProduto"));
@@ -164,8 +185,7 @@ public class MyAtendimentoDAO implements AtendimentoDAO {
             ResultSet result = statement.executeQuery();
             while (result.next()) {
                 Atendimento atd = new Atendimento();
-                atd.setIdAtendimento(result.getInt("idAtendimento"));
-				atd.setInicio(result.getString("inicio"));
+                atd.setInicio(result.getString("inicio"));
 				atd.setFim(result.getString("fim"));
 				atd.setIdPedido(result.getInt("atend_idPedido"));
 				atd.setIdProduto(result.getInt("atend_idProduto"));

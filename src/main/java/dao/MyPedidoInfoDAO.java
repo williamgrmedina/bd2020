@@ -46,6 +46,34 @@ public class MyPedidoInfoDAO {
 	"JOIN partial_info " +
 	"USING (idPedido);";
 	
+	String LIST_INFO_RELEVANT_QUERY = 
+	"WITH prod_ped AS " +
+		"(" +
+			"SELECT  pedido_idPedido AS idPedido, " + 
+			"produto_idProduto AS idProduto, " +
+			"valor, qtd " +
+			"FROM restaurante.produtos_pedidos " +
+		"), " +
+	"atendimentos AS " +
+		"(" +
+			"SELECT  atend_idPedido AS idPedido, " +
+			"atend_idProduto AS idProduto, " +
+			"inicio, fim " +
+			"FROM restaurante.atendimentos" +
+		")," +
+	"partial_info AS " +
+		"(" +
+			"SELECT * FROM atendimentos " +
+			"JOIN prod_ped " +
+			"USING (idPedido, idProduto)" +
+		")" +
+	"SELECT * FROM restaurante.pedidos " +
+	"LEFT JOIN partial_info " +
+	"USING (idPedido) " +
+	"WHERE funcionario_login = ? " +
+	"OR cliente_login IS NOT NULL AND " +
+	"funcionario_login IS NULL;";
+	
 	Connection connection;
 	
 	public MyPedidoInfoDAO(Connection connection) {
@@ -79,5 +107,31 @@ public class MyPedidoInfoDAO {
 		}
 	}
 	
-	
+	public List<PedidoInfo> readRelevant(String login) throws SQLException {
+		List<PedidoInfo> allPedInfo = new ArrayList<>();
+		
+		try (PreparedStatement statement = connection.prepareStatement(LIST_INFO_RELEVANT_QUERY)) {
+			statement.setString(1, login);
+			
+            ResultSet result = statement.executeQuery();
+            while (result.next()) {
+                PedidoInfo info = new PedidoInfo();
+				info.setIdPedido(result.getInt("idPedido"));
+                info.setIdProduto(result.getInt("idProduto"));
+				info.setInicio(result.getString("inicio"));
+				info.setFim(result.getString("fim"));
+				info.setValor(result.getBigDecimal("valor"));
+				info.setQtd(result.getInt("qtd"));
+				info.setStatus(result.getString("status"));
+				/*Pedido e nome do produto deverão ser setados após criação 
+				do PedidoInfo, utilizando as classes PedidoDAO e ProdutoDAO*/
+				allPedInfo.add(info);
+			}
+			return allPedInfo;
+		}
+		catch(SQLException ex){
+			Logger.getLogger(MyProdutoDAO.class.getName()).log(Level.SEVERE, "DAO", ex);
+            throw new SQLException("Erro ao listar informacoes de pedidos.");
+		}
+	}
 }

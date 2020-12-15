@@ -40,7 +40,12 @@ public class MyAtendimentoDAO implements AtendimentoDAO {
 	private final static String FINALIZE_QUERY =
 		"UPDATE restaurante.atendimentos " +
 		"SET fim = CURRENT_TIMESTAMP() " +
-		"WHERE atend_idPedido = ? AND atend_idProduto = ?;";
+		"WHERE atend_idPedido = ? AND atend_idProduto";
+	
+	private final static String FINALIZE_BY_PED_QUERY =
+		"UPDATE restaurante.atendimentos " +
+		"SET fim = CURRENT_TIMESTAMP() " +
+		"WHERE atend_idPedido = ?;";
 	
 	private final static String DELETE_QUERY =
 		"DELETE FROM restaurante.atendimentos " +
@@ -126,6 +131,23 @@ public class MyAtendimentoDAO implements AtendimentoDAO {
 			
 			statement.setInt(1, atd.getIdPedido());
 			statement.setInt(2, atd.getIdProduto());
+			
+			statement.executeUpdate();
+			
+		}catch(SQLException ex){
+			Logger.getLogger(MyAtendimentoDAO.class.getName()).log(Level.SEVERE, "DAO", ex);
+			if (ex.getMessage().contains("not-null")) {
+                throw new SQLException("Erro ao atualizar atendimento: um campo obrigatório está em branco.");
+            }
+			else throw new SQLException("Erro ao atualizar atendimento.");
+		}
+	}
+	
+	@Override
+	public void finalizeByPedido(int idPedido) throws SQLException {
+		try(PreparedStatement statement = connection.prepareStatement(FINALIZE_BY_PED_QUERY)){
+			
+			statement.setInt(1, idPedido);
 			
 			statement.executeUpdate();
 			

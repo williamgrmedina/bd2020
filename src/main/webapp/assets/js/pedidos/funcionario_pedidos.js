@@ -11,6 +11,26 @@ $(document).ready(function () {
 	});
 	$('.dataTables_length').addClass('bs-select');
 	
+	$(document).on('click', '.link_confirmar_ped', confirmarPedido);
+	$(document).on('click', '.link_confirmacao_ped', function(e){
+		e.preventDefault();
+		var url = $(this).attr('href');
+		console.log(url);
+		$.get(url, function(data){
+			location.replace(data);
+		});
+	});
+	
+	$(document).on('click', '.link_enviar', confirmarEnvio);
+	$(document).on('click', '.link_confirmacao_envio', function(e){
+		e.preventDefault();
+		var url = $(this).attr('href');
+		console.log(url);
+		$.get(url, function(data){
+			location.replace(data);
+		});
+	});
+	
 	$(document).on('click', '.link_confirmar_entrega', confirmarEntrega);
 	$(document).on('click', '.link_confirmacao_entrega', function(e){
 		e.preventDefault();
@@ -39,10 +59,22 @@ $(document).ready(function () {
 	});
 });
 
+function confirmarEnvio(e) {
+    e.preventDefault();
+	$('.link_confirmacao_envio').attr('href', $(this).data('href'));
+	$('.modal_enviar').modal();
+}
+
 function confirmarEntrega(e) {
     e.preventDefault();
 	$('.link_confirmacao_entrega').attr('href', $(this).data('href'));
 	$('.modal_confirmar_entrega').modal();
+}
+
+function confirmarPedido(e) {
+    e.preventDefault();
+	$('.link_confirmacao_ped').attr('href', $(this).data('href'));
+	$('.modal_confirmar_ped').modal();
 }
 
 function confirmarPagamento(e) {

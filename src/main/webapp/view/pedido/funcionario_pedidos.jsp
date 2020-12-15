@@ -88,15 +88,23 @@
 											<c:choose>
 												<c:when test="${pedido.pedido.tipo == 'online'}">
 													<c:choose>	
-														<c:when test="${pedido.pedido.status == 'enviado para entrega'}">
-															<a class="btn btn-default link_confirmar_pag"
+														<c:when test="${pedido.pedido.status == 'aguardando confirmacao'}">
+															<a class="btn btn-default link_confirmar_ped"
 															   href="#"
+															   data-href="${pageContext.servletContext.contextPath}/pedido/confirmar?id=${pedido.pedido.id}"
+															   >Confirmar pedido</a>
+														</c:when>
+														<c:when test="${pedido.pedido.status == 'enviado para entrega'}">
+															<a class="btn btn-default link_confirmar_pgmt"
+															   href="#"
+															   data-href="${pageContext.servletContext.contextPath}/pedido/confirmar_pgmt?id=${pedido.pedido.id}"
 															   >Confirmar pagamento</a>
 														</c:when>
 														<c:otherwise>
 															<a class="btn btn-default link_enviar"
 															   href="#"
-															   >Enviar</a>
+															   data-href="${pageContext.servletContext.contextPath}/pedido/enviar?id=${pedido.pedido.id}"
+																>Enviar para entrega</a>
 														</c:otherwise>
 													</c:choose>
 												</c:when>
@@ -127,23 +135,59 @@
 
 				</table>
 
-				<div class="modal modal_confirmar_entrega">
-					<div class="modal-dialog">
-						<div class="modal-content">
-							<div class="modal-header">
-								<h4 class="modal-title">Confirmação</h4>
-								<button class="close" type="button" data-dismiss="modal"><span>&times;</span></button>
-							</div>
-							<div class="modal-body">
-								<p>Confirmar entrega deste pedido?</p>
-							</div>
-							<div class="modal-footer">
-								<a class="btn btn-primary link_confirmacao_entrega">Sim</a>
-								<button class="btn btn-default" type="button" data-dismiss="modal">Não</button>
-							</div>
-						</div>
-					</div>
-				</div>
+				   <div class="modal modal_enviar">
+					   <div class="modal-dialog">
+						   <div class="modal-content">
+							   <div class="modal-header">
+								   <h4 class="modal-title">Confirmação</h4>
+								   <button class="close" type="button" data-dismiss="modal"><span>&times;</span></button>
+							   </div>
+							   <div class="modal-body">
+								   <p>Enviar este pedido para entrega?</p>
+							   </div>
+							   <div class="modal-footer">
+								   <a class="btn btn-primary link_confirmacao_envio">Sim</a>
+								   <button class="btn btn-default" type="button" data-dismiss="modal">Não</button>
+							   </div>
+						   </div>
+					   </div>
+				   </div>
+
+				   <div class="modal modal_confirmar_entrega">
+					   <div class="modal-dialog">
+						   <div class="modal-content">
+							   <div class="modal-header">
+								   <h4 class="modal-title">Confirmação</h4>
+								   <button class="close" type="button" data-dismiss="modal"><span>&times;</span></button>
+							   </div>
+							   <div class="modal-body">
+								   <p>Confirmar entrega deste pedido?</p>
+							   </div>
+							   <div class="modal-footer">
+								   <a class="btn btn-primary link_confirmacao_entrega">Sim</a>
+								   <button class="btn btn-default" type="button" data-dismiss="modal">Não</button>
+							   </div>
+						   </div>
+					   </div>
+				   </div>
+
+				   <div class="modal modal_confirmar_ped">
+					   <div class="modal-dialog">
+						   <div class="modal-content">
+							   <div class="modal-header">
+								   <h4 class="modal-title">Confirmação</h4>
+								   <button class="close" type="button" data-dismiss="modal"><span>&times;</span></button>
+							   </div>
+							   <div class="modal-body">
+								   <p>Confirmar este pedido?</p>
+							   </div>
+							   <div class="modal-footer">
+								   <a class="btn btn-primary link_confirmacao_ped">Sim</a>
+								   <button class="btn btn-default" type="button" data-dismiss="modal">Não</button>
+							   </div>
+						   </div>
+					   </div>
+				   </div>
 
 				<div class="modal modal_confirmar_pgmt">
 					<div class="modal-dialog">

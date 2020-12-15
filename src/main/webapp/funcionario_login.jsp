@@ -13,17 +13,15 @@
         <title>[BD 2020] Login</title>
     </head>
     <body>
-        <div class="container text-center">
-            <h2 class="form-signin-heading">Escolha uma opção.</h2>
+        <div class="container">
+            <form class="form-signin" action="${pageContext.servletContext.contextPath}/loginFuncionario" method="POST">
+                <h2 class="form-signin-heading">Por favor, faça login.</h2>
 
-                <a class="btn btn-lg btn-primary" href="${pageContext.servletContext.contextPath}/funcionario">
-                    Sou funcionário
-                </a>
-					<p></p>
-				<a class="btn btn-lg btn-primary" href="${pageContext.servletContext.contextPath}/cliente">
-                    Sou cliente
-                </a>
-					
+                <input class="form-control" type="text" name="login" placeholder="Usuário" required autofocus>
+                <input class="form-control" type="password" name="senha" placeholder="Senha" required>
+
+                <button class="btn btn-lg btn-primary btn-block" type="submit">Login</button>
+            </form>
                         
         </div>
 

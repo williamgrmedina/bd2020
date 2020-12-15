@@ -33,19 +33,19 @@ public class Cliente {
 		this.senha = senha;
 	}
 
-	public String getPnome() {
+	public String getPNome() {
 		return pnome;
 	}
 
-	public void setPnome(String pnome) {
+	public void setPNome(String pnome) {
 		this.pnome = pnome;
 	}
 
-	public String getSnome() {
+	public String getSNome() {
 		return snome;
 	}
 
-	public void setSnome(String snome) {
+	public void setSNome(String snome) {
 		this.snome = snome;
 	}
 

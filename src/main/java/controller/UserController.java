@@ -7,6 +7,7 @@ package controller;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import dao.ClienteDAO;
 import dao.DAOFactory;
 import dao.UserDAO;
 import java.io.File;
@@ -34,6 +35,7 @@ import org.apache.commons.fileupload.FileUploadException;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import dao.DAOInt;
+import model.Cliente;
 
 /**
  *
@@ -94,7 +96,7 @@ public class UserController extends HttpServlet {
             }
 
             case "/user/create": {
-                dispatcher = request.getRequestDispatcher("/view/user/create.jsp");
+                dispatcher = request.getRequestDispatcher("/view/cliente/create.jsp");
                 dispatcher.forward(request, response);
                 break;
             }
@@ -158,8 +160,8 @@ public class UserController extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
-        DAOInt<User> dao;
-        User user = new User();
+        ClienteDAO cdao;
+		Cliente cl = new Cliente();
         HttpSession session = request.getSession();
 
         String servletPath = request.getServletPath();
@@ -196,57 +198,30 @@ public class UserController extends HttpServlet {
 
                             switch (fieldName) {
                                 case "login":
-                                    user.setLogin(fieldValue);
+                                    cl.setLogin(fieldValue);
                                     break;
                                 case "senha":
-                                    user.setSenha(fieldValue);
+                                    cl.setSenha(fieldValue);
                                     break;
                                 case "nome":
-                                    user.setNome(fieldValue);
+                                    cl.setPNome(fieldValue);
                                     break;
-                                case "nascimento":
-                                    java.util.Date dataNascimento = new SimpleDateFormat("yyyy-mm-dd").parse(fieldValue);
-                                    user.setNascimento(new Date(dataNascimento.getTime()));
-                                    break;
-                                case "id":
-                                    user.setId(Integer.parseInt(fieldValue));
+                                case "sobrenome":
+									cl.setSNome(fieldValue);
+                                case "email":
+									cl.setEmail(fieldValue);
                             }
-                        } else {
-                            String fieldName = item.getFieldName();
-                            String fileName = item.getName();
-                            if (fieldName.equals("avatar") && !fileName.isBlank()) {
-                                // Dados adicionais (não usado nesta aplicação)
-                                String contentType = item.getContentType();
-                                boolean isInMemory = item.isInMemory();
-                                long sizeInBytes = item.getSize();
-
-                                // Pega o caminho absoluto da aplicação
-                                String appPath = request.getServletContext().getRealPath("");
-                                // Grava novo arquivo na pasta img no caminho absoluto
-                                String savePath = appPath + File.separator + SAVE_DIR + File.separator + fileName;
-                                File uploadedFile = new File(savePath);
-                                item.write(uploadedFile);
-
-                                user.setAvatar(fileName);
-                            }
-                        }
+						}
                     }
-
-                    dao = daoFactory.getUserDAO();
+					
+                    cdao = daoFactory.getClienteDAO();
 
                     if (servletPath.equals("/user/create")) {
-                        dao.create(user);
-                    } else {
-                        servletPath += "?id=" + String.valueOf(user.getId());
-                        dao.update(user);
+                        cdao.create(cl);
                     }
 
-                    response.sendRedirect(request.getContextPath() + "/user");
+                    response.sendRedirect(request.getContextPath() + "/cliente");
 
-                } catch (ParseException ex) {
-                    Logger.getLogger(UserController.class.getName()).log(Level.SEVERE, "Controller", ex);
-                    session.setAttribute("error", "O formato de data não é válido. Por favor entre data no formato dd/mm/aaaa");
-                    response.sendRedirect(request.getContextPath() + servletPath);
                 } catch (FileUploadException ex) {
                     Logger.getLogger(UserController.class.getName()).log(Level.SEVERE, "Controller", ex);
                     session.setAttribute("error", "Erro ao fazer upload do arquivo.");
@@ -263,7 +238,7 @@ public class UserController extends HttpServlet {
                 break;
             }
             
-            case "/user/delete": {
+            /*case "/user/delete": {
                 String[] users = request.getParameterValues("delete");
 
                 try ( DAOFactory daoFactory = DAOFactory.getInstance()) {
@@ -318,7 +293,7 @@ public class UserController extends HttpServlet {
                 }
 
                 break;
-            }
+            }*/
 
         }
     }

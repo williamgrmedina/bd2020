@@ -1,13 +1,13 @@
 <%-- 
-    Document   : create
-    Created on : 6 de dez. de 2020, 18:04:09
+    Document   : cliente_welcome
+    Created on : 14 de dez. de 2020, 23:21:09
     Author     : Medina
 --%>
 
 <%@page contentType="text/html" pageEncoding="UTF-8" %>
 <%@taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@taglib tagdir="/WEB-INF/tags/session" prefix="session"%>
-<session:my_funcionario context="${pageContext.servletContext.contextPath}"/>
+<session:my_cliente context="${pageContext.servletContext.contextPath}"/>
 <!DOCTYPE html>
 <html>
     <head>
@@ -18,24 +18,18 @@
 		<div class="container">
             <h2 class="text-center">Inserção de um novo pedido</h2>
 
-			<p> 
-				<label class="control-label flex-grow-1" for="comanda">Comanda: </label>
-				<input class="form-control h2" id="comanda" type="number" name="comanda" 
-					   placeholder="insira o número da comanda..." required autofocus />
-			</p>
-
 			<div class="container">            
 				<div class="text-center div_voltar_confirmar">
 					<a class="btn btn-lg btn-default"
-					   href="${pageContext.servletContext.contextPath}/pedidos"
+					   href="${pageContext.servletContext.contextPath}/"
 					   data-toggle="tooltip"
 					   data-original-title="">
 						<i class="fa fa-arrow-left"></i>
-						Voltar para pedidos
+						Voltar para minha página
 					</a>
 
 					<a class="btn btn-lg btn-primary link_confirmar_pedido"
-					   href="${pageContext.servletContext.contextPath}/pedidos"
+					   href="${pageContext.servletContext.contextPath}/"
 					   data-toggle="tooltip"
 					   data-original-title="">
 						Confirmar pedido
@@ -62,17 +56,8 @@
 					</thead>
 
 					<tbody>
-						<c:forEach var="produto" items="${requestScope.produtos}" varStatus="status">
-							<c:choose>
-								<c:when test="${produto.qtd > 0}">
-									<tr class="info-color">
-								</c:when>
-
-								<c:otherwise>
-									<tr class="danger-color">
-								</c:otherwise>
-							</c:choose>	
-
+						<c:forEach var="produto" items="${requestScope.produtos}" varStatus="status">							
+							<tr class="info-color">			
 								<td>
 									<span class="h6"><c:out value="${produto.id}"/></span>
 								</td>
@@ -119,7 +104,7 @@
 				<div class="modal-dialog" role="document">
 					<div class="modal-content">
 						<div class="modal-header">
-							<h5 class="modal-title" id="observacoes">Observações?</h5>
+							<h5 class="modal-title" id="edit_prod_nome">Observações?</h5>
 							<button type="button" class="close" data-dismiss="modal" aria-label="Fechar">
 								<span aria-hidden="true">&times;</span>	
 							</button>
@@ -127,7 +112,7 @@
 
 						<form
 							class="form" id="form_obs" 
-							href="${pageContext.servletContext.contextPath}/pedido/createPresencial">
+							href="${pageContext.servletContext.contextPath}/pedido/createOnline">
 
 							<div class="form-group" width>
 								<input class="form-control h2" type="text" name="observacao" 
@@ -163,6 +148,6 @@
             </div>
 
 			<%@include file="/view/include/scripts.jsp" %>
-			<script src="${pageContext.servletContext.contextPath}/assets/js/pedidos/funcionario_gerar.js"></script>
+			<script src="${pageContext.servletContext.contextPath}/assets/js/pedidos/cliente_gerar.js"></script>
     </body>
 </html>

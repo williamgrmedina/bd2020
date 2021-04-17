@@ -13,50 +13,66 @@ import java.math.RoundingMode;
  * @author Medina
  */
 public class ProdutoPedido implements FormatCurrency {
-	private int idPedido;
-	private int idProduto;
-	private BigDecimal valor;
-	private int qtd;
-	Pedido pedido;
-	Produto produto;
-	Atendimento atd;
 
-	public int getIdPedido() {
-		return idPedido;
-	}
+    private int idPedido;
+    private int idProduto;
+    private BigDecimal valor;
+    private int qtd;
+    Pedido pedido;
+    Produto produto;
 
-	public void setIdPedido(int idPedido) {
-		this.idPedido = idPedido;
-	}
+    public int getIdPedido() {
+        return idPedido;
+    }
 
-	public int getIdProduto() {
-		return idProduto;
-	}
+    public void setIdPedido(int idPedido) {
+        this.idPedido = idPedido;
+    }
 
-	public void setIdProduto(int idProduto) {
-		this.idProduto = idProduto;
-	}
+    public int getIdProduto() {
+        return idProduto;
+    }
 
-	public BigDecimal getValor() {
-		return valor;
-	}
+    public void setIdProduto(int idProduto) {
+        this.idProduto = idProduto;
+    }
 
-	public void setValor(BigDecimal valor) {
-		this.valor = valor;
-	}
+    public BigDecimal getValor() {
+        return valor;
+    }
 
-	public int getQtd() {
-		return qtd;
-	}
+    public void setValor(BigDecimal valor) {
+        this.valor = valor;
+    }
 
-	public void setQtd(int qtd) {
-		this.qtd = qtd;
-	}
-	
-	@Override
-	public String getFormatted(BigDecimal value) {
-		value = value.setScale(2, RoundingMode.HALF_UP);
-		return "R$ " + value;
-	}
-	
+    public int getQtd() {
+        return qtd;
+    }
+
+    public void setQtd(int qtd) {
+        this.qtd = qtd;
+    }
+
+    public Pedido getPedido() {
+        return pedido;
+    }
+
+    public void setPedido(Pedido pedido) {
+        this.pedido = pedido;
+    }
+
+    public Produto getProduto() {
+        return produto;
+    }
+
+    public void setProduto(Produto produto) {
+        this.produto = produto;
+    }
+
+    @Override
+    public String getFormatted(BigDecimal value) {
+        value = value.setScale(2, RoundingMode.HALF_UP);
+        return "R$ " + value;
+    }
+
 }

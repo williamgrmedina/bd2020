@@ -34,12 +34,12 @@ import org.apache.commons.fileupload.servlet.ServletFileUpload;
  * @author Medina
  */
 @WebServlet(
-        name = "FuncionarioController", 
+        name = "FuncionarioController",
         urlPatterns = {"/gerente",
-			"/gerente/funcionarios",
-			"/funcionario/create",
-			"/funcionario/update",
-			"/funcionario/delete"
+            "/gerente/funcionarios",
+            "/funcionario/create",
+            "/funcionario/update",
+            "/funcionario/delete"
         })
 public class FuncionarioController extends HttpServlet {
 
@@ -52,7 +52,6 @@ public class FuncionarioController extends HttpServlet {
      * @throws ServletException if a servlet-specific error occurs
      * @throws IOException if an I/O error occurs
      */
-
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
     /**
      * Handles the HTTP <code>GET</code> method.
@@ -68,31 +67,31 @@ public class FuncionarioController extends HttpServlet {
         FuncionarioDAO dao;
         HttpSession session = request.getSession();
         RequestDispatcher dispatcher;
-		Funcionario fun;
-        
-        switch(request.getServletPath()){
-            case "/gerente/funcionarios":
-				try ( DAOFactory daoFactory = DAOFactory.getInstance()) {
-					dao = daoFactory.getFuncionarioDAO();
-					
-					Funcionario gerente = (Funcionario)session.getAttribute("gerente");
-					
-					List<Funcionario> funList = dao.get_gerenciados(gerente.getLogin());					
-					
-					request.setAttribute("funList", funList);
-				} catch (Exception ex) {
-					request.getSession().setAttribute("error", ex.getMessage());
-				} 
+        Funcionario fun;
 
-				dispatcher = request.getRequestDispatcher("/view/funcionario/gerente_funcionarios.jsp");
-				dispatcher.forward(request, response);
-				break;
-			case "/funcionario/create":
-				dispatcher = request.getRequestDispatcher("/view/funcionario/create.jsp");
+        switch (request.getServletPath()) {
+            case "/gerente/funcionarios":
+				try (DAOFactory daoFactory = DAOFactory.getInstance()) {
+                dao = daoFactory.getFuncionarioDAO();
+
+                Funcionario gerente = (Funcionario) session.getAttribute("gerente");
+
+                List<Funcionario> funList = dao.get_gerenciados(gerente.getLogin());
+
+                request.setAttribute("funList", funList);
+            } catch (Exception ex) {
+                request.getSession().setAttribute("error", ex.getMessage());
+            }
+
+            dispatcher = request.getRequestDispatcher("/view/funcionario/gerente_funcionarios.jsp");
+            dispatcher.forward(request, response);
+            break;
+            case "/funcionario/create":
+                dispatcher = request.getRequestDispatcher("/view/funcionario/create.jsp");
                 dispatcher.forward(request, response);
-				break;
-			case "/funcionario/update": {
-				try ( DAOFactory daoFactory = DAOFactory.getInstance()) {
+                break;
+            case "/funcionario/update": {
+                try (DAOFactory daoFactory = DAOFactory.getInstance()) {
                     dao = daoFactory.getFuncionarioDAO();
 
                     fun = dao.read(request.getParameter("login"));
@@ -101,15 +100,15 @@ public class FuncionarioController extends HttpServlet {
                     dispatcher = request.getRequestDispatcher("/view/funcionario/update.jsp");
                     dispatcher.forward(request, response);
                 } catch (ClassNotFoundException | IOException | SQLException ex) {
-					request.getSession().setAttribute("error", ex.getMessage());
+                    request.getSession().setAttribute("error", ex.getMessage());
                     response.sendRedirect(request.getContextPath() + "/gerente/funcionarios");
                 }
                 break;
             }
-			case "/funcionario/delete": {
-				try ( DAOFactory daoFactory = DAOFactory.getInstance()) {
+            case "/funcionario/delete": {
+                try (DAOFactory daoFactory = DAOFactory.getInstance()) {
                     dao = daoFactory.getFuncionarioDAO();
-					dao.delete((request.getParameter("login")));
+                    dao.delete((request.getParameter("login")));
                 } catch (ClassNotFoundException | IOException | SQLException ex) {
                     request.getSession().setAttribute("error", ex.getMessage());
                 }
@@ -118,7 +117,7 @@ public class FuncionarioController extends HttpServlet {
                 break;
             }
         }
-            
+
     }
 
     /**
@@ -132,99 +131,104 @@ public class FuncionarioController extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        
-		FuncionarioDAO dao;
-		Funcionario fun = new Funcionario();
-		HttpSession session = request.getSession();
-		
-		String servletPath = request.getServletPath();
-		
-		switch(servletPath){
-			case "/funcionario/create":
-			case "/funcionario/update":
-				
-				DiskFileItemFactory factory = new DiskFileItemFactory();
-				
-				Funcionario gerente = (Funcionario)session.getAttribute("gerente");
-				fun.setGerenteLogin(gerente.getLogin());
-				
-				String previousLogin = null;
-				String newLogin = null;
-				
-				// Create a new file upload handler
+
+        FuncionarioDAO dao;
+        Funcionario fun = new Funcionario();
+        Funcionario gerente = null;
+        HttpSession session = request.getSession();
+
+        String servletPath = request.getServletPath();
+
+        switch (servletPath) {
+            case "/funcionario/create":
+            case "/funcionario/update":
+
+                DiskFileItemFactory factory = new DiskFileItemFactory();
+
+                if(session.getAttribute("gerente") != null){
+                    gerente = (Funcionario) session.getAttribute("gerente");
+                    fun.setGerenteLogin(gerente.getLogin());
+                }
+                else{
+                    response.sendRedirect(request.getContextPath() + servletPath);
+                }
+
+                String previousLogin = null;
+                String newLogin = null;
+
+                // Create a new file upload handler
                 ServletFileUpload upload = new ServletFileUpload(factory);
-				
-				try ( DAOFactory daoFactory = DAOFactory.getInstance()) {
+
+                try (DAOFactory daoFactory = DAOFactory.getInstance()) {
                     // Parse the request
                     List<FileItem> items = upload.parseRequest(request);
-					Iterator<FileItem> iter = items.iterator();
-					while (iter.hasNext()) {
-						FileItem item = iter.next();
+                    Iterator<FileItem> iter = items.iterator();
+                    while (iter.hasNext()) {
+                        FileItem item = iter.next();
 
-						// Process a regular form field
-						String fieldName = item.getFieldName();
-						String fieldValue = item.getString();
+                        // Process a regular form field
+                        String fieldName = item.getFieldName();
+                        String fieldValue = item.getString();
 
-						switch (fieldName) {
-							case "previous_login":
-								previousLogin = fieldValue;
-								break;
-							case "login":
-								newLogin = fieldValue;
-								break;
-							case "senha":
-								fun.setSenha(fieldValue);
-								break;
-							case "nome":
-								fun.setPNome(fieldValue);
-								break;
-							case "sobrenome":
-								fun.setSNome(fieldValue);
-								break;	
-							case "email":
-								fun.setEmail(fieldValue);
-								break;	
-							case "cargo":
-								fun.setCargo(fieldValue);
-								break;
-							case "setor":
-								fun.setSetor(fieldValue);
-								break;	
-							case "salario":
-								fun.setSalario(Double.parseDouble(fieldValue));
-								break;	
-							case "efetivacao":
-								java.util.Date dataEfetivacao = new SimpleDateFormat("yyyy-mm-dd").parse(fieldValue);
-								fun.setData_efetivacao(new Date(dataEfetivacao.getTime()));
-								break;
-						}
-					}
-				fun.setGerenteLogin(gerente.getLogin());
-				
-				dao = daoFactory.getFuncionarioDAO();
-				
-				if (servletPath.equals("/funcionario/create")) {
-					fun.setLogin(newLogin);
-					dao.create(fun);
-				} else {
-					// case /funcionario/update
-					if(!Objects.equals(previousLogin, newLogin)){
-						//atualizou login tambem, mas login eh chave primaria
-						fun.setLogin(previousLogin);
-						dao.updateWithLogin(fun, newLogin);
-					}
-					else {
-						fun.setLogin(previousLogin);
-						dao.update(fun);
-					}
-				}
+                        switch (fieldName) {
+                            case "previous_login":
+                                previousLogin = fieldValue;
+                                break;
+                            case "login":
+                                newLogin = fieldValue;
+                                break;
+                            case "senha":
+                                fun.setSenha(fieldValue);
+                                break;
+                            case "nome":
+                                fun.setPNome(fieldValue);
+                                break;
+                            case "sobrenome":
+                                fun.setSNome(fieldValue);
+                                break;
+                            case "email":
+                                fun.setEmail(fieldValue);
+                                break;
+                            case "cargo":
+                                fun.setCargo(fieldValue);
+                                break;
+                            case "setor":
+                                fun.setSetor(fieldValue);
+                                break;
+                            case "salario":
+                                fun.setSalario(Double.parseDouble(fieldValue));
+                                break;
+                            case "efetivacao":
+                                java.util.Date dataEfetivacao = new SimpleDateFormat("yyyy-mm-dd").parse(fieldValue);
+                                fun.setData_efetivacao(new Date(dataEfetivacao.getTime()));
+                                break;
+                        }
+                    }
+                    fun.setGerenteLogin(gerente.getLogin());
 
-				response.sendRedirect(request.getContextPath() + "/gerente/funcionarios");
-				} catch (ParseException ex) {
+                    dao = daoFactory.getFuncionarioDAO();
+
+                    if (servletPath.equals("/funcionario/create")) {
+                        fun.setLogin(newLogin);
+                        dao.create(fun);
+                    } else {
+                        // case /funcionario/update
+                        if (!Objects.equals(previousLogin, newLogin)) {
+                            //atualizou login tambem, mas login eh chave primaria
+                            fun.setLogin(previousLogin);
+                            dao.updateWithLogin(fun, newLogin);
+                        } else {
+                            fun.setLogin(previousLogin);
+                            dao.update(fun);
+                        }
+                    }
+
+                    response.sendRedirect(request.getContextPath() + "/gerente/funcionarios");
+                } catch (ParseException ex) {
                     Logger.getLogger(FuncionarioController.class.getName()).log(Level.SEVERE, "Controller", ex);
                     session.setAttribute("error", "O formato de data não é válido. Por favor entre data no formato dd/mm/aaaa");
                     response.sendRedirect(request.getContextPath() + servletPath);
-				} catch (ClassNotFoundException | IOException | SQLException ex) {
+                } catch (ClassNotFoundException | IOException | SQLException ex) {
                     Logger.getLogger(FuncionarioController.class.getName()).log(Level.SEVERE, "Controller", ex);
                     session.setAttribute("error", ex.getMessage());
                     response.sendRedirect(request.getContextPath() + servletPath);
@@ -234,8 +238,8 @@ public class FuncionarioController extends HttpServlet {
                     response.sendRedirect(request.getContextPath() + servletPath);
                 }
                 break;
-				
-		}
+
+        }
     }
 
     /**

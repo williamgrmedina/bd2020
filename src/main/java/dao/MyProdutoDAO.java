@@ -34,7 +34,7 @@ public class MyProdutoDAO implements ProdutoDAO {
 	
 	private final static String UPDATE_QUERY =
 		"UPDATE restaurante.produtos " +
-		"SET nome = ? valor_de_compra = ?, valor_de_venda = ?, qtd = ?;" +
+		"SET nome = ?, valor_de_compra = ?, valor_de_venda = ?, qtd = ? " +
 		"WHERE idProduto = ?;";
 	
 	private final static String DELETE_QUERY =
@@ -108,6 +108,7 @@ public class MyProdutoDAO implements ProdutoDAO {
 					prod.setNome(result.getString("nome"));
 					prod.setValor_compra(result.getBigDecimal("valor_de_compra"));
 					prod.setValor_venda(result.getBigDecimal("valor_de_venda"));
+                                        prod.setQtd(result.getInt("qtd"));
 					return prod;
 				}
 				else{
@@ -131,7 +132,8 @@ public class MyProdutoDAO implements ProdutoDAO {
 			statement.setBigDecimal(2, p.getValor_compra());
 			statement.setBigDecimal(3, p.getValor_venda());
 			statement.setInt(4, p.getQtd());
-			
+                        statement.setInt(5, p.getId());
+                        
 			statement.executeUpdate();
 			
 		}catch(SQLException ex){

@@ -50,13 +50,13 @@
                     <label for="cliente-nome" class="control-label">Nome</label>
                     <input id="cliente-nome" class="form-control" type="text" name="nome" required/>
                 </div>
-				
-				<div class="form-group">
+
+                <div class="form-group">
                     <label for="cliente-sobrenome" class="control-label">Sobrenome</label>
                     <input id="cliente-sobrenome" class="form-control" type="text" name="sobrenome" required/>
                 </div>
-				
-				<div class="form-group">
+
+                <div class="form-group">
                     <label for="cliente-email" class="control-label">E-mail</label>
                     <input id="cliente-email" class="form-control" type="email" name="email" required/>
                 </div>

@@ -41,7 +41,7 @@ $(document).ready(function () {
 		var $form = $('#form_obs');
 		var	observacao = $form.find("input[name='observacao']").val();
 		var table = $('#tabela_produtos').DataTable();
-		var rowCount = $('#tabela_produtos tbody tr').length - 1;
+		var rowCount = $('#tabela_produtos tbody tr').length;
 		var i, id, qtd;
 		var solicitados = [];
 

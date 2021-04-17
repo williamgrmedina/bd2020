@@ -19,23 +19,24 @@
 
             <div class="jumbotron text-center">
                 <h1>Bem-vindo,
-					<c:out value="${funcionario.PNome}"/>!</h1>
+                    <c:out value="${funcionario.PNome}"/>!</h1>
                 <p class="lead text-muted">
                     Pouca coisa é necessária para transformar inteiramente uma vida:<br/> 
-					amor no coração e sorriso nos lábios.<br/>
-					E o seu é o mais lindo deles!
+                    amor no coração e sorriso nos lábios.<br/>
+                    E o seu é o mais lindo deles!
                 </p>
                 <p>
                     <a class="btn dbtn-lg btn-primary my-2" href="${pageContext.servletContext.contextPath}/pedidos">
                         Proceder para pedidos
                     </a>
-				</p>
-				<a class="btn btn-default"
-				   href="${pageContext.servletContext.contextPath}/logout"
-				   data-toggle="tooltip"
-				   data-original-title="Logout">
-					<i class="fa fa-sign-out"></i>
-				</a>
-		<%@include file="/view/include/scripts.jsp"%>
-	</body>
-</html>
+                </p>
+                <a class="btn btn-default"
+                   href="${pageContext.servletContext.contextPath}/logout"
+                   data-toggle="tooltip"
+                   data-original-title="Logout">
+                    <i class="fa fa-sign-out"></i>
+                </a>
+                <%@include file="/view/include/scripts.jsp"%>
+                <script src="${pageContext.servletContext.contextPath}/assets/js/base.js"></script>
+                </body>
+                </html>

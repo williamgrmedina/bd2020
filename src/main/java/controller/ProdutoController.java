@@ -230,7 +230,7 @@ public class ProdutoController extends HttpServlet {
 
 					daoFactory.commitTransaction();
 					daoFactory.endTransaction();
-				} catch (SQLException ex) {
+				} catch (SQLException | NullPointerException ex) {
 					session.setAttribute("error", ex.getMessage());
 					daoFactory.rollbackTransaction();
 				}

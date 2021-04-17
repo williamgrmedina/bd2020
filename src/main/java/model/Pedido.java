@@ -38,21 +38,6 @@ public class Pedido {
 		this.status = status;
 	}
 
-	public String getCliente_login() {
-		return cliente_login;
-	}
-
-	public void setCliente_login(String cliente_login) {
-		this.cliente_login = cliente_login;
-	}
-
-	public String getFuncionario_login() {
-		return funcionario_login;
-	}
-
-	public void setFuncionario_login(String funcionario_login) {
-		this.funcionario_login = funcionario_login;
-	}
 	public int getId() {
 		return id;
 	}

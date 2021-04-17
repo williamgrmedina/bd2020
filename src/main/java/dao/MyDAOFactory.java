@@ -41,11 +41,6 @@ public class MyDAOFactory extends DAOFactory {
 	public ProdutoPedidoDAO getProdutoPedidoDAO() {
 		return new MyProdutoPedidoDAO(this.connection);
 	}
-	
-	@Override
-	public MyAtendimentoDAO getAtendimentoDAO() {
-		return new MyAtendimentoDAO(this.connection);
-	}
 
 	@Override
 	public MyPedidoInfoDAO getPedidoInfoDAO() {

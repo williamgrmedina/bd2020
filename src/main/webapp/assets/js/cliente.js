@@ -2,7 +2,7 @@
  * Checks whether the password and password-confirm fields match
  */
 
-$(document).on('focusout', '.password-input,.password-confirm', function(e) {
+$(document).on('focusout', '.password-input,.password-confirm', function (e) {
     var $form = $(this).closest("form");
     var $password = $form.find(".password-input");
     var $passwordConfirm = $form.find(".password-confirm");
@@ -32,9 +32,8 @@ $(document).on('focusout', '#cliente-login', function (e) {
             $formGroup.removeClass("has-error");
         }
         $input.next("p").html("");
-    }
-    else {
-        $.post($.url("//user/checkLogin"), { login: $("#cliente-login").val() }, function(data) {
+    } else {
+        $.post($.url("//user/checkLogin"), {login: $("#cliente-login").val()}, function (data) {
             var $formGroup = $input.parents(".form-group").first();
             if (data.status == "USADO") {
                 if (!$formGroup.hasClass("has-error")) {
@@ -52,17 +51,19 @@ $(document).on('focusout', '#cliente-login', function (e) {
 });
 
 $(document).ready(function () {
-  $('#lista_clientes').DataTable();
-  $('.dataTables_length').addClass('bs-select');
+    $('#tabela_pedidos').DataTable({
+        "order": [[0, "asc"]]
+    });
+    $('.dataTables_length').addClass('bs-select');
 });
 
 $('#my-modal').on('show.bs.modal', function (event) {
-  var login = $(event.relatedTarget).data('login');
-  $(this).find(".modal-login").text(nome);
-  var nome = $(event.relatedTarget).data('nome');
-  $(this).find(".modal-nome").text(login);
-  var salario = $(event.relatedTarget).data('salario');
-  $(this).find(".modal-salario").text(salario);
-  var data_efetivacao = $(event.relatedTarget).data('data_efetivacao');
-  $(this).find(".modal-data_efetivacao").text(data_efetivacao);
+    var login = $(event.relatedTarget).data('login');
+    $(this).find(".modal-login").text(nome);
+    var nome = $(event.relatedTarget).data('nome');
+    $(this).find(".modal-nome").text(login);
+    var salario = $(event.relatedTarget).data('salario');
+    $(this).find(".modal-salario").text(salario);
+    var data_efetivacao = $(event.relatedTarget).data('data_efetivacao');
+    $(this).find(".modal-data_efetivacao").text(data_efetivacao);
 });

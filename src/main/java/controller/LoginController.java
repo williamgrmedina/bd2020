@@ -29,10 +29,10 @@ import model.Funcionario;
         urlPatterns = {
             "",
             "/loginCliente",
-			"/loginFuncionario",
+            "/loginFuncionario",
             "/logout",
-			"/cliente",
-			"/funcionario"
+            "/cliente",
+            "/funcionario"
         })
 public class LoginController extends HttpServlet {
 
@@ -55,35 +55,35 @@ public class LoginController extends HttpServlet {
             case "": {
                 session = request.getSession(false);
                 if (session != null) {
-					if(session.getAttribute("gerente") != null){
-						dispatcher = request.getRequestDispatcher("/view/funcionario/gerente_welcome.jsp");
-					}
-					else if(session.getAttribute("funcionario") != null){
-						dispatcher = request.getRequestDispatcher("/view/funcionario/funcionario_welcome.jsp");
-					}
-					else if(session.getAttribute("cliente") != null){
-						dispatcher = request.getRequestDispatcher("/view/cliente/cliente_welcome.jsp");
-					}
-					else dispatcher = request.getRequestDispatcher("/index.jsp");
-				}
-				else dispatcher = request.getRequestDispatcher("/index.jsp");
-				
-				dispatcher.forward(request, response);
+                    if (session.getAttribute("gerente") != null) {
+                        dispatcher = request.getRequestDispatcher("/view/funcionario/gerente_welcome.jsp");
+                    } else if (session.getAttribute("funcionario") != null) {
+                        dispatcher = request.getRequestDispatcher("/view/funcionario/funcionario_welcome.jsp");
+                    } else if (session.getAttribute("cliente") != null) {
+                        dispatcher = request.getRequestDispatcher("/cliente_welcome");
+                    } else {
+                        dispatcher = request.getRequestDispatcher("/index.jsp");
+                    }
+                } else {
+                    dispatcher = request.getRequestDispatcher("/index.jsp");
+                }
+
+                dispatcher.forward(request, response);
                 break;
-			}
-			
-			case "/cliente": {
-				dispatcher = request.getRequestDispatcher("/cliente_login.jsp");
-				dispatcher.forward(request, response);
-				break;
-            }	
-            
-			case "/funcionario": {
-				dispatcher = request.getRequestDispatcher("/funcionario_login.jsp");
-				dispatcher.forward(request, response);
-				break;
             }
-			
+
+            case "/cliente": {
+                dispatcher = request.getRequestDispatcher("/cliente_login.jsp");
+                dispatcher.forward(request, response);
+                break;
+            }
+
+            case "/funcionario": {
+                dispatcher = request.getRequestDispatcher("/funcionario_login.jsp");
+                dispatcher.forward(request, response);
+                break;
+            }
+
             case "/logout": {
                 session = request.getSession(false);
 
@@ -94,7 +94,7 @@ public class LoginController extends HttpServlet {
                 response.sendRedirect(request.getContextPath() + "/");
             }
         }
-        
+
     }
 
     /**
@@ -109,68 +109,69 @@ public class LoginController extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         FuncionarioDAO fdao;
-        Funcionario fun = new Funcionario ();
-		ClienteDAO cdao;
-		Cliente cl = new Cliente();
+        Funcionario fun = new Funcionario();
+        ClienteDAO cdao;
+        Cliente cl = new Cliente();
         HttpSession session = request.getSession();
 
         switch (request.getServletPath()) {
-            case "/loginFuncionario":{
+            case "/loginFuncionario": {
                 fun.setLogin(request.getParameter("login"));
                 fun.setSenha(request.getParameter("senha"));
-                
+
                 //retorna conexao com banco de dados se o banco for suportado
                 try (DAOFactory daoFactory = DAOFactory.getInstance()) {
-                    
-                    fdao = daoFactory.getFuncionarioDAO();   
-                                         
+
+                    fdao = daoFactory.getFuncionarioDAO();
+
                     /*procura no banco de dados pelas informacoes de login e senha fornecidos nos campos.
                     Se estiverem corretos, seta restante dos dados (salario, etc) ao funcionario fun*/
                     fdao.authenticate(fun);
-                    
-					//gerente: pagina especial
-					if(fun.getCargo().equalsIgnoreCase("gerente")){
-						session.setAttribute("gerente", fun);
-						session.setAttribute("funcionario", fun);
-					}
-					//funcinario comum
-					else session.setAttribute("funcionario", fun);
-						
-                } catch (ClassNotFoundException | IOException | SQLException | SecurityException ex) {
-                    session.setAttribute("error", ex.getMessage());
-					response.sendRedirect(request.getContextPath() + "/funcionario");
-					break;
-                }
 
-                response.sendRedirect(request.getContextPath() + "/");
-				break;
-			}
-			
-			case "/loginCliente":{
-                cl.setLogin(request.getParameter("login"));
-                cl.setSenha(request.getParameter("senha"));
-                
-                //retorna conexao com banco de dados se o banco for suportado
-                try (DAOFactory daoFactory = DAOFactory.getInstance()) {
-                    
-                    cdao = daoFactory.getClienteDAO();   
-                                         
-                    /*procura no banco de dados pelas informacoes de login e senha fornecidos nos campos.
-                    Se estiverem corretos, seta restante dos dados (salario, etc) ao funcionario fun*/
-                    cdao.authenticate(cl);
-                    
-					session.setAttribute("cliente", cl);
-						
+                    //gerente: pagina especial
+                    if (fun.getCargo().equalsIgnoreCase("gerente")) {
+                        session.setAttribute("gerente", fun);
+                        session.setAttribute("funcionario", fun);
+                    } //funcinario comum
+                    else {
+                        session.setAttribute("funcionario", fun);
+                    }
+
                 } catch (ClassNotFoundException | IOException | SQLException | SecurityException ex) {
                     session.setAttribute("error", ex.getMessage());
-					response.sendRedirect(request.getContextPath() + "/cliente");
+                    response.sendRedirect(request.getContextPath() + "/funcionario");
                     break;
                 }
 
                 response.sendRedirect(request.getContextPath() + "/");
-				break;
-			}
-        }        
+                break;
+            }
+
+            case "/loginCliente": {
+                cl.setLogin(request.getParameter("login"));
+                cl.setSenha(request.getParameter("senha"));
+
+                //retorna conexao com banco de dados se o banco for suportado
+                try (DAOFactory daoFactory = DAOFactory.getInstance()) {
+
+                    cdao = daoFactory.getClienteDAO();
+
+                    /*procura no banco de dados pelas informacoes de login e senha fornecidos nos campos.
+                    Se estiverem corretos, seta restante dos dados (salario, etc) ao funcionario fun*/
+                    cdao.authenticate(cl);
+
+                    session.setAttribute("cliente", cl);
+
+                } catch (ClassNotFoundException | IOException | SQLException | SecurityException ex) {
+                    session.setAttribute("error", ex.getMessage());
+                    response.sendRedirect(request.getContextPath() + "/cliente");
+                    break;
+                }
+
+                response.sendRedirect(request.getContextPath() + "/");
+                break;
+            }
+        }
     }
 
     /**

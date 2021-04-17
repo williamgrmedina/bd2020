@@ -53,7 +53,7 @@ public class MySqlConnectionFactory extends ConnectionFactory {
             Class.forName("com.mysql.cj.jdbc.Driver");
             readProperties();
             
-            String url = "jdbc:mysql://" + dbHost + ":" + dbPort + "/" + dbName + "?useTimeZone=true&serverTimezone=" + dbTimezone;
+            String url = "jdbc:mysql://" + dbHost + ":" + dbPort + "/" + dbName + "?useUnicode=yes&characterEncoding=utf-8&useTimeZone=true&serverTimezone=" + dbTimezone;
             
             connection = DriverManager.getConnection(url, dbUser, dbPassword);
             

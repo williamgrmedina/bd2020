@@ -5,12 +5,16 @@
  */
 package dao;
 
+import java.sql.SQLException;
+import java.util.List;
 import model.ProdutoPedido;
 
 /**
  *
  * @author Medina
  */
-public interface ProdutoPedidoDAO extends DAOInt_2x <ProdutoPedido> {
-	
+public interface ProdutoPedidoDAO extends DAOInt_2x<ProdutoPedido> {
+
+    public List<ProdutoPedido> readProdutos(Integer idPedido) throws SQLException;
+
 }

@@ -110,7 +110,6 @@ public abstract class DAOFactory implements AutoCloseable {
 	public abstract PedidoDAO getPedidoDAO();
 	public abstract MyPedidoInfoDAO getPedidoInfoDAO();
 	public abstract ProdutoPedidoDAO getProdutoPedidoDAO();
-	public abstract MyAtendimentoDAO getAtendimentoDAO();
 	public abstract ClienteDAO getClienteDAO();
 	
     @Override

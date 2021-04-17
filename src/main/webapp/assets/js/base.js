@@ -1,12 +1,23 @@
 /**
  * Check whether an object is empty or not (wider checking than obj === undefined).
  */
-function isEmpty(someObj){
-    if(someObj === undefined || someObj === null){
+
+$(document).ready(function () {
+    $('body').tooltip({
+        selector: '[data-toggle="tooltip"]',
+        trigger: 'hover'
+    }).on('click mousedown mouseup', '[data-toggle="tooltip"], [title]:not([data-toggle="popover"])', function () {
+        $('[data-toggle="tooltip"], [title]:not([data-toggle="popover"])').tooltip('dispose');
+    });
+});
+
+function isEmpty(someObj) {
+    if (someObj === undefined || someObj === null) {
         return true;
-    }else if(typeof someObj === "string" && $.trim(someObj) === ""){
+    } else if (typeof someObj === "string" && $.trim(someObj) === "") {
         return true;
-    }else return !!(typeof someObj === "number" && someObj === 0);
+    } else
+        return !!(typeof someObj === "number" && someObj === 0);
 }
 
 /**

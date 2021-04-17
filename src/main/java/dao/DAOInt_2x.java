@@ -13,8 +13,12 @@ import java.sql.SQLException;
  * @param <T>
  */
 public interface DAOInt_2x<T> {
-	public void create( T pp) throws SQLException;
+
+    public void create(T pp) throws SQLException;
+
     public T read(Integer idPedido, Integer idProduto) throws SQLException;
+
     public void update(T pp) throws SQLException;
+
     public void delete(Integer idPedido, Integer idProduto) throws SQLException;
 }

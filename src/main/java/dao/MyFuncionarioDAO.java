@@ -112,7 +112,11 @@ public class MyFuncionarioDAO implements FuncionarioDAO {
             Logger.getLogger(MyFuncionarioDAO.class.getName()).log(Level.SEVERE, "DAO", ex);
             if (ex.getMessage().contains("not-null")) {
                 throw new SQLException("Erro ao inserir funcionário: um campo obrigatório está em branco.");
-            } else {
+            } 
+            else if (ex.getMessage().contains("Duplicate")) {
+                throw new SQLException("Erro ao inserir funcionário: login ja utilizado.");
+            } 
+            else {
                 throw new SQLException("Erro ao inserir funcionário.");
             }
         }

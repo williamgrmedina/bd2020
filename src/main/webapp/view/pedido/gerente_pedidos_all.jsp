@@ -65,7 +65,12 @@
                                     <span class="h6"><c:out value="${pedido.id}"/></span>
                                 </td>
                                 <td>
-                                    <span class="h6"><c:out value="${pedido.comanda}"/></span>
+                                    <c:choose>
+                                        <c:when test="${pedido.tipo == 'online'}"/>
+                                        <c:otherwise>
+                                            <span class="h6"><c:out value="${pedido.comanda}"/></span>
+                                        </c:otherwise>
+                                    </c:choose>
                                 </td>
                                 <td>
                                     <span class="h6"><c:out value="${pedido.clienteLogin}"/></span>
@@ -77,11 +82,16 @@
                                     <span class="h6"><c:out value="${pedido.obs}"/></span>
                                 </td>
                                 <td>
-                                    <form action="${pageContext.servletContext.contextPath}/pedido/visualizar_produtos" method="GET">
-                                        <input type='hidden' name='id' value='${pedido.id}'>
-                                        <input class="btn btn-default link_visualizar_prods"
-                                               type='submit' value='Visualizar Produtos'>
-                                    </form>                                    
+                                    <c:choose>
+                                        <c:when test="${pedido.status == 'cancelado'}"></c:when>
+                                        <c:otherwise>
+                                            <form action="${pageContext.servletContext.contextPath}/pedido/visualizar_produtos" method="GET">
+                                                <input type='hidden' name='id' value='${pedido.id}'>
+                                                <input class="btn btn-default link_visualizar_prods"
+                                                       type='submit' value='Visualizar Produtos'>
+                                            </form> 
+                                        </c:otherwise>    
+                                    </c:choose>
                                 </td>
                             </tr>	
                         </c:forEach>

@@ -37,7 +37,7 @@ public class MyProdutoPedidoDAO implements ProdutoPedidoDAO {
 
     private final static String UPDATE_QUERY
             = "UPDATE restaurante.produtos_pedidos "
-            + "SET pedido_idPedido = ?, produto_idProduto = ?, valor = ?, qtd = ?"
+            + "SET valor = ?, qtd = ? "
             + "WHERE pedido_idPedido = ? AND produto_idProduto = ?;";
 
     private final static String DELETE_QUERY
@@ -101,7 +101,7 @@ public class MyProdutoPedidoDAO implements ProdutoPedidoDAO {
     public List<ProdutoPedido> readProdutos(Integer idPedido) throws SQLException {
 
         try (PreparedStatement statement = connection.prepareStatement(READ_INFO_PEDIDO)) {
-            
+
             statement.setInt(1, idPedido);
             List<ProdutoPedido> produtos = new ArrayList();
 
@@ -123,23 +123,19 @@ public class MyProdutoPedidoDAO implements ProdutoPedidoDAO {
         }
     }
 
-@Override
-        public void update(ProdutoPedido pp) throws SQLException {
+    @Override
+    public void update(ProdutoPedido pp) throws SQLException {
         try (PreparedStatement statement = connection.prepareStatement(UPDATE_QUERY)) {
-            statement.setInt(1, pp.getIdPedido());
-            statement.setInt(2, pp.getIdProduto());
-            statement.setBigDecimal(3, pp.getValor());
-            statement.setInt(4, pp.getQtd());
+            statement.setBigDecimal(1, pp.getValor());
+            statement.setInt(2, pp.getQtd());
+            statement.setInt(3, pp.getIdPedido());
+            statement.setInt(4, pp.getIdProduto());
 
             statement.executeUpdate();
 
         } catch (SQLException ex) {
-            Logger.getLogger(MyProdutoDAO
-
-.class  
-
-
-.getName()).log(Level.SEVERE, "DAO", ex);
+            Logger.getLogger(MyProdutoDAO.class
+                    .getName()).log(Level.SEVERE, "DAO", ex);
             if (ex.getMessage().contains("not-null")) {
                 throw new SQLException("Erro ao atualizar produto do pedido: um campo obrigatório está em branco.");
             } else {
@@ -149,7 +145,7 @@ public class MyProdutoPedidoDAO implements ProdutoPedidoDAO {
     }
 
     @Override
-        public void delete(Integer idPedido, Integer idProduto) throws SQLException {
+    public void delete(Integer idPedido, Integer idProduto) throws SQLException {
         try (PreparedStatement statement = connection.prepareStatement(DELETE_QUERY)) {
 
             statement.setInt(1, idPedido);
@@ -157,14 +153,15 @@ public class MyProdutoPedidoDAO implements ProdutoPedidoDAO {
             statement.executeUpdate();
 
         } catch (SQLException ex) {
-            Logger.getLogger(MyProdutoDAO
-
-.class  
-
-
-.getName()).log(Level.SEVERE, "DAO", ex);
+            Logger.getLogger(MyProdutoDAO.class
+                    .getName()).log(Level.SEVERE, "DAO", ex);
             throw new SQLException("Erro ao remover produto do pedido.");
         }
+    }
+
+    @Override
+    public List<ProdutoPedido> all() throws SQLException {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
 }

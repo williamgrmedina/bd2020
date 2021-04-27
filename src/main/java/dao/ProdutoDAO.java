@@ -19,4 +19,5 @@ public interface ProdutoDAO extends DAOInt <Produto> {
 	public void update_qtd(Produto p) throws SQLException;
 	public void add_items(Produto p) throws SQLException;
 	public void remove_items(Produto p) throws SQLException;
+        public Produto readRandom() throws SQLException;
 }

@@ -6,7 +6,6 @@
 package controller;
 
 import dao.DAOFactory;
-import dao.MyPedidoInfoDAO;
 import dao.PedidoDAO;
 import dao.ProdutoDAO;
 import dao.ProdutoPedidoDAO;
@@ -46,7 +45,6 @@ public class ClienteController extends HttpServlet {
             throws ServletException, IOException {
 
         PedidoDAO dao_ped;
-        MyPedidoInfoDAO dao_ped_info;
         ProdutoPedidoDAO dao_prod_ped;
         ProdutoDAO dao_prod;
         HttpSession session = request.getSession();
@@ -57,7 +55,6 @@ public class ClienteController extends HttpServlet {
                 String result_url = "";
 
                 try (DAOFactory daoFactory = DAOFactory.getInstance()) {
-                    dao_ped_info = daoFactory.getPedidoInfoDAO();
                     dao_prod = daoFactory.getProdutoDAO();
                     dao_ped = daoFactory.getPedidoDAO();
                     Produto prod;

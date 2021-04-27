@@ -12,43 +12,43 @@ import java.sql.Connection;
  * @author João Vitor
  */
 public class MyDAOFactory extends DAOFactory {
-    
-    public MyDAOFactory(Connection connection){
+
+    public MyDAOFactory(Connection connection) {
         this.connection = connection;
     }
+
+    @Override
+    public UserDAO getUserDAO() {
+        return new MyUserDAO(this.connection);
+    }
+
+    @Override
+    public FuncionarioDAO getFuncionarioDAO() {
+        return new MyFuncionarioDAO(this.connection);
+    }
+
+    @Override
+    public ProdutoDAO getProdutoDAO() {
+        return new MyProdutoDAO(this.connection);
+    }
+
+    @Override
+    public PedidoDAO getPedidoDAO() {
+        return new MyPedidoDAO(this.connection);
+    }
+
+    @Override
+    public ProdutoPedidoDAO getProdutoPedidoDAO() {
+        return new MyProdutoPedidoDAO(this.connection);
+    }
+
+    @Override
+    public ClienteDAO getClienteDAO() {
+        return new MyClienteDAO(this.connection);
+    }
     
     @Override
-    public UserDAO getUserDAO(){
-      return new MyUserDAO(this.connection);
+    public MyCancelamentoDAO getCancelamentoDAO() {
+        return new MyCancelamentoDAO(this.connection);
     }
-    
-    @Override
-    public FuncionarioDAO getFuncionarioDAO(){
-      return new MyFuncionarioDAO(this.connection);
-    }
-	
-	@Override
-    public ProdutoDAO getProdutoDAO(){
-      return new MyProdutoDAO(this.connection);
-    }
-
-	@Override
-	public PedidoDAO getPedidoDAO() {
-		return new MyPedidoDAO(this.connection);
-	}
-	
-	@Override
-	public ProdutoPedidoDAO getProdutoPedidoDAO() {
-		return new MyProdutoPedidoDAO(this.connection);
-	}
-
-	@Override
-	public MyPedidoInfoDAO getPedidoInfoDAO() {
-		return new MyPedidoInfoDAO(this.connection);
-	}
-
-	@Override
-	public ClienteDAO getClienteDAO() {
-		return new MyClienteDAO(this.connection);
-	}
 }

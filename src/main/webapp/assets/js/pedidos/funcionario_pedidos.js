@@ -14,7 +14,7 @@ $(document).ready(function () {
     $('#tabela_produtos').DataTable({
         "order": [[0, "asc"]]
     });
-    
+
     $("*[data-toggle='tooltip']").tooltip({
         'container': 'body',
         trigger: "hover"
@@ -58,7 +58,7 @@ $(document).ready(function () {
         });
     });
 
-    $(document).on('click', '.link_cancelar_pedido', cancelarPedido);    
+    $(document).on('click', '.link_cancelar_pedido', cancelarPedido);
     $(document).on('click', '.link_confirmacao_cancelar', function (e) {
         e.preventDefault();
         var url = $(this).attr('href');
@@ -71,11 +71,30 @@ $(document).ready(function () {
         var nome_prod = $(event.relatedTarget).data('nome_prod');
         $(this).find(".modal-nome_prod").text(nome_prod);
         var qtd = $(event.relatedTarget).data('qtd_max');
-        
+        var id_pedido = $(event.relatedTarget).data('id_pedido');
+        var id_produto = $(event.relatedTarget).data('id_produto');
+        var $form = $(document).find('#form_delete_prod');
+        $form.attr('id_pedido', id_pedido);
+        $form.attr('id_produto', id_produto);
+
         var selector = $('#qtd_a_remover');
         await disableSelector(selector);
         await populateIncrementalSelector(selector, qtd);
         enableSelector(selector);
+    });
+
+    $('#form_delete_prod').on('submit', function (event) {
+        event.preventDefault();
+        var $form = $(this);
+        var url = $form.attr("action");
+        var id_pedido = $form.attr("id_pedido");
+        var id_produto = $form.attr("id_produto");
+        var qtd = $form.find('#qtd_a_remover').val();
+
+        $.post(url, {id_pedido: id_pedido, id_produto: id_produto, qtd: qtd}, function () {
+            alert(qtd + " produto(s) cancelado(s) com sucesso.");
+            document.location.reload();
+        });
     });
 
 });
@@ -111,20 +130,20 @@ function cancelarPedido(e) {
 }
 
 async function populateIncrementalSelector(selector, qtd) {
-    
+
     selector
-        .empty();
+            .empty();
 
     var i;
-    for(i = 1; i < qtd + 1; i++){
+    for (i = 1; i < qtd + 1; i++) {
         selector.append('<option value="' + i + '">' + i + '</option>');
     }
 }
 
-async function disableSelector(selector){
+async function disableSelector(selector) {
     selector.attr('disabled', true);
 }
 
-async function enableSelector(selector){
+async function enableSelector(selector) {
     selector.attr('disabled', false);
 }

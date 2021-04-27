@@ -19,7 +19,7 @@ public class Funcionario {
     private String snome;
     private String email;
     private String cargo;
-	private String setor;
+    private String setor;
     private Double salario;
     private Date data_efetivacao;
     private String gerente_login;

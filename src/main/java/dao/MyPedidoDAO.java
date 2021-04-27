@@ -15,6 +15,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import model.Cliente;
 import model.Funcionario;
+import model.FuncionarioPedidos;
 import model.Pedido;
 
 /**
@@ -46,7 +47,6 @@ public class MyPedidoDAO implements PedidoDAO {
 		"INSERT INTO restaurante.atendimentos " +
 		"(inicio, atend_idPedido, atend_idProduto)" +
 		"VALUES (?, ?, ?);";*/
-    
     private final static String READ_QUERY
             = "SELECT * FROM restaurante.pedidos "
             + "WHERE idPedido = ?;";
@@ -72,7 +72,12 @@ public class MyPedidoDAO implements PedidoDAO {
 
     private final static String UPDATE_QUERY
             = "UPDATE restaurante.pedidos "
-            + "SET idPedido = ?, comanda = ?, cliente_login = ?, funcionario_login = ?, tipo = ?, status = ?, observacao = ? "
+            + "SET comanda = ?, cliente_login = ?, funcionario_login = ?, tipo = ?, status = ?, observacao = ?, fim_atd = ? "
+            + "WHERE idPedido = ?;";
+
+    private final static String UPDATE_TOTAL_QUERY
+            = "UPDATE restaurante.pedidos "
+            + "SET comanda = ?, cliente_login = ?, funcionario_login = ?, tipo = ?, status = ?, observacao = ?, inicio_atd = ?, fim_atd = ? "
             + "WHERE idPedido = ?;";
 
     private final static String UPDATE_COMANDA_QUERY
@@ -90,12 +95,61 @@ public class MyPedidoDAO implements PedidoDAO {
             + "SET status = ? "
             + "WHERE idPedido = ?;";
 
+    private final static String FINALIZE_QUERY
+            = "UPDATE restaurante.pedidos "
+            + "SET fim_atd = CURRENT_TIMESTAMP "
+            + "WHERE idPedido = ?;";
+
     private final static String DELETE_QUERY
             = "DELETE FROM restaurante.pedidos "
             + "WHERE idPedido = ?;";
 
     private final static String GET_LAST_QUERY
             = "SELECT MAX(idPedido) AS idPedido FROM restaurante.pedidos;";
+
+    private final static String CANCELADOS_YEAR_QUERY
+            = "SELECT COUNT(*) AS cnt FROM restaurante.pedidos "
+            + "WHERE status = 'cancelado' AND YEAR(inicio_atd) = ?;";
+
+    private final static String PAGOS_YEAR_QUERY
+            = "SELECT COUNT(*) AS cnt FROM restaurante.pedidos "
+            + "WHERE status = 'pago' AND YEAR(inicio_atd) = ?;";
+
+    private final static String MAX_YEAR_QUERY
+            = "SELECT MAX(YEAR(inicio_atd)) AS max_year FROM restaurante.pedidos;";
+
+    private final static String MAX_MONTH_QUERY
+            = "SELECT MAX(MONTH(inicio_atd)) AS max_month FROM restaurante.pedidos "
+            + "WHERE YEAR(inicio_atd) = ?;";
+
+    private final static String MIN_YEAR_QUERY
+            = "SELECT MIN(YEAR(inicio_atd)) AS min_year FROM restaurante.pedidos;";
+
+    private final static String MONTH_YEAR_PRESENCIAL_QUERY
+            = "SELECT COUNT(*) AS cnt FROM restaurante.pedidos "
+            + "WHERE status = 'pago' AND tipo = 'presencial' AND MONTH(inicio_atd) = ? AND YEAR(inicio_atd) = ?;";
+
+    private final static String MONTH_YEAR_ONLINE_QUERY
+            = "SELECT COUNT(*) AS cnt FROM restaurante.pedidos "
+            + "WHERE status = 'pago' AND tipo = 'online' AND MONTH(inicio_atd) = ? AND YEAR(inicio_atd) = ?;";
+
+    private final static String READ_RANDOM_QUERY
+            = "SELECT * FROM restaurante.pedidos "
+            + "ORDER BY RAND() "
+            + "LIMIT 1;";
+
+    private final static String PEDIDOS_BY_FUNCIONARIO_QUERY
+            = "SELECT COUNT(*) AS pedidos_atendidos "
+            + "FROM restaurante.pedidos "
+            + "WHERE funcionario_login = ? "
+            + "AND MONTH(inicio_atd) = ? "
+            + "AND YEAR(inicio_atd) = ?;";
+    
+    public final static String MONTH_YEAR_PEDIDOS_QUERY 
+            = "SELECT * FROM restaurante.pedidos "
+            + "WHERE MONTH(inicio_atd) = ? "
+            + "AND YEAR(inicio_atd) = ? "
+            + "AND status = 'pago';";
 
     public MyPedidoDAO(Connection connection) {
         this.connection = connection;
@@ -242,18 +296,62 @@ public class MyPedidoDAO implements PedidoDAO {
     @Override
     public void update(Pedido p) throws SQLException {
         try (PreparedStatement statement = connection.prepareStatement(UPDATE_QUERY)) {
-            statement.setInt(1, p.getId());
-            statement.setInt(2, p.getComanda());
-            statement.setString(3, p.getClienteLogin());
-            statement.setString(4, p.getFuncionarioLogin());
-            statement.setString(5, p.getTipo());
-            statement.setString(6, p.getStatus());
-            statement.setString(7, p.getObs());
+            statement.setInt(1, p.getComanda());
+            statement.setString(2, p.getClienteLogin());
+            statement.setString(3, p.getFuncionarioLogin());
+            statement.setString(4, p.getTipo());
+            statement.setString(5, p.getStatus());
+            statement.setString(6, p.getObs());
+            statement.setTimestamp(7, p.getFimAtd());
             statement.setInt(8, p.getId());
             statement.executeUpdate();
 
         } catch (SQLException ex) {
             Logger.getLogger(MyProdutoDAO.class.getName()).log(Level.SEVERE, "DAO", ex);
+            if (ex.getMessage().contains("not-null")) {
+                throw new SQLException("Erro ao atualizar pedido: um campo obrigatório está em branco.");
+            } else {
+                throw new SQLException("Erro ao atualizar pedido.");
+            }
+        }
+    }
+
+    @Override
+    public void updateAllAttr(Pedido p) throws SQLException {
+        try (PreparedStatement statement = connection.prepareStatement(UPDATE_TOTAL_QUERY)) {
+            statement.setInt(1, p.getComanda());
+            statement.setString(2, p.getClienteLogin());
+            statement.setString(3, p.getFuncionarioLogin());
+            statement.setString(4, p.getTipo());
+            statement.setString(5, p.getStatus());
+            statement.setString(6, p.getObs());
+            statement.setTimestamp(7, p.getInicioAtd());
+            statement.setTimestamp(8, p.getFimAtd());
+            statement.setInt(9, p.getId());
+            statement.executeUpdate();
+
+        } catch (SQLException ex) {
+            Logger.getLogger(MyProdutoDAO.class.getName()).log(Level.SEVERE, "DAO", ex);
+            throw new SQLException("Erro ao atualizar pedido.");
+        }
+    }
+
+    public void updateTotal(Pedido p) throws SQLException {
+        try (PreparedStatement statement = connection.prepareStatement(UPDATE_QUERY)) {
+            statement.setInt(1, p.getComanda());
+            statement.setString(2, p.getClienteLogin());
+            statement.setString(3, p.getFuncionarioLogin());
+            statement.setString(4, p.getTipo());
+            statement.setString(5, p.getStatus());
+            statement.setString(6, p.getObs());
+            statement.setTimestamp(7, p.getInicioAtd());
+            statement.setTimestamp(8, p.getFimAtd());
+            statement.setInt(9, p.getId());
+            statement.executeUpdate();
+
+        } catch (SQLException ex) {
+            Logger.getLogger(MyProdutoDAO.class
+                    .getName()).log(Level.SEVERE, "DAO", ex);
             if (ex.getMessage().contains("not-null")) {
                 throw new SQLException("Erro ao atualizar pedido: um campo obrigatório está em branco.");
             } else {
@@ -271,12 +369,27 @@ public class MyPedidoDAO implements PedidoDAO {
             statement.executeUpdate();
 
         } catch (SQLException ex) {
-            Logger.getLogger(MyProdutoDAO.class.getName()).log(Level.SEVERE, "DAO", ex);
+            Logger.getLogger(MyProdutoDAO.class
+                    .getName()).log(Level.SEVERE, "DAO", ex);
             if (ex.getMessage().contains("not-null")) {
                 throw new SQLException("Erro ao atualizar pedido: um campo obrigatório está em branco.");
             } else {
                 throw new SQLException("Erro ao atualizar pedido.");
             }
+        }
+    }
+
+    @Override
+    public void finalize(int id) throws SQLException {
+        try (PreparedStatement statement = connection.prepareStatement(FINALIZE_QUERY)) {
+
+            statement.setInt(1, id);
+            statement.executeUpdate();
+
+        } catch (SQLException ex) {
+            Logger.getLogger(MyProdutoDAO.class
+                    .getName()).log(Level.SEVERE, "DAO", ex);
+            throw new SQLException("Erro ao finalizar pedido.");
         }
     }
 
@@ -288,7 +401,8 @@ public class MyPedidoDAO implements PedidoDAO {
             statement.executeUpdate();
 
         } catch (SQLException ex) {
-            Logger.getLogger(MyProdutoDAO.class.getName()).log(Level.SEVERE, "DAO", ex);
+            Logger.getLogger(MyProdutoDAO.class
+                    .getName()).log(Level.SEVERE, "DAO", ex);
             throw new SQLException("Erro ao remover pedido.");
         }
     }
@@ -307,18 +421,20 @@ public class MyPedidoDAO implements PedidoDAO {
                 p.setClienteLogin(result.getString("cliente_login"));
                 p.setFuncionarioLogin(result.getString("funcionario_login"));
                 p.setStatus(result.getString("status"));
+                p.setTipo(result.getString("tipo"));
                 p.setObs(result.getString("observacao"));
                 allPed.add(p);
             }
             return allPed;
         } catch (SQLException ex) {
-            Logger.getLogger(MyProdutoDAO.class.getName()).log(Level.SEVERE, "DAO", ex);
+            Logger.getLogger(MyProdutoDAO.class
+                    .getName()).log(Level.SEVERE, "DAO", ex);
             throw new SQLException("Erro ao listar pedidos.");
         }
     }
 
     @Override
-    public int getLastPedido() throws SQLException {
+    public int getLastPedidoId() throws SQLException {
         try (PreparedStatement statement = connection.prepareStatement(GET_LAST_QUERY)) {
             try (ResultSet result = statement.executeQuery()) {
                 if (result.next()) {
@@ -328,8 +444,233 @@ public class MyPedidoDAO implements PedidoDAO {
                 }
             }
         } catch (SQLException ex) {
-            Logger.getLogger(MyProdutoDAO.class.getName()).log(Level.SEVERE, "DAO", ex);
+            Logger.getLogger(MyProdutoDAO.class
+                    .getName()).log(Level.SEVERE, "DAO", ex);
             throw new SQLException("Erro ao recuperar pedido.");
+        }
+    }
+
+    @Override
+    public int getCanceladosCount(int year) throws SQLException {
+        try (PreparedStatement statement = connection.prepareStatement(CANCELADOS_YEAR_QUERY)) {
+
+            statement.setInt(1, year);
+
+            try (ResultSet result = statement.executeQuery()) {
+                if (result.next()) {
+                    return result.getInt("cnt");
+                } else {
+                    throw new SQLException("Erro ao recuperar contagem de pedidos cancelados.");
+                }
+            }
+
+        } catch (SQLException ex) {
+            Logger.getLogger(MyProdutoDAO.class
+                    .getName()).log(Level.SEVERE, "DAO", ex);
+            throw new SQLException("Erro ao recuperar contagem de pedidos cancelados.");
+        }
+    }
+
+    @Override
+    public int getPagosCount(int year) throws SQLException {
+        try (PreparedStatement statement = connection.prepareStatement(PAGOS_YEAR_QUERY)) {
+
+            statement.setInt(1, year);
+
+            try (ResultSet result = statement.executeQuery()) {
+                if (result.next()) {
+                    return result.getInt("cnt");
+                } else {
+                    throw new SQLException("Erro ao recuperar contagem de pedidos pagos.");
+                }
+            }
+
+        } catch (SQLException ex) {
+            Logger.getLogger(MyProdutoDAO.class
+                    .getName()).log(Level.SEVERE, "DAO", ex);
+            throw new SQLException("Erro ao recuperar contagem de pedidos pagos.");
+        }
+    }
+
+    @Override
+    public int getMaxYear() throws SQLException {
+        try (PreparedStatement statement = connection.prepareStatement(MAX_YEAR_QUERY)) {
+
+            try (ResultSet result = statement.executeQuery()) {
+                if (result.next()) {
+                    return result.getInt("max_year");
+                } else {
+                    throw new SQLException("Erro ao recuperar ano da tabela pedidos.");
+                }
+            }
+
+        } catch (SQLException ex) {
+            Logger.getLogger(MyProdutoDAO.class
+                    .getName()).log(Level.SEVERE, "DAO", ex);
+            throw new SQLException("Erro ao recuperar ano da tabela pedidos.");
+        }
+    }
+
+    @Override
+    public int getMinYear() throws SQLException {
+        try (PreparedStatement statement = connection.prepareStatement(MIN_YEAR_QUERY)) {
+
+            try (ResultSet result = statement.executeQuery()) {
+                if (result.next()) {
+                    return result.getInt("min_year");
+                } else {
+                    throw new SQLException("Erro ao recuperar ano da tabela pedidos.");
+                }
+            }
+
+        } catch (SQLException ex) {
+            Logger.getLogger(MyProdutoDAO.class
+                    .getName()).log(Level.SEVERE, "DAO", ex);
+            throw new SQLException("Erro ao recuperar ano da tabela pedidos.");
+        }
+    }
+
+    @Override
+    public int getMaxMonth(int year) throws SQLException {
+        try (PreparedStatement statement = connection.prepareStatement(MAX_MONTH_QUERY)) {
+
+            statement.setInt(1, year);
+
+            try (ResultSet result = statement.executeQuery()) {
+                if (result.next()) {
+                    return result.getInt("max_month");
+                } else {
+                    throw new SQLException("Erro ao recuperar mes da tabela pedidos.");
+                }
+            }
+
+        } catch (SQLException ex) {
+            Logger.getLogger(MyProdutoDAO.class
+                    .getName()).log(Level.SEVERE, "DAO", ex);
+            throw new SQLException("Erro ao recuperar mes da tabela pedidos.");
+        }
+    }
+
+    @Override
+    public int getMonthYearPresCount(int month, int year) throws SQLException {
+        try (PreparedStatement statement = connection.prepareStatement(MONTH_YEAR_PRESENCIAL_QUERY)) {
+
+            statement.setInt(1, month);
+            statement.setInt(2, year);
+
+            try (ResultSet result = statement.executeQuery()) {
+                if (result.next()) {
+                    return result.getInt("cnt");
+                } else {
+                    throw new SQLException("Erro ao recuperar contagem de pedidos do mes " + month + " ano " + year + ".");
+                }
+            }
+
+        } catch (SQLException ex) {
+            Logger.getLogger(MyProdutoDAO.class
+                    .getName()).log(Level.SEVERE, "DAO", ex);
+            throw new SQLException("Erro ao recuperar contagem de pedidos do mes " + month + " ano " + year + ".");
+        }
+    }
+
+    @Override
+    public int getMonthYearOnlineCount(int month, int year) throws SQLException {
+        try (PreparedStatement statement = connection.prepareStatement(MONTH_YEAR_ONLINE_QUERY)) {
+
+            statement.setInt(1, month);
+            statement.setInt(2, year);
+
+            try (ResultSet result = statement.executeQuery()) {
+                if (result.next()) {
+                    return result.getInt("cnt");
+                } else {
+                    throw new SQLException("Erro ao recuperar contagem de pedidos do mes " + month + " ano " + year + ".");
+                }
+            }
+
+        } catch (SQLException ex) {
+            Logger.getLogger(MyProdutoDAO.class
+                    .getName()).log(Level.SEVERE, "DAO", ex);
+            throw new SQLException("Erro ao recuperar contagem de pedidos do mes " + month + " ano " + year + ".");
+        }
+    }
+
+    public Pedido getRandom() throws SQLException {
+        Pedido p = new Pedido();
+
+        try (PreparedStatement statement = connection.prepareStatement(READ_RANDOM_QUERY)) {
+            try (ResultSet result = statement.executeQuery()) {
+                if (result.next()) {
+                    p.setId(result.getInt("idPedido"));
+                    p.setComanda(result.getInt("comanda"));
+                    p.setClienteLogin(result.getString("cliente_login"));
+                    p.setFuncionarioLogin(result.getString("funcionario_login"));
+                    p.setStatus(result.getString("status"));
+                    p.setTipo(result.getString("tipo"));
+                    p.setObs(result.getString("observacao"));
+                    return p;
+                } else {
+                    throw new SQLException("Erro ao retornar pedido aleatório.");
+                }
+            }
+
+        } catch (SQLException ex) {
+            Logger.getLogger(MyProdutoDAO.class
+                    .getName()).log(Level.SEVERE, "DAO", ex);
+            throw new SQLException("Erro ao retornar pedido aleatório.");
+        }
+    }
+
+    @Override
+    public int getPedidosByFuncionario(Funcionario f, int month, int year) throws SQLException {
+        try (PreparedStatement statement = connection.prepareStatement(PEDIDOS_BY_FUNCIONARIO_QUERY)) {
+
+            statement.setString(1, f.getLogin());
+            statement.setInt(2, month);
+            statement.setInt(3, year);
+
+            try (ResultSet result = statement.executeQuery()) {
+                if (result.next()) {
+                   return result.getInt("pedidos_atendidos");
+                }
+                else {
+                    throw new SQLException("Erro ao recuperar contagem de pedidos para funcionario " + f.getPNome());
+                }
+            }
+
+        } catch (SQLException ex) {
+            Logger.getLogger(MyProdutoDAO.class
+                    .getName()).log(Level.SEVERE, "DAO", ex);
+            throw new SQLException("Erro ao recuperar contagem de pedidos por funcionario.");
+        }
+    }
+    
+    @Override
+    public List<Pedido> getMonthYearPedidos(int month, int year) throws SQLException {
+        List<Pedido> pedidos = new ArrayList<>();
+
+        try (PreparedStatement statement = connection.prepareStatement(MONTH_YEAR_PEDIDOS_QUERY)) {
+
+            statement.setInt(1, month);
+            statement.setInt(2, year);
+            
+            ResultSet result = statement.executeQuery();
+            while (result.next()) {
+                Pedido p = new Pedido();
+                p.setId(result.getInt("idPedido"));
+                p.setComanda(result.getInt("comanda"));
+                p.setClienteLogin(result.getString("cliente_login"));
+                p.setFuncionarioLogin(result.getString("funcionario_login"));
+                p.setStatus(result.getString("status"));
+                p.setTipo(result.getString("tipo"));
+                p.setObs(result.getString("observacao"));
+                pedidos.add(p);
+            }
+            return pedidos;
+        } catch (SQLException ex) {
+            Logger.getLogger(MyProdutoDAO.class
+                    .getName()).log(Level.SEVERE, "DAO", ex);
+            throw new SQLException("Erro ao recuperar pedidos.");
         }
     }
 }

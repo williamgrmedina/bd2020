@@ -67,6 +67,8 @@
                                                href="#"
                                                data-nome_prod="${produto.produto.nome}"
                                                data-qtd_max="${produto.qtd}"
+                                               data-id_pedido="${produto.idPedido}"
+                                               data-id_produto="${produto.idProduto}"
                                                data-toggle="modal" 
                                                data-target="#modal_cancelar_produto">
 
@@ -93,12 +95,15 @@
                         </button>
                     </div>				
 
-                    <div class="h5 modal-nome_prod text-center" ></div>
-
+                    <div class="modal-nome_prod text-center" ></div>
+                    
                     <form
                         class="form" id="form_delete_prod"
                         action="${pageContext.servletContext.contextPath}/pedido/cancelar_produto"
-                        method="POST">
+                        id_pedido="should_be_changed_in_javascript_file"
+                        id_produto="should_be_changed_in_javascript_file"
+                        
+                        method="GET">
                         <div class="form-group d-flex justify-content-center">
                             <span class="form-inline" >
                                 <label class=" h5 control-label" style="color: red; padding-right: 15px" for="qtd_a_remover">Quantidade a cancelar: </label>

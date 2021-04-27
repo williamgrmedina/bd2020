@@ -14,4 +14,5 @@ import model.Cliente;
  */
 public interface ClienteDAO extends DAOString<Cliente> {
 	public void authenticate(Cliente cl) throws SQLException, SecurityException;
+        public Cliente readRandom() throws SQLException;
 }

@@ -11,7 +11,7 @@ import java.util.List;
 /**
  *
  * @author dskaster
- * @param <T> the DAOString Type. Ex: Pedido indicates pedido, User indicates user
+ * @param <T> the DAOString Type. Ex: Pedido indicates pedido
  */
 public interface DAOString<T> {
     public void create(T t) throws SQLException;

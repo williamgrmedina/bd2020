@@ -59,7 +59,12 @@
                                             <span class="h6"><c:out value="${pedido.id}"/></span>
                                         </td>
                                         <td>
-                                            <span class="h6"><c:out value="${pedido.comanda}"/></span>
+                                            <c:choose>
+                                                <c:when test="${pedido.tipo == 'online'}"/>
+                                                <c:otherwise>
+                                                    <span class="h6"><c:out value="${pedido.comanda}"/></span>
+                                                </c:otherwise>
+                                            </c:choose>
                                         </td>
                                         <td>
                                             <span class="h6"><c:out value="${pedido.clienteLogin}"/></span>

@@ -13,12 +13,11 @@ import java.util.List;
  * @author Medina
  * @param <T> the DAOInt Type. Ex: Pedido indicates pedido
  */
-public interface DAOInt_2x <T> {
-
+public interface DAOInt_3x <T> {
     public void create(T t) throws SQLException;
-    public T read(Integer prim_key_one, Integer prim_key_two) throws SQLException;
+    public T read(Integer prim_key_one, Integer prim_key_two, Integer prim_key_three) throws SQLException;
     public void update(T t) throws SQLException;
-    public void delete(Integer prim_key_one, Integer prim_key_two) throws SQLException;
+    public void delete(Integer prim_key_one, Integer prim_key_two, Integer prim_key_three) throws SQLException;
     
-    public List<T> all() throws SQLException; 
+     public List<T> all() throws SQLException;
 }

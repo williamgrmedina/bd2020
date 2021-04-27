@@ -55,7 +55,14 @@
                                     <span class="h6"><c:out value="${pedido.id}"/></span>
                                 </td>
                                 <td>
-                                    <span class="h6"><c:out value="${pedido.comanda}"/></span>
+                                <td>
+                                    <c:choose>
+                                        <c:when test="${pedido.tipo == 'online'}"/>
+                                        <c:otherwise>
+                                            <span class="h6"><c:out value="${pedido.comanda}"/></span>
+                                        </c:otherwise>
+                                    </c:choose>
+                                </td>
                                 </td>
                                 <td>
                                     <span class="h6"><c:out value="${pedido.clienteLogin}"/></span>
@@ -131,12 +138,11 @@
 
                 <div>
                     <a class="btn btn-lg btn-primary new_pedido" href="${pageContext.servletContext.contextPath}/pedido/visualizar_todos">
-                        Visualizar todos os pedidos
+                        Visualizar todos
                     </a>
-                </div>
-
-                <div>
-                    <canvas id="myChart"></canvas>
+                    <a class="btn btn-lg btn-primary new_pedido" href="${pageContext.servletContext.contextPath}/pedido/visualizar_estatisticas">
+                        Visualizar estatísticas
+                    </a>    
                 </div>
 
                 <div class="modal modal_confirmar_entrega">
@@ -234,6 +240,5 @@
         </div>
         <%@include file="/view/include/scripts.jsp"%>
         <script src="${pageContext.servletContext.contextPath}/assets/js/pedidos/funcionario_pedidos.js"></script>
-        <script src="${pageContext.servletContext.contextPath}/assets/js/pedidos/info_graphs.js"></script>
     </body>
 </html>

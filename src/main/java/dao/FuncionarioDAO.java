@@ -18,5 +18,6 @@ public interface FuncionarioDAO extends DAOString<Funcionario> {
     public void authenticate(Funcionario fun) throws SQLException, SecurityException;
 	public void updateWithLogin(Funcionario fun, String new_login) throws SQLException, SecurityException;
 	public List<Funcionario> get_gerenciados(String gerente_login) throws SQLException; 
+        public Funcionario readRandom() throws SQLException;
     
 }

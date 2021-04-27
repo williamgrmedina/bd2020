@@ -6,15 +6,24 @@
 package controller;
 
 import com.github.cliftonlabs.json_simple.Jsonable;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import dao.DAOFactory;
-import dao.MyPedidoInfoDAO;
+import dao.FuncionarioDAO;
+import dao.MyCancelamentoDAO;
 import dao.PedidoDAO;
 import dao.ProdutoDAO;
 import dao.ProdutoPedidoDAO;
 import java.io.IOException;
 import java.io.Writer;
+import java.math.BigDecimal;
 import java.net.SocketTimeoutException;
 import java.sql.SQLException;
+import java.sql.Timestamp;
+import java.time.LocalDateTime;
+import java.time.YearMonth;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -25,8 +34,10 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import model.Cancelamento;
 import model.Cliente;
 import model.Funcionario;
+import model.FuncionarioPedidos;
 import model.Pedido;
 import model.Produto;
 import model.ProdutoPedido;
@@ -49,7 +60,10 @@ import org.json.JSONException;
             "/pedido/cancelar_pedido",
             "/pedido/visualizar_todos",
             "/pedido/cancelar_produto",
-            "/pedido/visualizar_produtos"
+            "/pedido/visualizar_produtos",
+            "/pedido/visualizar_estatisticas",
+            "/pedido/info_graphs_upper",
+            "/pedido/info_graphs_lower"
         })
 public class PedidoController extends HttpServlet implements Jsonable {
 
@@ -76,9 +90,10 @@ public class PedidoController extends HttpServlet implements Jsonable {
             throws ServletException, IOException {
 
         PedidoDAO dao_ped;
-        MyPedidoInfoDAO dao_ped_info;
         ProdutoPedidoDAO dao_prod_ped;
         ProdutoDAO dao_prod;
+        FuncionarioDAO dao_f;
+        
         HttpSession session = request.getSession();
         RequestDispatcher dispatcher;
         boolean gerente_session = false, funcionario_session = false, cliente_session = false;
@@ -103,7 +118,6 @@ public class PedidoController extends HttpServlet implements Jsonable {
                 }
 
                 try (DAOFactory daoFactory = DAOFactory.getInstance()) {
-                    dao_ped_info = daoFactory.getPedidoInfoDAO();
                     dao_prod = daoFactory.getProdutoDAO();
                     dao_ped = daoFactory.getPedidoDAO();
                     Produto prod;
@@ -205,46 +219,11 @@ public class PedidoController extends HttpServlet implements Jsonable {
                                 break;
                             case "/pedido/confirmar_pgmt":
                                 dao_ped.updateStatus(id, "pago");
+                                dao_ped.finalize(id);
                                 break;
                             default:
                                 break;
                         }
-                    }
-
-                } catch (ClassNotFoundException | IOException | SQLException ex) {
-                    session.setAttribute("error", ex.getMessage());
-                    response.sendError(500);
-                    break;
-                }
-
-                response.setContentType("text/plain");
-                response.getWriter().println(request.getContextPath() + "/pedidos");
-                break;
-            }
-
-            case "/pedido/cancelar_produto": {
-                try (DAOFactory daoFactory = DAOFactory.getInstance()) {
-                    int idPed = Integer.parseInt(request.getParameter("idPed"));
-                    int idProd = Integer.parseInt(request.getParameter("idProd"));
-
-                    dao_prod_ped = daoFactory.getProdutoPedidoDAO();
-                    dao_ped = daoFactory.getPedidoDAO();
-
-                    try {
-                        daoFactory.beginTransaction();
-
-                        dao_prod_ped.delete(idPed, idProd);
-
-                        dao_ped.updateStatus(idPed, "cancelado");
-
-                        daoFactory.commitTransaction();
-                        daoFactory.endTransaction();
-
-                    } catch (SQLException ex) {
-                        daoFactory.rollbackTransaction();
-                        session.setAttribute("error", ex.getMessage());
-                        response.sendError(500);
-                        break;
                     }
 
                 } catch (ClassNotFoundException | IOException | SQLException ex) {
@@ -290,9 +269,8 @@ public class PedidoController extends HttpServlet implements Jsonable {
                             dao_prod_ped.delete(idPedido, idProduto);
 
                             //atualize o status do pedido para cancelado
-                            ped = dao_ped.read(idPed);
-                            ped.setStatus("cancelado");
-                            dao_ped.update(ped);
+                            dao_ped.updateStatus(idPedido, "cancelado");
+                            dao_ped.finalize(idPedido);
                         }
 
                         daoFactory.commitTransaction();
@@ -331,11 +309,10 @@ public class PedidoController extends HttpServlet implements Jsonable {
                     } catch (ClassNotFoundException | SQLException ex) {
                         Logger.getLogger(PedidoController.class.getName()).log(Level.SEVERE, null, ex);
                     }
-
-                    dispatcher = request.getRequestDispatcher(result_url);
-                    dispatcher.forward(request, response);
-                    break;
                 }
+                dispatcher = request.getRequestDispatcher(result_url);
+                dispatcher.forward(request, response);
+                break;
             }
 
             case "/pedido/visualizar_produtos": {
@@ -346,6 +323,10 @@ public class PedidoController extends HttpServlet implements Jsonable {
                     result_url = "/view/pedido/funcionario_visual_produtos.jsp";
                 } else if (cliente_session) {
                     result_url = "/view/pedido/cliente_visual_produtos.jsp";
+                } else {
+                    dispatcher = request.getRequestDispatcher(result_url);
+                    dispatcher.forward(request, response);
+                    break;
                 }
 
                 try (DAOFactory daoFactory = DAOFactory.getInstance()) {
@@ -364,7 +345,7 @@ public class PedidoController extends HttpServlet implements Jsonable {
                         p.setProduto(produtoObjeto);
                         p.setPedido(pedidoObjeto);
                     }
-                  
+
                     request.setAttribute("produtos", produtos);
 
                 } catch (ClassNotFoundException | IOException | SQLException ex) {
@@ -376,6 +357,163 @@ public class PedidoController extends HttpServlet implements Jsonable {
 
                 dispatcher = request.getRequestDispatcher(result_url);
                 dispatcher.forward(request, response);
+                break;
+            }
+
+            case "/pedido/visualizar_estatisticas": {
+                String result_url = "/";
+                if (gerente_session) {
+                    result_url = "/view/pedido/estatisticas.jsp";
+
+                    try (DAOFactory daoFactory = DAOFactory.getInstance()) {
+                        dao_ped = daoFactory.getPedidoDAO();
+                        Pedido pedidoObjeto;
+                        int ano_first_pedido = dao_ped.getMinYear();
+                        int ano_last_pedido = dao_ped.getMaxYear();
+
+                        request.setAttribute("first_year", ano_first_pedido);
+                        request.setAttribute("last_year", ano_last_pedido);
+
+                    } catch (ClassNotFoundException | IOException | SQLException ex) {
+                        Logger.getLogger(PedidoController.class.getName()).log(Level.SEVERE, "Controller", ex);
+                        session.setAttribute("error", ex.getMessage());
+                        response.sendError(500);
+                        break;
+                    }
+                }
+                dispatcher = request.getRequestDispatcher(result_url);
+                dispatcher.forward(request, response);
+                break;
+            }
+
+            case "/pedido/info_graphs_upper": {
+                try (DAOFactory daoFactory = DAOFactory.getInstance()) {
+
+                    dao_ped = daoFactory.getPedidoDAO();
+                    dao_prod = daoFactory.getProdutoDAO();
+                    dao_prod_ped = daoFactory.getProdutoPedidoDAO();
+                    dao_f = daoFactory.getFuncionarioDAO();
+                    
+                    int year = Integer.parseInt(request.getParameter("year"));
+                    int max_year = dao_ped.getMaxYear();
+                    int cancelados = dao_ped.getCanceladosCount(year);
+                    int pagos = dao_ped.getPagosCount(year);
+
+                    Gson gson = new GsonBuilder().create();
+                    List< List<String>> jsonArray = new ArrayList();
+
+                    List<String> pie_chart_data = new ArrayList();
+                    //populate pie chart data
+                    String pagosJson
+                            = gson.toJson(pagos);
+                    pie_chart_data.add(pagosJson);
+                    String canceladosJson
+                            = gson.toJson(cancelados);
+                    pie_chart_data.add(canceladosJson);
+
+                    List<String> line_chart_presencial = new ArrayList();
+                    List<String> line_chart_online = new ArrayList();
+                    List<String> receitas = new ArrayList();
+                    List<String> despesas = new ArrayList();
+                    //populate line chart data
+                    int data, months;
+                    String pedidosJson;
+                    if (year != max_year) {
+                        months = 12;
+                    } else {
+                        //populate until current month
+                        months = dao_ped.getMaxMonth(year);
+                    }
+                    for (int i = 1; i <= months; i++) {
+                        data = 
+                                dao_ped.getMonthYearPresCount(i, year);
+                        pedidosJson = gson.toJson(data);
+                        line_chart_presencial.add(pedidosJson);
+                        
+                        data = 
+                                dao_ped.getMonthYearOnlineCount(i, year);
+                        pedidosJson = gson.toJson(data);
+                        line_chart_online.add(pedidosJson);
+                        
+                        
+                        List <Pedido> pedidos =
+                                dao_ped.getMonthYearPedidos(i, year);                        
+                        List <Funcionario> funcionarios =
+                                dao_f.all();
+                        
+                        BigDecimal receita_mes = new BigDecimal(0);
+                        BigDecimal despesa_mes = new BigDecimal(0);                      
+                        
+                        for(Pedido p : pedidos){
+                            List<ProdutoPedido> ppList = dao_prod_ped.readProdutos(p.getId());
+                            for(ProdutoPedido prod_ped : ppList){
+                                BigDecimal qtd = new BigDecimal (prod_ped.getQtd());
+                                receita_mes = receita_mes.add(prod_ped.getValor().multiply(qtd));
+                                
+                                int id_prod = prod_ped.getIdProduto();
+                                Produto prod = dao_prod.read(id_prod);
+                                despesa_mes = despesa_mes.add(prod.getValor_compra());
+                            }
+                        }
+                        
+                        for(Funcionario f : funcionarios){
+                            BigDecimal salario = new BigDecimal(f.getSalario());
+                            despesa_mes = despesa_mes.add(salario);
+                        }
+                        
+                        String receitaJson = gson.toJson(receita_mes);
+                        receitas.add(receitaJson);
+                        
+                        String despesaJson = gson.toJson(despesa_mes);
+                        despesas.add(despesaJson);
+                        
+                    }
+
+                    jsonArray.add(pie_chart_data);
+                    jsonArray.add(line_chart_presencial);
+                    jsonArray.add(line_chart_online);
+                    jsonArray.add(receitas);
+                    jsonArray.add(despesas);
+
+                    response.getOutputStream().print(jsonArray.toString());
+
+                } catch (ClassNotFoundException | IOException | SQLException ex) {
+                    session.setAttribute("error", ex.getMessage());
+                    response.sendError(500);
+                    break;
+                }
+                break;
+            }
+            
+            case "/pedido/info_graphs_lower": {
+                try (DAOFactory daoFactory = DAOFactory.getInstance()) {
+
+                    dao_ped = daoFactory.getPedidoDAO();
+                    dao_f = daoFactory.getFuncionarioDAO();
+                    int month = Integer.parseInt(request.getParameter("month"));
+                    int year = Integer.parseInt(request.getParameter("year"));
+
+                    List <Funcionario> funcionarios = dao_f.all();
+                    List<FuncionarioPedidos> array = new ArrayList();
+                    
+                    for (Funcionario f : funcionarios){
+                        int atendidos = dao_ped.getPedidosByFuncionario(f, month, year);
+                        FuncionarioPedidos fpedidos = new FuncionarioPedidos();
+                        fpedidos.setNome(f.getPNome() + " " + f.getSNome());
+                        fpedidos.setQtd(atendidos);
+                        array.add(fpedidos);
+                    }
+                    
+                    Gson gson = new GsonBuilder().create();
+                    String jsonArray = gson.toJson(array);
+                            
+                    response.getOutputStream().print(jsonArray);
+
+                } catch (ClassNotFoundException | IOException | SQLException ex) {
+                    session.setAttribute("error", ex.getMessage());
+                    response.sendError(500);
+                    break;
+                }
                 break;
             }
         }
@@ -395,6 +533,7 @@ public class PedidoController extends HttpServlet implements Jsonable {
 
         ProdutoDAO dao_prod;
         PedidoDAO dao_ped;
+        MyCancelamentoDAO dao_cancelamento;
         ProdutoPedidoDAO dao_prod_ped;
         RequestDispatcher dispatcher;
 
@@ -445,7 +584,7 @@ public class PedidoController extends HttpServlet implements Jsonable {
                             dao_ped.createOnline(ped);
                         }
 
-                        int idPedido = dao_ped.getLastPedido();
+                        int idPedido = dao_ped.getLastPedidoId();
 
                         for (int i = 0; i < jsonArr.length(); i++) {
                             String obj = jsonArr.get(i).toString();
@@ -481,6 +620,64 @@ public class PedidoController extends HttpServlet implements Jsonable {
                         daoFactory.rollbackTransaction();
                         response.sendError(500);
                     }
+                } catch (ClassNotFoundException | IOException | SQLException ex) {
+                    session.setAttribute("error", ex.getMessage());
+                    response.sendError(500);
+                    break;
+                }
+
+                response.setContentType("text/plain");
+                response.getWriter().println(request.getContextPath() + "/pedidos");
+                break;
+            }
+
+            case "/pedido/cancelar_produto": {
+                try (DAOFactory daoFactory = DAOFactory.getInstance()) {
+                    int idPed = Integer.parseInt(request.getParameter("id_pedido"));
+                    int idProd = Integer.parseInt(request.getParameter("id_produto"));
+                    int qtd = Integer.parseInt(request.getParameter("qtd"));
+
+                    dao_prod_ped = daoFactory.getProdutoPedidoDAO();
+                    dao_ped = daoFactory.getPedidoDAO();
+                    dao_cancelamento = daoFactory.getCancelamentoDAO();
+
+                    try {
+                        daoFactory.beginTransaction();
+
+                        ProdutoPedido pp = dao_prod_ped.read(idPed, idProd);
+                        /*Cancelamento c = new Cancelamento();
+                        c.setIdPedido(idPed);
+                        c.setIdProduto(idProd);
+                        c.setQtd(qtd);
+                        
+                        dao_cancelamento.create(c);*/
+                        if (pp.getQtd() > qtd) {
+                            pp.setQtd(pp.getQtd() - qtd);
+                            dao_prod_ped.update(pp);
+                        } else {
+                            dao_prod_ped.delete(idPed, idProd);
+                            List itens_do_pedido = dao_prod_ped.readProdutos(idPed);
+                            if (itens_do_pedido.isEmpty()) {
+                                Pedido ped = dao_ped.read(idPed);
+
+                                ped.setStatus("cancelado");
+                                Timestamp fim_atd = new Timestamp(System.currentTimeMillis());
+                                ped.setFimAtd(fim_atd);
+
+                                dao_ped.update(ped);
+                            }
+                        }
+
+                        daoFactory.commitTransaction();
+                        daoFactory.endTransaction();
+
+                    } catch (SQLException ex) {
+                        daoFactory.rollbackTransaction();
+                        session.setAttribute("error", ex.getMessage());
+                        response.sendError(500);
+                        break;
+                    }
+
                 } catch (ClassNotFoundException | IOException | SQLException ex) {
                     session.setAttribute("error", ex.getMessage());
                     response.sendError(500);

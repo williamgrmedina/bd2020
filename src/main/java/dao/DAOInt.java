@@ -13,7 +13,7 @@ import java.util.List;
  * @author dskaster
  * @param <T> the DAOInt Type. Ex: Pedido indicates pedido
  */
-public interface DAOInt<T> {
+public interface DAOInt <T> {
     public void create(T t) throws SQLException;
     public T read(Integer prim_key) throws SQLException;
     public void update(T t) throws SQLException;
